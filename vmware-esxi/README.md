@@ -32,7 +32,7 @@ While VMware ESXi does not support running in any virtual machine it is possible
 ### Only the deployment storage device is used
 Custom storage configuration is not supported as VMware ESXi has specific requirements for how files are written to the disk. MAAS will extend datastore1 to the full size of the deployment disk. After deployment VMware tools may be used to access the other disks.
 
-### IP Address not assoicated with machine
+### IP Address not associated with machine
 VMware ESXi connects the physical NIC to a vSphere Standard Switch and creates a new VMkernel adapter for networking. The VMkernel adapter has its own MAC address which is recognized by MAAS as a new device. Custom network configuration is not supported.
 
 ### Image fails to build due to qemu-nbd error
