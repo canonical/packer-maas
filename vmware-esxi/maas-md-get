@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+
+from argparse import ArgumentParser
+import http.client
+import socket
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+
+import oauthlib.oauth1 as oauth
+import yaml
+
+
+def authenticate_headers(url, headers, creds, clockskew=0):
+    """Update and sign a dict of request headers."""
+    if creds.get('consumer_key', None) is not None:
+        timestamp = int(time.time()) + clockskew
+        client = oauth.Client(
+            client_key=creds['consumer_key'],
+            client_secret=creds['consumer_secret'],
+            resource_owner_key=creds['token_key'],
+            resource_owner_secret=creds['token_secret'],
+            signature_method=oauth.SIGNATURE_PLAINTEXT,
+            timestamp=str(timestamp))
+        _, signed_headers, _ = client.sign(url)
+        headers.update(signed_headers)
+
+
+def geturl(url, creds, headers=None, data=None):
+    # Takes a dict of creds to be passed through to oauth_headers,
+    # so it should have consumer_key, token_key, ...
+    if headers is None:
+        headers = {}
+    else:
+        headers = dict(headers)
+
+    clockskew = 0
+
+    error = Exception("Unexpected Error")
+    for naptime in (1, 1, 2, 4, 8, 16, 32):
+        authenticate_headers(url, headers, creds, clockskew)
+        try:
+            req = urllib.request.Request(url=url, data=data, headers=headers)
+            ret = urllib.request.urlopen(req)
+            return ret.read().decode()
+        except urllib.error.HTTPError as exc:
+            error = exc
+            if 'date' not in exc.headers:
+                print("date field not in %d headers" % exc.code)
+                pass
+            elif exc.code in (http.client.UNAUTHORIZED, http.client.FORBIDDEN):
+                date = exc.headers['date']
+                try:
+                    ret_time = time.mktime(parsedate(date))
+                    clockskew = int(ret_time - time.time())
+                    print("updated clock skew to %d" % clockskew)
+                except:
+                    print("failed to convert date '%s'" % date)
+            elif exc.code == http.client.NOT_FOUND:
+                # Nothing to download.
+                return ''
+                
+        except Exception as exc:
+            error = exc
+
+        print("request to %s failed. sleeping %d.: %s" % (url, naptime, error))
+        time.sleep(naptime)
+
+    raise error
+
+
+def main():
+    parser = ArgumentParser(
+        description='Get data from the MAAS metadata server')
+    parser.add_argument(
+        '-c', '--config', help='Path to the MAAS metadata credentials file',
+        required=True)
+    parser.add_argument('entry', help='The metadata path to get')
+
+    args = parser.parse_args()
+
+    with open(args.config, 'r') as f:
+        cfg = yaml.safe_load(f)
+
+    if 'datasource' in cfg:
+        cfg = cfg['datasource']['MAAS']
+
+    if 'consumer_secret' not in cfg:
+        cfg['consumer_secret'] = ''
+
+    if cfg['metadata_url'].endswith('/'):
+        url = '%s%s' % (cfg['metadata_url'], args.entry)
+    else:
+        url = '%s/%s' % (cfg['metadata_url'], args.entry)
+
+    try:
+        print(geturl(url, creds=cfg))
+    except urllib.error.HTTPError as exc:
+        print("HTTP error [%s]" % exc.code)
+        sys.exit(1)
+    except urllib.error.URLError as exc:
+        print("URL error [%s]" % exc.reason)
+        sys.exit(1)
+    except socket.timeout as exc:
+        print("Socket timeout [%s]" % exc)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()

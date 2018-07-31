@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+
+from curtin.config import load_command_config
+from curtin.util import load_command_environment
+
+from subprocess import check_call
+import os
+import sys
+import tempfile
+
+
+def find_altbootbank_blkdev(target):
+    with open('/proc/mounts', 'r') as mounts:
+        for line in mounts.readlines():
+            mount = line.split()
+            blkdev = mount[0]
+            mount_point = mount[1]
+            if mount_point == target:
+                return '%s6' % blkdev[0:-1]
+
+    print('ERROR: Unable to find /altbootbank block device!')
+    sys.exit(1)
+
+
+def mount(blkdev):
+    mount_point = tempfile.mkdtemp(prefix='curtin-hooks-')
+    check_call(['mount', blkdev, mount_point])
+    return mount_point
+
+
+def umount(blkdev):
+    check_call(['umount', blkdev])
+
+def main():
+    state = load_command_environment()
+    config = load_command_config(None, state)
+
+    # Write the MAAS credentials to /altbootbank
+    altbootbank_blkdev = find_altbootbank_blkdev(state['target'])
+    altbootbank_mount_point = mount(altbootbank_blkdev)
+    maas_cfg_path = os.path.join(altbootbank_mount_point, 'maas', 'maas.cfg')
+    with open(maas_cfg_path, 'w') as f:
+        f.write(config['cloudconfig']['maas-cloud-config']['content'])
+    umount(altbootbank_blkdev)
+
+
+if __name__ =="__main__":
+    main()
