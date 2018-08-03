@@ -13,7 +13,7 @@ Installation is non-interactive.
 
 ## Uploading an image to MAAS
 ```
-$ maas $PROFILE boot-resources create name='vmware-esxi-6.7' title='VMware ESXi 6.7' architecture='amd64/generic' filetype='ddgz' content@=vmware-esxi.dd.gz
+$ maas $PROFILE boot-resources create name='esxi/6.7' title='VMware ESXi 6.7' architecture='amd64/generic' filetype='ddgz' content@=vmware-esxi.dd.gz
 ```
 
 ## Customization
