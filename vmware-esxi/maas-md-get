@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from argparse import ArgumentParser
+from email.utils import parsedate
 import http.client
 import socket
 import sys
@@ -61,7 +62,7 @@ def geturl(url, creds, headers=None, data=None):
             elif exc.code == http.client.NOT_FOUND:
                 # Nothing to download.
                 return ''
-                
+
         except Exception as exc:
             error = exc
 
