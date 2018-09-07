@@ -1,59 +1,62 @@
 {
     "variables": {
-	"vmware_esxi_iso_path": "{{env `VMWARE_ESXI_ISO_PATH`}}"
+        "vmware_esxi_iso_path": "{{env `VMWARE_ESXI_ISO_PATH`}}"
     },
     "builders": [
-	{
-	    "type": "qemu",
-	    "communicator": "none",
-	    "iso_url": "{{user `vmware_esxi_iso_path`}}",
-	    "iso_checksum_type": "none",
-	    "accelerator": "kvm",
-	    "boot_wait": "3s",
-	    "boot_command": [
-		"<enter><wait>",
-		"<leftShift>O",
-		" ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/vmware-esxi-ks.cfg<enter>"
-	    ],
-	    "disk_interface": "ide",
-	    "disk_size": 10240,
-	    "http_directory": "http",
-	    "format": "raw",
-	    "net_device": "e1000",
-	    "qemuargs": [
-		[ "-m", "4096m" ],
-		[ "-cpu", "host" ],
-		[ "-smp", "2,sockets=2,cores=1,threads=1" ]
-	    ]
-	}
+        {
+            "type": "qemu",
+            "communicator": "none",
+            "iso_url": "{{user `vmware_esxi_iso_path`}}",
+            "iso_checksum_type": "none",
+            "accelerator": "kvm",
+            "boot_wait": "3s",
+            "boot_command": [
+                "<enter><wait>",
+                "<leftShift>O",
+                " ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/vmware-esxi-ks.cfg<enter>"
+            ],
+            "disk_interface": "ide",
+            "disk_size": 4096,
+            "http_directory": "http",
+            "format": "raw",
+            "net_device": "e1000",
+            "qemuargs": [
+                [ "-m", "4096m" ],
+                [ "-cpu", "host" ],
+                [ "-smp", "2,sockets=2,cores=1,threads=1" ]
+            ],
+            "shutdown_timeout": "20m"
+        }
     ],
     "post-processors": [
-	{
-	    "type": "shell-local",
-	    "inline_shebang": "/bin/bash -e",
-	    "inline": [
-		"TMP_DIR=$(mktemp -d)",
-		"qemu-nbd -c /dev/nbd4 -f raw -n output-qemu/packer-qemu",
-		"sleep 1",
-		"mount /dev/nbd4p1 $TMP_DIR",
-		"mkdir -p $TMP_DIR/curtin",
-		"cp curtin-hooks $TMP_DIR/curtin",
-		"sync $TMP_DIR/curtin",
-		"umount $TMP_DIR",
-		"mount /dev/nbd4p6 $TMP_DIR",
-		"mkdir -p $TMP_DIR/maas",
-		"cp maas-md-get $TMP_DIR/maas",
-		"cp -r pyyaml/lib3/yaml $TMP_DIR/maas",
-		"cp -r oauthlib/oauthlib $TMP_DIR/maas",
-		"sync $TMP_DIR/maas",
-		"umount $TMP_DIR",
-		"qemu-nbd -d /dev/nbd4",
-		"rmdir $TMP_DIR"
-	    ]
-	},
-	{
-	    "type": "compress",
-	    "output": "vmware-esxi.dd.gz"
-	}
+        {
+            "type": "shell-local",
+            "inline_shebang": "/bin/bash -e",
+            "inline": [
+                "TMP_DIR=$(mktemp -d)",
+                "qemu-nbd -c /dev/nbd4 -f raw -n output-qemu/packer-qemu",
+                "sleep 1",
+                "mount /dev/nbd4p1 $TMP_DIR",
+                "mkdir -p $TMP_DIR/curtin",
+                "cp curtin-hooks $TMP_DIR/curtin",
+                "sync $TMP_DIR/curtin",
+                "umount $TMP_DIR",
+                "mount /dev/nbd4p6 $TMP_DIR",
+                "mkdir -p $TMP_DIR/maas",
+                "cp -r pyyaml/lib3/yaml $TMP_DIR/maas",
+                "cp -r oauthlib/oauthlib $TMP_DIR/maas",
+                "cp maas-md-get $TMP_DIR/maas",
+                "cp ipaddr/ipaddr.py $TMP_DIR/maas",
+                "cp netplan-esxi $TMP_DIR/maas",
+                "sync $TMP_DIR/maas",
+                "umount $TMP_DIR",
+                "qemu-nbd -d /dev/nbd4",
+                "rmdir $TMP_DIR"
+            ]
+        },
+        {
+            "type": "compress",
+            "output": "vmware-esxi.dd.gz"
+        }
     ]
 }

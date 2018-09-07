@@ -5,10 +5,16 @@
 The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
 
 ## Building an image
+Before you begin make sure the nbd kernel module is loaded.
+```
+$ sudo modprobe nbd
+```
+
 Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
 ```
 $ sudo packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-6.7.0-8169922.x86_64.iso' vmware-esxi.json
 ```
+
 Installation is non-interactive.
 
 ## Uploading an image to MAAS
@@ -32,8 +38,13 @@ While VMware ESXi does not support running in any virtual machine it is possible
 ### Only the deployment storage device is used
 Custom storage configuration is not supported as VMware ESXi has specific requirements for how files are written to the disk. MAAS will extend datastore1 to the full size of the deployment disk. After deployment VMware tools may be used to access the other disks.
 
-### IP Address not associated with machine
-VMware ESXi connects the physical NIC to a vSphere Standard Switch and creates a new VMkernel adapter for networking. The VMkernel adapter has its own MAC address which is recognized by MAAS as a new device. Custom network configuration is not supported.
+### Networking
+* Bridges - Not supported in VMware ESXi
+* Bonds - The following MAAS bond modes are mapped to VMware ESXi NIC team sharing with load balancing as follows:
+  * balance-rr - portid
+  * active-backup - explicit
+  * 802.3ad - iphash, LACP rate and XMIT hash policy settings are ignored.
+  * No other bond modes are currently supported.
 
 ### Image fails to build due to qemu-nbd error
 If the image fails to build due to a qemu-nbd error try disconnecting the device with

@@ -7,15 +7,16 @@ from subprocess import check_call
 import os
 import shutil
 import tempfile
+import yaml
 
 
-def write_maas_md_cfg(target, config):
-    """Write the MAAS credentials to the deployed filesystem.
+def write_config(target, config):
+    """Write the network config and MAAS credentials to the deployed filesystem
 
-    Writes the MAAS credentials to the 6th partition which maps to
-    /altbootbank on the booted system. /altbootbank was chosen because it
-    is the largest writable filesystem which is easily accessible by both
-    Curtin and the %firstboot script.
+    Writes the network configuration and MAAS credentials to the 6th partition
+    which maps to /altbootbank on the booted system. /altbootbank was chosen
+    because it is the largest writable filesystem which is easily accessible
+    by both Curtin and the %firstboot script.
     """
     altbootbank_blkdev = None
     # The curtin-hooks are stored on the first partition so Curtin finds the
@@ -42,6 +43,11 @@ def write_maas_md_cfg(target, config):
     with open(maas_cfg_path, 'w') as f:
         f.write(config['cloudconfig']['maas-cloud-config']['content'])
 
+    network_cfg_path = os.path.join(
+        altbootbank_mount_point, 'maas', 'curtin-networking.cfg')
+    with open(network_cfg_path, 'w') as f:
+        f.write(yaml.dump(config['network']))
+
     check_call(['umount', altbootbank_blkdev])
 
 
@@ -55,7 +61,7 @@ def main():
     state = load_command_environment()
     config = load_command_config(None, state)
 
-    write_maas_md_cfg(state['target'], config)
+    write_config(state['target'], config)
     cleanup()
 
 

@@ -16,11 +16,11 @@ import yaml
 
 def authenticate_headers(url, headers, creds, clockskew=0):
     """Update and sign a dict of request headers."""
-    if creds.get('consumer_key', None) is not None:
+    if creds.get('consumer_key') is not None:
         timestamp = int(time.time()) + clockskew
         client = oauth.Client(
             client_key=creds['consumer_key'],
-            client_secret=creds['consumer_secret'],
+            client_secret=creds.get('consumer_secret', ''),
             resource_owner_key=creds['token_key'],
             resource_owner_secret=creds['token_secret'],
             signature_method=oauth.SIGNATURE_PLAINTEXT,
@@ -87,9 +87,6 @@ def main():
 
     if 'datasource' in cfg:
         cfg = cfg['datasource']['MAAS']
-
-    if 'consumer_secret' not in cfg:
-        cfg['consumer_secret'] = ''
 
     if cfg['metadata_url'].endswith('/'):
         url = '%s%s' % (cfg['metadata_url'], args.entry)

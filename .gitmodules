@@ -4,3 +4,6 @@
 [submodule "vmware-esxi/oauthlib"]
 	path = vmware-esxi/oauthlib
 	url = https://github.com/oauthlib/oauthlib
+[submodule "vmware-esxi/ipaddr"]
+	path = vmware-esxi/ipaddr
+	url = https://github.com/google/ipaddr-py
