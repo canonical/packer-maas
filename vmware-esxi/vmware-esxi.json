@@ -16,7 +16,7 @@
                 " ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/vmware-esxi-ks.cfg<enter>"
             ],
             "disk_interface": "ide",
-            "disk_size": 4096,
+            "disk_size": 10240,
             "http_directory": "http",
             "format": "raw",
             "net_device": "e1000",
