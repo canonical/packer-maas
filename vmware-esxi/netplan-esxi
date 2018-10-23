@@ -140,7 +140,7 @@ def _apply_subnets(config, vswitch, counters):
             # If there is more then one subnet the others are alias, use the
             # same naming convention MAAS does.
             port_group = '%s:%s' % (port_group_name, i)
-            warn('Creating alias %s' % port_group)
+            print('Creating alias %s' % port_group)
         check_call([
             'esxcli', 'network', 'vswitch', 'standard', 'portgroup', 'add',
             '-p', port_group, '-v', vswitch])

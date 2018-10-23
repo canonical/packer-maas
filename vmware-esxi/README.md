@@ -46,6 +46,8 @@ Custom storage configuration is not supported as VMware ESXi has specific requir
   * 802.3ad - iphash, LACP rate and XMIT hash policy settings are ignored.
   * No other bond modes are currently supported.
 
+**WARNING**: VMware ESXi does not allow VMs to use a PortGroup that has a VMK attached to it. All configured devices will have a VMK attached. To use a vSwitch with VMs you must leave a device or alias unconfigured in MAAS.
+
 ### Image fails to build due to qemu-nbd error
 If the image fails to build due to a qemu-nbd error try disconnecting the device with
 ```
