@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+
+from subprocess import check_call
+import sys
+import yaml
+
+
+def main():
+    data = sys.stdin.read()
+    cloud_config = yaml.safe_load(data)
+    if 'cloud-init' not in cloud_config:
+        print('No cloud-init data found!')
+        return
+    cloud_init = yaml.safe_load(cloud_config['cloud-init'])
+    if 'ntp' not in cloud_init:
+        print('No NTP data found!')
+        return
+    ntp = cloud_init['ntp']
+
+    with open('/etc/ntp.conf', 'a') as f:
+        f.write('\n# Configured by MAAS\n')
+        for pool in ntp.get('pools', []):
+            f.write('pool %s iburst\n' % pool)
+        for server in ntp.get('servers', []):
+            f.write('server %s iburst\n' % server)
+
+    check_call(['/etc/init.d/ntpd', 'restart'])
+
+
+if __name__ == '__main__':
+    main()
