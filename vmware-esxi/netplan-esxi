@@ -165,6 +165,10 @@ def _apply_subnets(config, vswitch, counters):
                 if gateway:
                     cmd += ['-g', gateway]
                 check_call(cmd)
+                if gateway:
+                    check_call([
+                        'esxcli', 'network', 'ip', 'route', 'ipv4', 'add',
+                        '--gateway=%s' % gateway, '--network=default'])
             elif ip_net.version == 6:
                 print(
                     'Configuring static IPv6 address(%s)' % subnet['address'])
@@ -173,6 +177,9 @@ def _apply_subnets(config, vswitch, counters):
                 gateway = subnet.get('gateway')
                 if gateway:
                     check_call(cmd + ['ipv6', 'set', '-i', vmk, '-g', gateway])
+                    check_call([
+                        'esxcli', 'network', 'ip', 'route', 'ipv6', 'add',
+                        '--gateway=%s' % gateway, '--network=default'])
             else:
                 warn('Unknown IP version IPv%s, skipping' % ip_net.version)
         elif subnet['type'] == 'dhcp4':

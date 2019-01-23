@@ -1,8 +1,16 @@
 # VMware ESXi Packer Template for MAAS
 
-## Prerequisites
+## Introduction
+MAAS 2.5 and above has the ability to deploy VMware ESXi as a custom image. MAAS cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
 
-The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
+## Prerequisites (to create the images)
+
+* A machine running Ubuntu 18.04+
+* [Packer.](https://www.packer.io/intro/getting-started/install.html)
+* The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
+
+## Customizing the Image
+The deployment image may be customized by modifying packer-maas/vmware-esxi/http/vmware-esxi-ks.cfg see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
 
 ## Building an image
 Before you begin make sure the nbd kernel module is loaded.
@@ -15,15 +23,13 @@ Your current working directory must be in packer-maas/vmware-esxi, where this fi
 $ sudo packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-6.7.0-8169922.x86_64.iso' vmware-esxi.json
 ```
 
+Note: Note: If you are building the image over SSH or a headless environment you must add [headless=True](https://www.packer.io/docs/builders/vmware-iso.html#headless) to vmware-esxi.json.
 Installation is non-interactive.
 
 ## Uploading an image to MAAS
 ```
 $ maas $PROFILE boot-resources create name='esxi/6.7' title='VMware ESXi 6.7' architecture='amd64/generic' filetype='ddgz' content@=vmware-esxi.dd.gz
 ```
-
-## Customization
-The deployment image may be customized by modifying packer-maas/vmware-esxi/http/vmware-esxi-ks.cfg see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
 
 ## Requirements
 VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent then MAAS.
