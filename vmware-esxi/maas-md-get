@@ -85,13 +85,10 @@ def main():
     with open(args.config, 'r') as f:
         cfg = yaml.safe_load(f)
 
-    if 'datasource' in cfg:
-        cfg = cfg['datasource']['MAAS']
-
-    if cfg['metadata_url'].endswith('/'):
-        url = '%s%s' % (cfg['metadata_url'], args.entry)
-    else:
-        url = '%s/%s' % (cfg['metadata_url'], args.entry)
+    if 'reporting' in cfg:
+        cfg = cfg['reporting']['maas']
+    url = '%s%s' % (
+        cfg['endpoint'][:cfg['endpoint'].find('status/')], args.entry)
 
     try:
         print(geturl(url, creds=cfg))

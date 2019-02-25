@@ -39,14 +39,10 @@ def write_config(target, config):
     altbootbank_mount_point = tempfile.mkdtemp(prefix='curtin-hooks-')
     check_call(['mount', altbootbank_blkdev, altbootbank_mount_point])
 
-    maas_cfg_path = os.path.join(altbootbank_mount_point, 'maas', 'maas.cfg')
-    with open(maas_cfg_path, 'w') as f:
-        f.write(config['cloudconfig']['maas-cloud-config']['content'])
-
-    network_cfg_path = os.path.join(
-        altbootbank_mount_point, 'maas', 'curtin-networking.cfg')
-    with open(network_cfg_path, 'w') as f:
-        f.write(yaml.dump(config['network']))
+    curtin_cfg_path = os.path.join(
+        altbootbank_mount_point, 'maas', 'curtin.cfg')
+    with open(curtin_cfg_path, 'w') as f:
+        f.write(yaml.dump(config))
 
     check_call(['umount', altbootbank_blkdev])
 
