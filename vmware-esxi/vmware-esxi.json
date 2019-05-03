@@ -48,6 +48,7 @@
                 "cp maas-md-get $TMP_DIR/maas",
                 "cp ipaddr/ipaddr.py $TMP_DIR/maas",
                 "cp netplan-esxi $TMP_DIR/maas",
+                "cp storage-esxi $TMP_DIR/maas",
                 "cp vendor-data-esxi $TMP_DIR/maas",
                 "sync $TMP_DIR/maas",
                 "umount $TMP_DIR",
