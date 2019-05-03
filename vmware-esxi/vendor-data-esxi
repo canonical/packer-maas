@@ -1,8 +1,40 @@
 #!/usr/bin/env python3
 
 from subprocess import check_call
+import os
 import sys
 import yaml
+
+
+def process_ntp(config):
+    with open('/etc/ntp.conf', 'a') as f:
+        f.write('\n# Configured by MAAS\n')
+        for pool in config.get('pools', []):
+            f.write('pool %s iburst\n' % pool)
+        for server in config.get('servers', []):
+            f.write('server %s iburst\n' % server)
+
+    check_call(['/etc/init.d/ntpd', 'restart'])
+
+
+def process_write_files(config):
+    for write_file in config:
+        print('INFO: Writing file %s' % write_file['path'])
+        if os.path.exists(write_file['path']):
+            print(
+                'ERROR: File already exists, skipping writing!',
+                file=sys.stderr)
+            continue
+        dirname = os.path.dirname(write_file['path'])
+        if os.path.exists(dirname) and not os.path.isdir(dirname):
+            print(
+                'ERROR: %s is a file not a directory!' % dirname,
+                file=sys.stderr)
+            continue
+        else:
+            os.makedirs(dirname, exist_ok=True)
+        with open(write_file['path'], 'w') as f:
+            f.write(write_file['content'])
 
 
 def main():
@@ -12,19 +44,12 @@ def main():
         print('No cloud-init data found!')
         return
     cloud_init = yaml.safe_load(cloud_config['cloud-init'])
-    if 'ntp' not in cloud_init:
-        print('No NTP data found!')
-        return
-    ntp = cloud_init['ntp']
-
-    with open('/etc/ntp.conf', 'a') as f:
-        f.write('\n# Configured by MAAS\n')
-        for pool in ntp.get('pools', []):
-            f.write('pool %s iburst\n' % pool)
-        for server in ntp.get('servers', []):
-            f.write('server %s iburst\n' % server)
-
-    check_call(['/etc/init.d/ntpd', 'restart'])
+    if 'ntp' in cloud_init:
+        process_ntp(cloud_init['ntp'])
+    else:
+        print('WARN: No NTP data found!', file=sys.stderr)
+    if 'write_files' in cloud_init:
+        process_write_files(cloud_init['write_files'])
 
 
 if __name__ == '__main__':
