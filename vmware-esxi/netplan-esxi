@@ -110,12 +110,12 @@ def add_nic_to_vswitch(nic, vswitch, mappings):
     return vmnic
 
 
-def add_vmk(port_group, mac_address, counters):
+def add_vmk(port_group, mtu, mac_address, counters):
     """Add a vmk and associated port group to the given switch."""
     vmk = 'vmk%s' % counters['vmk']
     cmd = [
         'esxcli', 'network', 'ip', 'interface', 'add',
-        '-i', vmk, '-p', port_group,
+        '-i', vmk, '-p', port_group, '-m', str(mtu)
     ]
     if mac_address is not None:
         cmd += ['-M', mac_address]
@@ -126,6 +126,7 @@ def add_vmk(port_group, mac_address, counters):
 
 def _apply_subnets(config, vswitch, counters):
     """IP configuration for the given subnets."""
+    mtu = config.get('mtu')
     port_group_name = config.get('name')
     if port_group_name is None:
         warn('No name given!')
@@ -149,7 +150,7 @@ def _apply_subnets(config, vswitch, counters):
                 'esxcli', 'network', 'vswitch', 'standard', 'portgroup', 'set',
                 '-p', port_group, '-v', str(vlan_id)])
 
-        vmk = add_vmk(port_group, mac_address, counters)
+        vmk = add_vmk(port_group, mtu, mac_address, counters)
         cmd = ['esxcli', 'network', 'ip', 'interface']
         stype = subnet.get('type')
         if stype == 'static':
