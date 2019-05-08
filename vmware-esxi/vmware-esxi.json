@@ -45,7 +45,7 @@
                 "mkdir -p $TMP_DIR/maas",
                 "cp -r pyyaml/lib3/yaml $TMP_DIR/maas",
                 "cp -r oauthlib/oauthlib $TMP_DIR/maas",
-                "cp -r urllib3/src/urllib3 $TMP_DIR/maas",
+                "cp -r urllib3/urllib3 $TMP_DIR/maas",
                 "cp -r chardet/chardet $TMP_DIR/maas",
                 "cp -r python-certifi/certifi $TMP_DIR/maas",
                 "cp -r idna/idna $TMP_DIR/maas",
