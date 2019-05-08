@@ -27,7 +27,7 @@ def help(parser):
 def get_list_names(command):
     """Return all names from a network list command."""
     output = check_output(['esxcli', 'network'] + command + ['list'])
-    return re.findall('^\s+Name:\s+(\w+)$', output.decode(), re.M)
+    return re.findall(r'^\s+Name:\s+(\w+)$', output.decode(), re.M)
 
 
 def wipe():
@@ -61,7 +61,7 @@ def get_vmnics():
     """Return a dictionary of MAC addresses to vmnic names."""
     output = check_output(['esxcli', 'network', 'nic', 'list'])
     regex = re.compile(
-        '^(?P<vmnic>vmnic\d+).*(?P<mac>(\w{2}:){5}\w{2}).*$', re.I)
+        r'^(?P<vmnic>vmnic\d+).*(?P<mac>(\w{2}:){5}\w{2}).*$', re.I)
     ret = {}
     for line in output.decode().splitlines():
         m = regex.search(line)
