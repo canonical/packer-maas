@@ -41,8 +41,8 @@ While VMware ESXi does not support running in any virtual machine it is possible
 
 ## Known limitations
 
-### Only the deployment storage device is used
-Custom storage configuration is not supported as VMware ESXi has specific requirements for how files are written to the disk. MAAS will extend datastore1 to the full size of the deployment disk. After deployment VMware tools may be used to access the other disks.
+### Storage
+Only datastores may be configured using the devices available on the system. The first 9 partitions of the disk are reserved for VMware ESXi operating system usage.
 
 ### Networking
 * Bridges - Not supported in VMware ESXi

@@ -270,7 +270,7 @@ def main():
     args = parser.parse_args()
 
     with open(args.config, 'r') as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
 
     # Allows either a full Curtin config or just the storage section to be
     # passed.

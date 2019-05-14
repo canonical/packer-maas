@@ -34,6 +34,8 @@
             "inline_shebang": "/bin/bash -e",
             "inline": [
                 "TMP_DIR=$(mktemp -d)",
+                "modprobe nbd",
+                "qemu-nbd -d /dev/nbd4",
                 "qemu-nbd -c /dev/nbd4 -f raw -n output-qemu/packer-qemu",
                 "sleep 1",
                 "mount /dev/nbd4p1 $TMP_DIR",
