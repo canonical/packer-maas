@@ -124,6 +124,40 @@ def add_vmk(port_group, mtu, mac_address, counters):
     return vmk
 
 
+def _route_exists(network, gateway, ip_ver):
+    """Check if the given network is already being routed to."""
+    output = check_output(['esxcli', 'network', 'ip', 'route', ip_ver, 'list'])
+    for line in output.decode().splitlines():
+        if (str(network.ip) in line and str(network.netmask) in line and
+                gateway in line):
+            # Static route has already been added
+            return True
+    return False
+
+
+def _apply_static_routes(routes):
+    """Apply all defined static routes."""
+    for route in routes:
+        for key in ['destination', 'gateway']:
+            if key not in route:
+                warn('Missing key "%s" for static route!' % key)
+                break
+        network = ipaddr.IPNetwork(route['destination'])
+        if network.ip.version == 4:
+            ip_ver = 'ipv4'
+        elif network.ip.version == 6:
+            ip_ver = 'ipv6'
+        else:
+            warn('Unknown IP version %s' % network.ip.version)
+            continue
+        if not _route_exists(network, route['gateway'], ip_ver):
+            print('Adding static route to %s via %s' % (
+                route['destination'], route['gateway']))
+            check_call([
+                'esxcli', 'network', 'ip', 'route', ip_ver, 'add',
+                '-g', route['gateway'], '-n', route['destination']])
+
+
 def _apply_subnets(config, vswitch, counters):
     """IP configuration for the given subnets."""
     mtu = config.get('mtu')
@@ -200,6 +234,8 @@ def _apply_subnets(config, vswitch, counters):
             check_call(cmd)
         else:
             warn('Unknown subnet type %s, skipping' % subnet['type'])
+            continue
+        _apply_static_routes(subnet.get('routes', []))
 
 
 def _apply_physical(config, subnets, mappings, counters):
