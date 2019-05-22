@@ -17,6 +17,7 @@
             ],
             "disk_interface": "ide",
             "disk_size": 10240,
+            "headless": true,
             "http_directory": "http",
             "format": "raw",
             "net_device": "e1000",

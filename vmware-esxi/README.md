@@ -13,17 +13,13 @@ MAAS 2.5 and above has the ability to deploy VMware ESXi as a custom image. MAAS
 The deployment image may be customized by modifying packer-maas/vmware-esxi/http/vmware-esxi-ks.cfg see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
 
 ## Building an image
-Before you begin make sure the nbd kernel module is loaded.
-```
-$ sudo modprobe nbd
-```
-
 Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
 ```
 $ sudo packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-6.7.0-8169922.x86_64.iso' vmware-esxi.json
 ```
 
-Note: Note: If you are building the image over SSH or a headless environment you must add [headless=True](https://www.packer.io/docs/builders/vmware-iso.html#headless) to vmware-esxi.json.
+Note: vmware-esxi.json is configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or remove the line containing "headless" in vmware-esxi.json.
+
 Installation is non-interactive.
 
 ## Uploading an image to MAAS
