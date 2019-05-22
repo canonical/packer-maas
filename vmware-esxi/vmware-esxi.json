@@ -33,11 +33,11 @@
             "type": "shell-local",
             "inline_shebang": "/bin/bash -e",
             "inline": [
-                "TMP_DIR=$(mktemp -d)",
+                "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
                 "modprobe nbd",
                 "qemu-nbd -d /dev/nbd4",
                 "qemu-nbd -c /dev/nbd4 -f raw -n output-qemu/packer-qemu",
-                "sleep 1",
+                "partprobe /dev/nbd4",
                 "mount /dev/nbd4p1 $TMP_DIR",
                 "mkdir -p $TMP_DIR/curtin",
                 "cp curtin-hooks $TMP_DIR/curtin",
