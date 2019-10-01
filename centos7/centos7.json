@@ -1,0 +1,41 @@
+{
+    "builders": [
+        {
+            "type": "qemu",
+            "communicator": "none",
+            "iso_url": "http://mirror.facebook.net/centos/7.7.1908/isos/x86_64/CentOS-7-x86_64-NetInstall-1908.iso",
+            "iso_checksum_type": "sha256",
+            "iso_checksum_url": "http://mirror.facebook.net/centos/7.7.1908/isos/x86_64/sha256sum.txt",
+            "boot_command": [
+                "<tab> ",
+                "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos7.ks ",
+                "inst.repo=http://mirror.centos.org/centos/7/os/x86_64",
+                "<enter>"
+            ],
+            "boot_wait": "3s",
+            "disk_size": 4096,
+            "headless": true,
+            "memory": 1024,
+            "http_directory": "http",
+            "shutdown_timeout": "20m"
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "shell-local",
+            "inline_shebang": "/bin/bash -e",
+            "inline": [
+                "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
+                "modprobe nbd",
+                "qemu-nbd -d /dev/nbd4",
+                "qemu-nbd -c /dev/nbd4 -n output-qemu/packer-qemu",
+                "partprobe /dev/nbd4",
+                "mount /dev/nbd4p1 $TMP_DIR",
+                "tar -czpf centos7.tar.gz -C $TMP_DIR .",
+                "umount $TMP_DIR",
+                "qemu-nbd -d /dev/nbd4",
+                "rmdir $TMP_DIR"
+            ]
+        }
+    ]
+}
