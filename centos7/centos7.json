@@ -9,11 +9,10 @@
             "boot_command": [
                 "<tab> ",
                 "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos7.ks ",
-                "inst.repo=http://mirror.centos.org/centos/7/os/x86_64",
                 "<enter>"
             ],
             "boot_wait": "3s",
-            "disk_size": 4096,
+            "disk_size": "4G",
             "headless": true,
             "memory": 1024,
             "http_directory": "http",
@@ -26,12 +25,15 @@
             "inline_shebang": "/bin/bash -e",
             "inline": [
                 "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
+                "echo 'Mounting image...'",
                 "modprobe nbd",
                 "qemu-nbd -d /dev/nbd4",
                 "qemu-nbd -c /dev/nbd4 -n output-qemu/packer-qemu",
                 "partprobe /dev/nbd4",
+                "echo 'Tarring up image...'",
                 "mount /dev/nbd4p1 $TMP_DIR",
                 "tar -czpf centos7.tar.gz -C $TMP_DIR .",
+                "echo 'Unmounting image...'",
                 "umount $TMP_DIR",
                 "qemu-nbd -d /dev/nbd4",
                 "rmdir $TMP_DIR"

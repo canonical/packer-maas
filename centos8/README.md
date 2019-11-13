@@ -44,3 +44,6 @@ Installation is non-interactive.
 ```
 $ maas $PROFILE boot-resources create name='centos/8-custom' title='CentOS 7 Custom' architecture='amd64/generic' filetype='tgz' content@=centos8.tar.gz
 ```
+
+## Default Username
+The default username is ```cloud-user```

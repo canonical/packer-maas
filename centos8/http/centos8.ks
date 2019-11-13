@@ -46,7 +46,6 @@ cloud-init
 # cloud-init only requires python3-oauthlib with MAAS. As such upstream
 # removed this dependency.
 python3-oauthlib
-linux-firmware
 rsync
 tar
 grub2-efi-x64
@@ -58,19 +57,6 @@ mdadm
 device-mapper-multipath
 iscsi-initiator-utils
 -plymouth
--iwl6050-firmware
--iwl5000-firmware
--iwl2030-firmware
--iwl1000-firmware
--iwl7260-firmware
--iwl6000g2a-firmware
--iwl5150-firmware
--iwl4965-firmware
--iwl3160-firmware
--iwl2000-firmware
--iwl105-firmware
--iwl100-firmware
--iwl6000-firmware
--iwl3945-firmware
--iwl135-firmware
+# Remove Intel wireless firmware
+-i*-firmware
 %end
