@@ -1,0 +1,45 @@
+{
+    "variables": {
+        "rhel7_iso_path": "{{env `RHEL7_ISO_PATH`}}"
+    },
+    "builders": [
+        {
+            "type": "qemu",
+            "communicator": "none",
+	    "iso_url": "{{user `rhel7_iso_path`}}",
+            "iso_checksum_type": "none",
+            "boot_command": [
+                "<tab> ",
+                "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rhel7.ks ",
+                "<enter>"
+            ],
+            "boot_wait": "3s",
+            "disk_size": "4G",
+            "headless": true,
+            "memory": 1024,
+            "http_directory": "http",
+            "shutdown_timeout": "20m"
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "shell-local",
+            "inline_shebang": "/bin/bash -e",
+            "inline": [
+                "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
+                "echo 'Mounting image...'",
+                "modprobe nbd",
+                "qemu-nbd -d /dev/nbd4",
+                "qemu-nbd -c /dev/nbd4 -n output-qemu/packer-qemu",
+                "partprobe /dev/nbd4",
+                "mount /dev/nbd4p1 $TMP_DIR",
+                "echo 'Tarring up image...'",
+                "tar -czpf rhel7.tar.gz -C $TMP_DIR .",
+                "echo 'Unmounting image...'",
+                "umount $TMP_DIR",
+                "qemu-nbd -d /dev/nbd4",
+                "rmdir $TMP_DIR"
+            ]
+        }
+    ]
+}
