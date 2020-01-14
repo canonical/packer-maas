@@ -11,7 +11,7 @@ Packer MAAS uses git submodules to retrieve required resource files during
 image building. Packer MAAS and all submodules can be cloned at once with:
 
 ```
-$ git clone --recurse-submodules git@github.com:CanonicalLtd/packer-maas.git
+$ git clone --recurse-submodules git@github.com:canonical/packer-maas.git
 ```
 
 If Packer MAAS has already been checked out submodules can be retrieved with
