@@ -9,6 +9,11 @@ The Packer template in this directory creates a RHEL 8 AMD64 image for use with 
 * [Packer](https://www.packer.io/intro/getting-started/install.html)
 * The [RHEL 8 DVD ISO](https://developers.redhat.com/products/rhel/download)
 
+## Requirements (to deploy the image)
+
+* [MAAS](https://maas.io) 2.3 or above, [MAAS](https://maas.io) 2.7 or above recommended
+* [Curtin](https://launchpad.net/curtin) 19.3-792 or above
+
 ## Customizing the Image
 The deployment image may be customized by modifying http/rhel8.ks. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.
 

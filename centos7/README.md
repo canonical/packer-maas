@@ -8,6 +8,11 @@ The Packer template in this directory creates a CentOS 7 AMD64 image for use wit
 * A machine running Ubuntu 18.04+
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
+## Requirements (to deploy the image)
+
+* [MAAS](https://maas.io) 2.3 or above
+* [Curtin](https://launchpad.net/curtin) 18.1-59 or above
+
 ## Customizing the Image
 The deployment image may be customized by modifying http/centos7.ks. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.
 
@@ -45,4 +50,3 @@ name='centos/7-custom' title='CentOS 7 Custom' architecture='amd64/generic' file
 
 ## Default Username
 The default username is ```centos```
-

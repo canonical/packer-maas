@@ -1,13 +1,17 @@
 # VMware ESXi Packer Template for MAAS
 
 ## Introduction
-MAAS 2.5 and above has the ability to deploy VMware ESXi as a custom image. MAAS cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
+[MAAS](https://maas.io) 2.5 and above has the ability to deploy VMware ESXi as a custom image. [MAAS](https://maas.io) cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
 
 ## Prerequisites (to create the images)
 
 * A machine running Ubuntu 18.04+
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 * The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
+
+## Requirements (to deploy the image)
+
+* [MAAS](https://maas.io) 2.5 or above, [MAAS](https://maas.io) 2.6 required for storage configuration
 
 ## Customizing the Image
 The deployment image may be customized by modifying packer-maas/vmware-esxi/http/vmware-esxi-ks.cfg see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
@@ -42,7 +46,7 @@ Only datastores may be configured using the devices available on the system. The
 
 ### Networking
 * Bridges - Not supported in VMware ESXi
-* Bonds - The following MAAS bond modes are mapped to VMware ESXi NIC team sharing with load balancing as follows:
+* Bonds - The following [MAAS](https://maas.io) bond modes are mapped to VMware ESXi NIC team sharing with load balancing as follows:
   * balance-rr - portid
   * active-backup - explicit
   * 802.3ad - iphash, LACP rate and XMIT hash policy settings are ignored.

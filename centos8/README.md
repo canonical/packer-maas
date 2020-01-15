@@ -9,6 +9,11 @@ with MAAS.
 * A machine running Ubuntu 18.04+
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
+## Requirements (to deploy the image)
+
+* [MAAS](https://maas.io) 2.3 or above, [MAAS](https://maas.io) 2.7 or above recommended
+* [Curtin](https://launchpad.net/curtin) 19.3-792 or above
+
 ## Default user
 The default username is cloud-user
 
@@ -42,7 +47,7 @@ Installation is non-interactive.
 
 ## Uploading an image to MAAS
 ```
-$ maas $PROFILE boot-resources create name='centos/8-custom' title='CentOS 7 Custom' architecture='amd64/generic' filetype='tgz' content@=centos8.tar.gz
+$ maas $PROFILE boot-resources create name='centos/8-custom' title='CentOS 8 Custom' architecture='amd64/generic' filetype='tgz' content@=centos8.tar.gz
 ```
 
 ## Default Username
