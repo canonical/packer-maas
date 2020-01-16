@@ -5,13 +5,15 @@ The Packer template in this directory creates a CentOS 7 AMD64 image for use wit
 
 ## Prerequisites (to create the image)
 
-* A machine running Ubuntu 18.04+
+* A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
+* qemu-utils
+* parted
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
 ## Requirements (to deploy the image)
 
-* [MAAS](https://maas.io) 2.3 or above
-* [Curtin](https://launchpad.net/curtin) 18.1-59 or above
+* [MAAS](https://maas.io) 2.3+
+* [Curtin](https://launchpad.net/curtin) 18.1-59+
 
 ## Customizing the Image
 The deployment image may be customized by modifying http/centos7.ks. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.

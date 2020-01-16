@@ -5,7 +5,10 @@
 
 ## Prerequisites (to create the images)
 
-* A machine running Ubuntu 18.04+
+* A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
+* qemu-utils
+* parted
+
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 * The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
 
@@ -19,7 +22,7 @@ The deployment image may be customized by modifying packer-maas/vmware-esxi/http
 ## Building an image
 Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
 ```
-$ sudo packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-6.7.0-8169922.x86_64.iso' vmware-esxi.json
+$ sudo packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso' vmware-esxi.json
 ```
 
 Note: vmware-esxi.json is configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or remove the line containing "headless" in vmware-esxi.json.
