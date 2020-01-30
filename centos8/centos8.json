@@ -3,9 +3,9 @@
         {
             "type": "qemu",
             "communicator": "none",
-            "iso_url": "http://mirror.facebook.net/centos/8/isos/x86_64/CentOS-8.1.1911-x86_64-boot.iso",
+            "iso_url": "https://mirrors.edge.kernel.org/centos/8.1.1911/isos/x86_64/CentOS-8.1.1911-x86_64-boot.iso",
             "iso_checksum_type": "sha256",
-            "iso_checksum_url": "http://mirror.facebook.net/centos/8/isos/x86_64/CHECKSUM",
+            "iso_checksum_url": "https://mirrors.edge.kernel.org/centos/8.1.1911/isos/x86_64/CHECKSUM",
             "boot_command": [
                 "<tab> ",
                 "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos8.ks ",
