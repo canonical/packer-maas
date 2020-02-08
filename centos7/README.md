@@ -7,7 +7,6 @@ The Packer template in this directory creates a CentOS 7 AMD64 image for use wit
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
-* parted
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
 ## Requirements (to deploy the image)
@@ -26,7 +25,7 @@ redefine iso_url to a local file, set iso_checksum_type to none to disable
 checksuming, and remove iso_checksum_url.
 
 To use a proxy during the installation add the --proxy=$HTTP_PROXY flag to every
-line starting with url or repo in http/centos8.ks. Alternatively you may set the
+line starting with url or repo in http/centos7.ks. Alternatively you may set the
 --mirrorlist values to a local mirror.
 
 ## Building an image

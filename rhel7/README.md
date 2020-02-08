@@ -7,7 +7,6 @@ The Packer template in this directory creates a RHEL 7 AMD64 image for use with 
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
-* parted
 * [Packer](https://www.packer.io/intro/getting-started/install.html)
 * The [RHEL 7 DVD ISO](https://developers.redhat.com/products/rhel/download)
 
@@ -37,7 +36,7 @@ $ sudo packer build -var 'rhel7_iso_path=/PATH/TO/rhel-server-7.7-x86_64-dvd.iso
 Note: rhel7.json is configured to run Packer in headless mode. Only Packer
 output will be seen. If you wish to see the installation output connect to the
 VNC port given in the Packer output or change the value of headless to false in
-centos7.json.
+rhel7.json.
 
 Installation is non-interactive.
 

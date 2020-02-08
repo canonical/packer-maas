@@ -1,16 +1,14 @@
 {
-    "variables": {
-        "rhel7_iso_path": "{{env `RHEL7_ISO_PATH`}}"
-    },
     "builders": [
         {
             "type": "qemu",
             "communicator": "none",
-	    "iso_url": "{{user `rhel7_iso_path`}}",
-            "iso_checksum_type": "none",
+            "iso_url": "https://mirrors.edge.kernel.org/centos/6.10/isos/x86_64/CentOS-6.10-x86_64-netinstall.iso",
+            "iso_checksum_type": "sha256",
+            "iso_checksum_url": "https://mirrors.edge.kernel.org/centos/6.10/isos/x86_64/sha256sum.txt",
             "boot_command": [
                 "<tab> ",
-                "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rhel7.ks ",
+                "ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos6.ks ",
                 "<enter>"
             ],
             "boot_wait": "3s",
@@ -37,9 +35,11 @@
                 "    sleep 1",
                 "    tries=$((tries+1))",
                 "done",
-                "mount /dev/nbd4p1 $TMP_DIR",
                 "echo 'Tarring up image...'",
-                "tar -Sczpf rhel7.tar.gz --selinux -C $TMP_DIR .",
+                "mount /dev/nbd4p1 $TMP_DIR",
+                "echo 'Adding Curtin hooks....'",
+                "cp -r curtin $TMP_DIR",
+                "tar -Sczpf centos6.tar.gz --selinux -C $TMP_DIR .",
                 "echo 'Unmounting image...'",
                 "umount $TMP_DIR",
                 "qemu-nbd -d /dev/nbd4",

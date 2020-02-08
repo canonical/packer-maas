@@ -7,7 +7,6 @@ The Packer template in this directory creates a RHEL 8 AMD64 image for use with 
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
-* parted
 * [Packer](https://www.packer.io/intro/getting-started/install.html)
 * The [RHEL 8 DVD ISO](https://developers.redhat.com/products/rhel/download)
 
@@ -37,7 +36,7 @@ $ sudo packer build -var 'rhel8_iso_path=/PATH/TO/rhel-8.1-x86_64-dvd.iso' rhel8
 Note: rhel8.json is configured to run Packer in headless mode. Only Packer
 output will be seen. If you wish to see the installation output connect to the
 VNC port given in the Packer output or change the value of headless to false in
-centos8.json.
+rhel8.json.
 
 Installation is non-interactive.
 

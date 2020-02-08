@@ -16,7 +16,7 @@
             "boot_wait": "3s",
             "disk_size": "4G",
             "headless": true,
-            "memory": 1024,
+            "memory": 2048,
             "http_directory": "http",
             "shutdown_timeout": "20m"
         }
@@ -39,7 +39,7 @@
                 "done",
                 "mount /dev/nbd4p1 $TMP_DIR",
                 "echo 'Tarring up image...'",
-                "tar -czpf rhel8.tar.gz -C $TMP_DIR .",
+                "tar -Sczpf rhel8.tar.gz --selinux -C $TMP_DIR .",
                 "echo 'Unmounting image...'",
                 "umount $TMP_DIR",
                 "qemu-nbd -d /dev/nbd4",

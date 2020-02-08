@@ -8,7 +8,6 @@ with MAAS.
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
-* parted
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
 ## Requirements (to deploy the image)
