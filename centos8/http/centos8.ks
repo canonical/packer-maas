@@ -12,9 +12,9 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name "AppStream" --mirrorlist="http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=AppStream"
-repo --name "Extras" --mirrorlist="http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=extras"
-repo --name "cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-8-x86_64"
+repo --name="AppStream" --mirrorlist="http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=AppStream"
+repo --name="Extras" --mirrorlist="http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=extras"
+repo --name="cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-8-x86_64"
 
 zerombr
 clearpart --all --initlabel

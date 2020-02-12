@@ -12,11 +12,10 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="CentOS-6 - OS" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=os"
-repo --name="CentOS-6 - Updates" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=updates"
-repo --name="CentOS-6 - Extras" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=extras"
+repo --name="Updates" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=updates"
+repo --name="Extras" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=extras"
 repo --name="EPEL6" --mirrorlist="https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=x86_64"
-repo --name "cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-6-x86_64"
+repo --name="cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-6-x86_64"
 
 zerombr
 clearpart --all --initlabel
