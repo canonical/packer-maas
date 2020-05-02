@@ -1,11 +1,16 @@
 {
+    "variables":
+        {
+            "centos6_iso_url": "https://mirrors.edge.kernel.org/centos/6.10/isos/x86_64/CentOS-6.10-x86_64-netinstall.iso",
+            "centos6_sha256sum_url": "https://mirrors.edge.kernel.org/centos/6.10/isos/x86_64/sha256sum.txt"
+        },
     "builders": [
         {
             "type": "qemu",
             "communicator": "none",
-            "iso_url": "https://mirrors.edge.kernel.org/centos/6.10/isos/x86_64/CentOS-6.10-x86_64-netinstall.iso",
+            "iso_url": "{{user `centos6_iso_url`}}",
             "iso_checksum_type": "sha256",
-            "iso_checksum_url": "https://mirrors.edge.kernel.org/centos/6.10/isos/x86_64/sha256sum.txt",
+            "iso_checksum_url": "{{user `centos6_sha256sum_url`}}",
             "boot_command": [
                 "<tab> ",
                 "ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos6.ks ",

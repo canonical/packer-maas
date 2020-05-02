@@ -6,7 +6,7 @@
         {
             "type": "qemu",
             "communicator": "none",
-	    "iso_url": "{{user `rhel7_iso_path`}}",
+            "iso_url": "{{user `rhel7_iso_path`}}",
             "iso_checksum_type": "none",
             "boot_command": [
                 "<tab> ",
