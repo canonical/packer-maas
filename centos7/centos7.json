@@ -1,8 +1,8 @@
 {
     "variables":
         {
-            "centos7_iso_url": "https://mirrors.edge.kernel.org/centos/7.7.1908/isos/x86_64/CentOS-7-x86_64-NetInstall-1908.iso",
-            "centos7_sha256sum_url": "https://mirrors.edge.kernel.org/centos/7.7.1908/isos/x86_64/sha256sum.txt"
+            "centos7_iso_url": "https://mirrors.edge.kernel.org/centos/7.8.2003/isos/x86_64/CentOS-7-x86_64-NetInstall-2003.iso",
+            "centos7_sha256sum_url": "https://mirrors.edge.kernel.org/centos/7.8.2003/isos/x86_64/sha256sum.txt"
         },
     "builders": [
         {
