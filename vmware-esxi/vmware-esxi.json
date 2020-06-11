@@ -7,7 +7,7 @@
             "type": "qemu",
             "communicator": "none",
             "iso_url": "{{user `vmware_esxi_iso_path`}}",
-            "iso_checksum_type": "none",
+            "iso_checksum": "none",
             "boot_command": [
                 "<enter><wait>",
                 "<leftShift>O",
@@ -20,7 +20,8 @@
             "memory": 4096,
             "http_directory": "http",
             "format": "raw",
-            "net_device": "e1000",
+            "net_bridge": "virbr0",
+            "net_device": "vmxnet3",
             "qemuargs": [
                 [ "-cpu", "host" ],
                 [ "-smp", "2,sockets=2,cores=1,threads=1" ]

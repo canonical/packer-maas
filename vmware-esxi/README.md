@@ -8,9 +8,8 @@
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
 * parted
-
-* [Packer.](https://www.packer.io/intro/getting-started/install.html)
-* The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
+* [Packer](https://www.packer.io/intro/getting-started/install.html) - At least version 1.6.0 for bridge mode support
+* The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi) Has been tested on ESXi 6.7 and 7.0.
 
 ## Requirements (to deploy the image)
 
@@ -18,6 +17,13 @@
 
 ## Customizing the Image
 The deployment image may be customized by modifying packer-maas/vmware-esxi/http/vmware-esxi-ks.cfg see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
+
+## Add an ACL for bridge
+Ensure you have a file located at /etc/qemu/bridge.conf that contains:
+```
+allow virbr0
+```
+This will allow packer to utilize a vmxnet3 driver on the qemu bridge.
 
 ## Building an image
 Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
