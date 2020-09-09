@@ -28,24 +28,9 @@
             "type": "shell-local",
             "inline_shebang": "/bin/bash -e",
             "inline": [
-                "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
-                "echo 'Mounting image...'",
-                "modprobe nbd",
-                "qemu-nbd -d /dev/nbd4",
-                "qemu-nbd -c /dev/nbd4 -n output-qemu/packer-qemu",
-                "echo 'Waiting for partitions to be created...'",
-                "tries=0",
-                "while [ ! -e /dev/nbd4p1 -a $tries -lt 60 ]; do",
-                "    sleep 1",
-                "    tries=$((tries+1))",
-                "done",
-                "echo 'Tarring up image...'",
-                "mount /dev/nbd4p1 $TMP_DIR",
-                "tar -Sczpf centos7.tar.gz --selinux -C $TMP_DIR .",
-                "echo 'Unmounting image...'",
-                "umount $TMP_DIR",
-                "qemu-nbd -d /dev/nbd4",
-                "rmdir $TMP_DIR"
+                "source ../scripts/setup-nbd",
+                "TGZ_NAME='centos7.tar.gz'",
+                "source ../scripts/tar-root"
             ]
         }
     ]
