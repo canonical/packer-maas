@@ -7,7 +7,6 @@
             "type": "qemu",
             "communicator": "none",
 	    "iso_url": "{{user `rhel8_iso_path`}}",
-            "iso_checksum_type": "none",
             "boot_command": [
                 "<tab> ",
                 "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rhel8.ks ",

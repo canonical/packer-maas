@@ -9,8 +9,7 @@
             "type": "qemu",
             "communicator": "none",
             "iso_url": "{{user `centos6_iso_url`}}",
-            "iso_checksum_type": "sha256",
-            "iso_checksum_url": "{{user `centos6_sha256sum_url`}}",
+            "iso_checksum": "file:{{user `centos6_sha256sum_url`}}",
             "boot_command": [
                 "<tab> ",
                 "ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos6.ks ",
