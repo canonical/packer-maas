@@ -29,9 +29,9 @@ TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
 echo 'Mounting root partition...'
 mount "${nbd}p1" $TMP_DIR
 
-if [ -d curtin ]; then
+if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
     echo 'Adding Curtin hooks...'
-    cp -r curtin $TMP_DIR
+    cp -r ${CURTIN_HOOKS:-curtin} $TMP_DIR
 fi
 
 echo "Creating MAAS image $TGZ_NAME..."
