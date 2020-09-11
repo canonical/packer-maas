@@ -11,7 +11,9 @@
             "boot_command": [
                 "<enter><wait>",
                 "<leftShift>O",
-                " ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/vmware-esxi-ks.cfg<enter>"
+                " ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/vmware-esxi-ks.cfg",
+                " com1_Port=0x3f8 tty2Port=com1",
+                "<enter>"
             ],
             "boot_wait": "3s",
             "disk_interface": "ide",
@@ -23,7 +25,8 @@
             "net_device": "e1000",
             "qemuargs": [
                 [ "-cpu", "host" ],
-                [ "-smp", "2,sockets=2,cores=1,threads=1" ]
+                [ "-smp", "2,sockets=2,cores=1,threads=1" ],
+                [ "-serial", "stdio" ]
             ],
             "shutdown_timeout": "45m"
         }

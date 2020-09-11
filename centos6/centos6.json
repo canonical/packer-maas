@@ -13,6 +13,7 @@
             "boot_command": [
                 "<tab> ",
                 "ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos6.ks ",
+                "console=ttyS0 inst.cmdline",
                 "<enter>"
             ],
             "boot_wait": "3s",
@@ -20,6 +21,9 @@
             "headless": true,
             "memory": 2048,
             "http_directory": "http",
+            "qemuargs": [
+                [ "-serial", "stdio" ]
+            ],
             "shutdown_timeout": "45m"
         }
     ],

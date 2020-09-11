@@ -32,7 +32,7 @@ Your current working directory must be in packer-maas/centos6, where this file
 is located. Once in packer-maas/centos6 you can generate an image with:
 
 ```
-$ sudo packer build centos6.json
+$ sudo PACKER_LOG=1 packer build centos6.json
 ```
 
 Note: centos6.json is configured to run Packer in headless mode. Only Packer

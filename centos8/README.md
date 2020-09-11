@@ -36,7 +36,7 @@ Your current working directory must be in packer-maas/centos8, where this file
 is located. Once in packer-maas/centos8 you can generate an image with:
 
 ```
-$ sudo packer build centos8.json
+$ sudo PACKER_LOG=1 packer build centos8.json
 ```
 
 Note: centos8.json is configured to run Packer in headless mode. Only Packer
