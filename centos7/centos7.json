@@ -11,7 +11,7 @@
             "iso_url": "{{user `centos7_iso_url`}}",
             "iso_checksum": "file:{{user `centos7_sha256sum_url`}}",
             "boot_command": [
-                "<tab> ",
+                "<up><tab> ",
                 "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos7.ks ",
                 "<enter>"
             ],

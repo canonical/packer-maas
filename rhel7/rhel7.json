@@ -9,7 +9,7 @@
             "iso_url": "{{user `rhel7_iso_path`}}",
             "iso_checksum": "none",
             "boot_command": [
-                "<tab> ",
+                "<up><tab> ",
                 "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rhel7.ks ",
                 "<enter>"
             ],
