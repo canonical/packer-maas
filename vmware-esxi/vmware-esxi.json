@@ -25,7 +25,7 @@
                 [ "-cpu", "host" ],
                 [ "-smp", "2,sockets=2,cores=1,threads=1" ]
             ],
-            "shutdown_timeout": "20m"
+            "shutdown_timeout": "45m"
         }
     ],
     "post-processors": [

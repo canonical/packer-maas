@@ -20,7 +20,7 @@
             "headless": true,
             "memory": 2048,
             "http_directory": "http",
-            "shutdown_timeout": "20m"
+            "shutdown_timeout": "45m"
         }
     ],
     "post-processors": [
