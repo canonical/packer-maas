@@ -13,7 +13,6 @@ bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
 repo --name="AppStream" --baseurl="file:///run/install/repo/AppStream"
-repo --name="cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-8-x86_64"
 
 zerombr
 clearpart --all --initlabel
@@ -40,7 +39,6 @@ dnf clean all
 %packages
 @core
 bash-completion
-cloud-init-el-release
 cloud-init
 # cloud-init only requires python3-oauthlib with MAAS. As such upstream
 # removed this dependency.

@@ -14,7 +14,6 @@ rootpw --plaintext password
 
 repo --name="Server-HighAvailability" --baseurl="file:///run/install/repo/addons/HighAvailability"
 repo --name="Server-ResilientStorage" --baseurl="file:///run/install/repo/addons/ResilientStorage"
-repo --name="cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-7-x86_64"
 
 zerombr
 clearpart --all --initlabel
@@ -41,7 +40,6 @@ yum clean all
 %packages
 @core
 bash-completion
-cloud-init-el-release
 cloud-init
 # cloud-init only requires python-oauthlib with MAAS. As such upstream
 # has removed python-oauthlib from cloud-init's deps.

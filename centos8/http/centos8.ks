@@ -14,7 +14,6 @@ rootpw --plaintext password
 
 repo --name="AppStream" --mirrorlist="http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=AppStream"
 repo --name="Extras" --mirrorlist="http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=extras"
-repo --name="cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-8-x86_64"
 
 zerombr
 clearpart --all --initlabel
@@ -41,7 +40,6 @@ dnf clean all
 %packages
 @core
 bash-completion
-cloud-init-el-release
 cloud-init
 # cloud-init only requires python3-oauthlib with MAAS. As such upstream
 # removed this dependency.

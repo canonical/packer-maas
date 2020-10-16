@@ -15,6 +15,7 @@ rootpw --plaintext password
 repo --name="Updates" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=updates"
 repo --name="Extras" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=extras"
 repo --name="EPEL6" --mirrorlist="https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=x86_64"
+# CentOS 6 requires a newer version of cloud-init to use advanced features with MAAS.
 repo --name="cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-6-x86_64"
 
 zerombr
