@@ -34,8 +34,16 @@ if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
     cp -r ${CURTIN_HOOKS:-curtin} $TMP_DIR
 fi
 
-echo "Creating MAAS image $TGZ_NAME..."
-tar -Sczpf $TGZ_NAME --selinux -C $TMP_DIR .
+echo "Creating MAAS image $OUTPUT..."
+tar -Sczpf $OUTPUT --selinux -C $TMP_DIR .
+
+if [ -n "$MANIFEST" ]; then
+    echo "Creating manifest..."
+    # RPM on CentOS/RHEL 7 needs /dev mounted so it can use /dev/urandom
+    mount -o bind /dev $TMP_DIR/dev
+    chroot $TMP_DIR rpm -qa | sort -u -o $MANIFEST
+    umount $TMP_DIR/dev
+fi
 
 echo 'Unmounting image...'
 umount $TMP_DIR

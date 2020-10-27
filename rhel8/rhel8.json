@@ -31,7 +31,7 @@
             "inline_shebang": "/bin/bash -e",
             "inline": [
                 "source ../scripts/setup-nbd",
-                "TGZ_NAME='rhel8.tar.gz'",
+                "OUTPUT=${OUTPUT:-rhel8.tar.gz}",
                 "source ../scripts/tar-root"
             ]
         }

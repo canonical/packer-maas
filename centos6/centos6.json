@@ -33,7 +33,7 @@
             "inline_shebang": "/bin/bash -e",
             "inline": [
                 "source ../scripts/setup-nbd",
-                "TGZ_NAME='centos6.tar.gz'",
+                "OUTPUT=${OUTPUT:-centos6.tar.gz}",
                 "source ../scripts/tar-root"
             ]
         }
