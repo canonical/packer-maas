@@ -34,6 +34,8 @@ done
 
 rm -f /etc/sysconfig/network-scripts/ifcfg-[^lo]*
 
+sed -i -e 's/^\(GRUB_ENABLE_BLSCFG=\).*/\1false/g' /etc/default/grub
+
 dnf clean all
 %end
 
@@ -47,6 +49,7 @@ python3-oauthlib
 rsync
 tar
 grub2-efi-x64
+grub2-efi-x64-modules
 efibootmgr
 shim-x64
 dosfstools
