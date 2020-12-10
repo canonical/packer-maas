@@ -53,6 +53,9 @@ cloud-init
 python3-oauthlib
 rsync
 tar
+# grub2-efi-x64 ships grub signed for UEFI secure boot. If grub2-efi-x64-modules
+# is installed grub will be generated on deployment and unsigned which breaks
+# UEFI secure boot.
 grub2-efi-x64
 efibootmgr
 shim-x64
