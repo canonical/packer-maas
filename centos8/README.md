@@ -21,6 +21,15 @@ The default username is cloud-user
 ## Customizing the Image
 The deployment image may be customized by modifying http/centos8.ks. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.
 
+## Dell RAID Support
+Support for older Dell RAID cards can be added by modifying the ~/centos8.json file as such:
+
+```
+                "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos8.ks ",
++                "inst.dd=https://elrepo.org/linux/dud/el8/x86_64/dd-megaraid_sas-07.714.04.00-1.el8_3.elrepo.iso ",
+                "console=ttyS0 inst.cmdline",
+```
+
 ## Building the image using a proxy
 The Packer template downloads the CentOS net installer from the Internet. To
 tell Packer to use a proxy set the HTTP_PROXY environment variable to your proxy

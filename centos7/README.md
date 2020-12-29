@@ -17,6 +17,20 @@ The Packer template in this directory creates a CentOS 7 AMD64 image for use wit
 ## Customizing the Image
 The deployment image may be customized by modifying http/centos7.ks. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.
 
+## Dell RAID Support
+Support for older Dell RAID cards can be added by downloading the appropriate driver from [Dell's website](https://www.dell.com/support/search/en-us#q=Red%20Hat%20Enterprise%20Linux%207%20Driver%20for%20Dell%20PERC%20version&sort=relevancy&numberOfResults=100&f:langFacet=[en])
+
+* Un-archive the tar.gz file
+* Unzip the iso file
+* Place the iso file into the ~/http directory
+* Then modify the ~/centos7.json file as such:
+
+```
+                "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos7.ks ",
++                "inst.dd=http://{{ .HTTPIP }}:{{ .HTTPPort }}/megaraid_sas-$VERSION.x86_64.iso ",
+                "console=ttyS0 inst.cmdline",
+```
+
 ## Building the image using a proxy
 The Packer template downloads the CentOS
 net installer from the Internet. To tell Packer to use a proxy set the
