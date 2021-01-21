@@ -1,0 +1,65 @@
+{
+
+    "builders": [{
+        "type": "qemu",
+        "iso_url": "iso/win2016.iso",
+        "iso_checksum_type": "none",
+        "communicator": "none",
+        "accelerator" : "kvm",
+     "floppy_files": ["./http/Autounattend.xml",
+        "./http/logon.ps1",
+        "./http/rh.cer"], 
+        "floppy_label" : "flop",
+        "boot_command": [
+            "<enter><wait><f6><wait><esc><wait>",
+            "<enter>"
+        ],
+    "format": "raw",
+    "disk_interface" : "ide",
+
+        "boot_wait": "2s",
+        "disk_size": "15G",
+        "headless": false,
+        "memory": 30000,
+        "net_device": "e1000",
+        "machine_type" : "q35",
+        "vnc_bind_address" : "0.0.0.0",
+        "http_directory": "http",
+        "qemuargs": [
+            ["-serial", "stdio"],
+            ["-bios", "/usr/share/edk2-ovmf/x64/OVMF_CODE.fd"]
+        ],
+                    "shutdown_timeout": "45m"
+
+}],
+
+        "post-processors": [
+        {
+            "type": "shell-local",
+            "inline_shebang": "/bin/bash -e",
+            "inline": [
+                "echo 'Syncing output-qemu/packer-qemu...'",
+                "sync -f output-qemu/packer-qemu",
+                "IMG_FMT=raw",
+                "source ../scripts/setup-nbd",
+                "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
+                "echo 'Adding curtin-hooks to image...'",
+                "mount -t ntfs ${nbd}p3 $TMP_DIR",
+                "mkdir -p $TMP_DIR/curtin",
+                "cp curtin/* $TMP_DIR/curtin/.",
+                "cp -r ./http/cloudbase-init $TMP_DIR/.",
+                "unzip $TMP_DIR/cloudbase-init/cloudbase_init.zip -d $TMP_DIR/'Program Files'/'Cloudbase Solutions'/Cloudbase-Init/",
+                "sync -f $TMP_DIR/curtin",
+                "sync -f $TMP_DIR/cloudbase-init",
+                "umount $TMP_DIR",
+                "qemu-nbd -d $nbd",
+                "rmdir $TMP_DIR"
+            ]
+        },
+        {
+            "type": "compress",
+            "output": "windows.dd.gz"
+        }
+    ]
+}
+
