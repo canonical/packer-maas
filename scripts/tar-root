@@ -4,7 +4,7 @@
 #
 # Author: Lee Trager <lee.trager@canonical.com>
 #
-# Copyright (C) 2020 Canonical
+# Copyright (C) 2020-2021 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -35,7 +35,7 @@ if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
 fi
 
 echo "Creating MAAS image $OUTPUT..."
-tar -Sczpf $OUTPUT --selinux -C $TMP_DIR .
+tar -Sczpf $OUTPUT --selinux --xattrs -C $TMP_DIR .
 
 if [ -n "$MANIFEST" ]; then
     echo "Creating manifest..."
