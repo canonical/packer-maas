@@ -35,7 +35,7 @@ if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
 fi
 
 echo "Creating MAAS image $OUTPUT..."
-tar -Sczpf $OUTPUT --selinux --xattrs -C $TMP_DIR .
+tar -Sczpf $OUTPUT --acls --selinux --xattrs -C $TMP_DIR .
 
 if [ -n "$MANIFEST" ]; then
     echo "Creating manifest..."
