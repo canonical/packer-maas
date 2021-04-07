@@ -1,0 +1,41 @@
+{
+    "variables":
+        {
+            "almalinux8_iso_url": "https://repo.almalinux.org/almalinux/8/isos/x86_64/AlmaLinux-8.3-x86_64-boot.iso",
+            "almalinux8_sha256sum_url": "https://repo.almalinux.org/almalinux/8/isos/x86_64/CHECKSUM"
+        },
+    "builders": [
+        {
+            "type": "qemu",
+            "communicator": "none",
+            "iso_url": "{{user `almalinux8_iso_url`}}",
+            "iso_checksum": "file:{{user `almalinux8_sha256sum_url`}}",
+            "boot_command": [
+                "<up><tab> ",
+                "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/almalinux8.ks ",
+                "console=ttyS0 inst.cmdline",
+                "<enter>"
+            ],
+            "boot_wait": "3s",
+            "disk_size": "4G",
+            "headless": true,
+            "memory": 2048,
+            "http_directory": "http",
+            "qemuargs": [
+                [ "-serial", "stdio" ]
+            ],
+            "shutdown_timeout": "1h"
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "shell-local",
+            "inline_shebang": "/bin/bash -e",
+            "inline": [
+                "source ../scripts/setup-nbd",
+                "OUTPUT=${OUTPUT:-almalinux8.tar.gz}",
+                "source ../scripts/tar-root"
+            ]
+        }
+    ]
+}
