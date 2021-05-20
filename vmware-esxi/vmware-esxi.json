@@ -12,6 +12,7 @@
                 "<enter><wait>",
                 "<leftShift>O",
                 " ks=cdrom:/KS.CFG",
+                " cpuUniformityHardCheckPanic=FALSE",
                 " com1_Port=0x3f8 tty2Port=com1",
                 "<enter>"
             ],
