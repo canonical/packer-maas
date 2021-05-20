@@ -17,10 +17,16 @@
 * [MAAS](https://maas.io) 2.5 or above, [MAAS](https://maas.io) 2.6 required for storage configuration
 
 ## Customizing the Image
-The deployment image may be customized by modifying packer-maas/vmware-esxi/http/vmware-esxi-ks.cfg see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
+The deployment image may be customized by modifying packer-maas/vmware-esxi/KS.CFG see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
 
 ## Building an image
-Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
+You can easily build the image using the Makefile:
+
+```
+$ make ISO=/path/to/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso
+```
+
+Alternatively you can manually run packer. Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
 ```
 $ sudo PACKER_LOG=1 packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso' vmware-esxi.json
 ```

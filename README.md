@@ -20,3 +20,21 @@ If you wish to use QEMU's UI also remove "headless": true
 
 If you keep "headless": true you can connect using VNC. Packer will output the
 IP and port to connect to when run.
+
+## Makefiles
+
+Each directory contains a Makefile to help build the image with the correct
+arguments. The default make target will remove the output-qemu directory and
+previously generated image before building the new image.
+
+The path to the Packer binary can be overridden with the `PACKER` variable:
+
+```
+$ make PACKER=/home/user/go/bin/packer
+```
+
+Images which require a user specified ISO can be set with the `ISO` variable:
+
+```
+$ make ISO=/path/to/iso
+```

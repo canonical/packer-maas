@@ -28,8 +28,15 @@ line starting with url or repo in http/centos6.ks. Alternatively you may set the
 --mirrorlist values to a local mirror.
 
 ## Building an image
-Your current working directory must be in packer-maas/centos6, where this file
-is located. Once in packer-maas/centos6 you can generate an image with:
+You can easily build the image using the Makefile:
+
+```
+$ make
+```
+
+Alternatively you can manually run packer. Your current working directory must
+be in packer-maas/centos6, where this file is located. Once in
+packer-maas/centos6 you can generate an image with:
 
 ```
 $ sudo PACKER_LOG=1 packer build centos6.json
