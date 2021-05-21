@@ -2,6 +2,7 @@ __pycache__
 *.orig
 output-qemu
 packer_cache
+.ve
 *~
 \#*\#
 .#*

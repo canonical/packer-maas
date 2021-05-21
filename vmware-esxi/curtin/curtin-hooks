@@ -19,14 +19,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from curtin.config import load_command_config
-from curtin.util import load_command_environment
-
-from subprocess import check_call
 import os
 import shutil
 import tempfile
+from subprocess import check_call
+
 import yaml
+from curtin.config import load_command_config
+from curtin.util import load_command_environment
 
 
 def write_config(target, config):
@@ -43,27 +43,28 @@ def write_config(target, config):
     # the booted system. Use the block device for the partition Curtin was
     # found on and change the partition to find /altbootbank which is
     # visible on the booted system.
-    with open('/proc/mounts', 'r') as mounts:
+    with open("/proc/mounts", "r") as mounts:
         for line in mounts.readlines():
             mount = line.split()
             blkdev = mount[0]
             mount_point = mount[1]
             if mount_point == target:
-                altbootbank_blkdev = '%s6' % blkdev[0:-1]
+                altbootbank_blkdev = "%s6" % blkdev[0:-1]
                 break
 
     if altbootbank_blkdev is None:
-        raise Exception('ERROR: Unable to find /altbootbank block device!')
+        raise Exception("ERROR: Unable to find /altbootbank block device!")
 
-    altbootbank_mount_point = tempfile.mkdtemp(prefix='curtin-hooks-')
-    check_call(['mount', altbootbank_blkdev, altbootbank_mount_point])
+    altbootbank_mount_point = tempfile.mkdtemp(prefix="curtin-hooks-")
+    check_call(["mount", altbootbank_blkdev, altbootbank_mount_point])
 
     curtin_cfg_path = os.path.join(
-        altbootbank_mount_point, 'maas', 'curtin.cfg')
-    with open(curtin_cfg_path, 'w') as f:
+        altbootbank_mount_point, "maas", "curtin.cfg"
+    )
+    with open(curtin_cfg_path, "w") as f:
         f.write(yaml.dump(config))
 
-    check_call(['umount', altbootbank_blkdev])
+    check_call(["umount", altbootbank_blkdev])
 
 
 def cleanup():
@@ -76,7 +77,7 @@ def main():
     state = load_command_environment()
     config = load_command_config(None, state)
 
-    write_config(state['target'], config)
+    write_config(state["target"], config)
     cleanup()
 
 
