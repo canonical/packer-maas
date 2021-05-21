@@ -7,9 +7,8 @@
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
-* parted
-
-* [Packer.](https://www.packer.io/intro/getting-started/install.html)
+* Python Pip
+* [Packer](https://www.packer.io/intro/getting-started/install.html)
 * The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
 
 ## Requirements (to deploy the image)
@@ -41,7 +40,7 @@ $ maas $PROFILE boot-resources create name='esxi/6.7' title='VMware ESXi 6.7' ar
 ```
 
 ## Requirements
-VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent then MAAS.
+VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent than MAAS.
 
 The machine building the deployment image must be a GNU/Linux host with a dual core x86_64 processor supporting hardware virtualization with at least 4GB of RAM and 10GB of disk space available. Additionally the qemu-kvm and qemu-utils packages must be installed on the build system.
 
