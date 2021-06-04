@@ -4,7 +4,7 @@
 #
 # Author: Lee Trager <lee.trager@canonical.com>
 #
-# Copyright (C) 2019 Canonical
+# Copyright (C) 2019-2021 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -20,7 +20,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import re
 import sys
 from argparse import ArgumentParser
 from subprocess import PIPE, Popen, check_call, check_output
@@ -43,50 +42,104 @@ def error(msg):
     print("ERROR: %s" % msg, file=sys.stderr)
 
 
+def get_disks():
+    """Parse all disks on the system."""
+    disks = []
+
+    disk_block_sizes = {}
+    output = check_output(
+        ["esxcli", "storage", "core", "device", "capacity", "list"]
+    ).decode()
+    for line in output.splitlines()[2:]:
+        line = line.split()
+        disk_block_sizes[line[0]] = int(line[1])
+
+    # Get the list of devices
+    output = check_output(["esxcfg-scsidevs", "-l"]).decode()
+    disk = None
+    other_names = False
+
+    for line in output.splitlines():
+        if not line.startswith(" " * 3):
+            # Each section starts with the device name, all fields are defined
+            # below and start with 3 spaces.
+            if disk:
+                disks.append(disk)
+                other_names = False
+            name = line.strip()
+            disk = {
+                "name": name,
+                "other_names": [],
+                "blocksize": disk_block_sizes.get(name, 0),
+            }
+        elif disk:
+            if other_names and not line.startswith(" " * 6):
+                # Other names is a list which contains the serial. Entries must
+                # start with 6 spaces.
+                other_names = False
+            line = line.strip()
+            if line.startswith("Size"):
+                _, size = line.split(":", 1)
+                disk["size"] = size.strip()
+            elif line.startswith("Devfs Path"):
+                _, path = line.split(":", 1)
+                disk["path"] = path.strip()
+            elif line.startswith("Vendor"):
+                # Vendor isn't actually the vendor, normally its ATA
+                # Stored on the same line is the model which is needed.
+                last_val = None
+                for i in line.split():
+                    if last_val == "Model:":
+                        disk["model"] = i.strip()
+                        break
+                    else:
+                        last_val = i
+            elif line.startswith("Other Names"):
+                other_names = True
+            elif other_names:
+                disk["other_names"].append(line)
+    if disk:
+        disks.append(disk)
+    return disks
+
+
+def get_disk(disks, model, serial):
+    """Return the disk matching the model and serial from the list of disk."""
+    for disk in disks:
+        if disk["model"] == model:
+            for other_name in disk["other_names"]:
+                # VMware doesn't provide the exact serial number. It provides
+                # a list of other names, one of which contains the serial
+                if serial in other_name:
+                    return disk
+    return None
+
+
 def parse_config(config):
     """Pulls the disks out of the config and map to VMware devices."""
     disks = {}
     partitions = {}
     vmfs_datastores = {}
-    # grub_device = None
 
-    # Get the list of devices
-    cmd = ["esxcli", "storage", "core", "device", "capacity", "list"]
-    devices_output = check_output(cmd).decode()
-    show_devices_output = False
-
-    # Ignore the output headers
-    devices = devices_output.split("\n")[2:]
-    devices = [i.split() for i in devices if len(i) > 0]
+    detected_disks = get_disks()
 
     for i in config:
         if i.get("type") == "disk":
             if "grub_device" in i:
                 i["partitioned"] = True
-                # grub_device = i["id"]
             model = i["model"].replace(" ", "_")
             serial = i["serial"].replace(" ", "_")
-            for device in devices:
-                # Search for both the model and serial
-                m = re.search(".*%s.*%s.*" % (model, serial), device[0])
-                # VMware sometimes only uses the serial in the device name.
-                if m or device[0].endswith(serial):
-                    i["path"] = "/vmfs/devices/disks/%s" % device[0]
-                    i["blocksize"] = int(device[1])
-                    disks[i["id"]] = i
-                    break
-            if "path" not in i:
+            disk = get_disk(detected_disks, model, serial)
+            if disk:
+                i["path"] = disk["path"]
+                i["blocksize"] = disk["blocksize"]
+                disks[i["id"]] = i
+            else:
                 warn("Disk %s %s not found!" % (i["model"], i["serial"]))
-                show_devices_output = True
         elif i.get("type") == "partition":
             partitions[i["id"]] = i
         elif i.get("type") == "vmfs6":
             vmfs_datastores[i["id"]] = i
-
-    if show_devices_output:
-        # If a device wasn't found show the discovered devices.
-        print("Devices command: %s" % " ".join(cmd))
-        print(devices_output)
 
     return disks, partitions, vmfs_datastores
 

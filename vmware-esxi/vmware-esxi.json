@@ -18,7 +18,7 @@
             ],
             "boot_wait": "3s",
             "disk_interface": "ide",
-            "disk_size": "10G",
+            "disk_size": "12G",
             "headless": true,
             "memory": 4096,
             "cd_files": [ "./KS.CFG" ],
