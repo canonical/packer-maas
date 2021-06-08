@@ -22,6 +22,7 @@
 import os
 import sys
 from argparse import ArgumentParser
+from functools import lru_cache
 from subprocess import PIPE, Popen, check_call, check_output
 
 import yaml
@@ -40,6 +41,32 @@ def warn(msg):
 def error(msg):
     """Print a standard error message."""
     print("ERROR: %s" % msg, file=sys.stderr)
+
+
+@lru_cache(maxsize=1)
+def get_esxi_version():
+    """Return the VMware ESXi version as a tuple."""
+    ret = []
+    output = check_output(["uname", "-r"]).decode()
+    for i in output.split("."):
+        # The version is currently a tuple of ints. Allow strings
+        # incase VMware decides to add them.
+        try:
+            i = int(i)
+        except ValueError:
+            pass
+        ret.append(i)
+    return tuple(ret)
+
+
+def is_esxi67():
+    """Return true if running on VMware ESXi 6.7.X."""
+    return get_esxi_version()[0:2] == (6, 7)
+
+
+def is_esxi7():
+    """Return true if running on VMware ESXi 7.X.Y."""
+    return get_esxi_version()[0] == 7
 
 
 def get_disks():
@@ -153,14 +180,23 @@ def process_disk_wipes(disks):
             # full size of the disk.
             p = Popen(["partedUtil", "fixGpt", disk["path"]], stdin=PIPE)
             p.communicate(input=b"Y\nFix\n")
-            if os.path.exists("%s:3" % disk["path"]):
-                # Remove partition 3, it's at the end of the disk and is the
-                # only one that can be customized.
+            # Remove the default datastore partition if it exists. It is the
+            # only partition included in the base layout that can be
+            # customized.
+            if is_esxi67() and os.path.exists("%s:3" % disk["path"]):
+                datastore_partition = "3"
+            elif is_esxi7() and os.path.exists("%s:8" % disk["path"]):
+                datastore_partition = "8"
+            else:
+                datastore_partition = None
+            if datastore_partition is not None:
                 info("Removing the default datastore.")
                 check_call(
                     ["esxcli", "storage", "filesystem", "unmount", "-a"]
                 )
-                check_call(["partedUtil", "delete", disk["path"], "3"])
+                check_call(
+                    ["partedUtil", "delete", disk["path"], datastore_partition]
+                )
                 check_call(["esxcli", "storage", "filesystem", "rescan"])
             continue
         wipe = disk.get("wipe")
@@ -220,6 +256,7 @@ def get_ending_sector(blocksize, starting_sector, size):
     for m in mpliers:
         if size.endswith(m):
             size = size[0 : -len(m)]
+            mplier = m
             break
 
     return int(starting_sector + float(size) * mpliers[mplier] / blocksize)
@@ -231,13 +268,14 @@ def partition_disks(disks, partitions):
     for part in partitions.values():
         disk = disks[part["device"]]
         # The grub_device is the disk which Curtin installed the OS to. The
-        # offical VMware installer defines 8 partitions and skips partition 4.
-        # Partition 3 is the datastore which can be extended. It needs to be
-        # recreated.
-        if (
-            disk.get("grub_device")
-            and part["number"] != 3
-            and part["number"] <= 9
+        # offical VMware ESXi 6.7 installer defines 8 partitions and skips
+        # partition 4. Partition 3 is the datastore which can be extended.
+        # It needs to be recreated. On VMware ESXi 7.0 the offical installer
+        # defines 5 partitions and skips partitions 2-4. Partition 8 is the
+        # datastore which can be extended.
+        if disk.get("grub_device") and (
+            (is_esxi67() and part["number"] != 3 and part["number"] <= 9)
+            or (is_esxi7() and part["number"] <= 7)
         ):
             continue
         elif not disk.get("partitioned"):
@@ -259,7 +297,8 @@ def partition_disks(disks, partitions):
                 "add",
                 disk["path"],
                 disk["ptable"],
-                "%d %d %d AA31E02A400F11DB9590000C2911D1B8 0"
+                # partedUtil expects this as one argument
+                "%s %s %s AA31E02A400F11DB9590000C2911D1B8 0"
                 % (part["number"], starting_sector, ending_sector),
             ]
         )
@@ -278,6 +317,7 @@ def mkvmfs(disks, partitions, vmfs_datastores):
         head_partition = get_partition_dev(
             disks, partitions, vmfs_datastore["devices"][0]
         )
+        # Both VMware ESXi 6.7 and 7.0 use VMFS6.
         info(
             "Creating VMFS6 datastore %s using %s as the head partition"
             % (vmfs_datastore["name"], head_partition)
@@ -310,6 +350,7 @@ def extend_default(disks):
     part_num = 0
     part_start = 0
     part_end = 0
+    last_end = 0
     volumes = check_output(["esxcli", "storage", "vmfs", "extent", "list"])
     extend_vmfs = True
     for volume in volumes.decode().splitlines():
@@ -319,13 +360,12 @@ def extend_default(disks):
             part_num = volume[4]
             break
     if not dev_path:
-        # For whatever reason VMware ESXi 6.7.0U2 will remove defined
-        # datastores on deployment on some hardware. Assume that is what
-        # is happening.
+        # For whatever reason VMware ESXi will remove defined datastores on
+        # deployment on some hardware. Assume that is what is happening.
         for disk in disks.values():
             if disk.get("grub_device", False):
                 dev_path = disk["path"]
-                part_num = "3"
+                part_num = "3" if is_esxi67() else "8"
                 extend_vmfs = False
                 break
 
@@ -335,21 +375,36 @@ def extend_default(disks):
     # Get the sector the partition currently starts on.
     part_info = check_output(["partedUtil", "get", dev_path])
     for part in part_info.decode().splitlines():
-        if part.startswith("%s " % part_num):
+        if extend_vmfs and part.startswith("%s " % part_num):
             part_start = part.split()[1]
             break
+        else:
+            last_end = part.split()[2]
 
     # Get the last sector of the disk to extend the datastore to.
     part_info = check_output(["partedUtil", "getUsableSectors", dev_path])
     part_end = part_info.decode().split()[1]
 
-    check_call(
-        ["partedUtil", "resize", dev_path, part_num, part_start, part_end]
-    )
     vmfs_part = "%s:%s" % (dev_path, part_num)
+
     if extend_vmfs:
+        check_call(
+            ["partedUtil", "resize", dev_path, part_num, part_start, part_end]
+        )
         check_call(["vmkfstools", "--growfs", vmfs_part, vmfs_part])
     else:
+        part_start = str(int(last_end) + 1)
+        check_call(
+            [
+                "partedUtil",
+                "add",
+                disk["path"],
+                disk["ptable"],
+                # partedUtil expected this as one argument
+                "%s %s %s AA31E02A400F11DB9590000C2911D1B8 0"
+                % (part_num, part_start, part_end),
+            ]
+        )
         check_call(
             ["vmkfstools", "-C", "vmfs6", "-S", "datastore1", vmfs_part]
         )
