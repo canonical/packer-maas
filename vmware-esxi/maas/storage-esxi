@@ -20,6 +20,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import re
 import sys
 from argparse import ArgumentParser
 from functools import lru_cache
@@ -86,6 +87,12 @@ def get_disks():
     disk = None
     other_names = False
 
+    vendor_model_regex = re.compile(
+        r"^Vendor:\s+(?P<vendor>.*)\s*"
+        r"Model:\s+(?P<model>.*)\s*"
+        r"Revis:\s+(?P<revis>.*)\s*$"
+    )
+
     for line in output.splitlines():
         if not line.startswith(" " * 3):
             # Each section starts with the device name, all fields are defined
@@ -114,13 +121,9 @@ def get_disks():
             elif line.startswith("Vendor"):
                 # Vendor isn't actually the vendor, normally its ATA
                 # Stored on the same line is the model which is needed.
-                last_val = None
-                for i in line.split():
-                    if last_val == "Model:":
-                        disk["model"] = i.strip()
-                        break
-                    else:
-                        last_val = i
+                m = vendor_model_regex.search(line)
+                if m:
+                    disk["model"] = m.group("model").strip()
             elif line.startswith("Other Names"):
                 other_names = True
             elif other_names:
@@ -133,7 +136,9 @@ def get_disks():
 def get_disk(disks, model, serial):
     """Return the disk matching the model and serial from the list of disk."""
     for disk in disks:
-        if disk["model"] == model:
+        # udev will sometimes replace a space in the model name with an
+        # underscore.
+        if disk["model"] == model or disk["model"].replace(" ", "_") == model:
             for other_name in disk["other_names"]:
                 # VMware doesn't provide the exact serial number. It provides
                 # a list of other names, one of which contains the serial
