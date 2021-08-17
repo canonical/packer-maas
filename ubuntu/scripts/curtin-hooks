@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# ENV variables available
+#
+# OUTPUT_NETWORK_CONFIG: 
+#    This is a path to the file created during network discovery stage.
+# OUTPUT_FSTAB: 
+#    This is a path to the file created during partitioning stage.
+# CONFIG: 
+#    This is a path to the curtin config file. 
+# WORKING_DIR: 
+#    This is a path to a temporary directory where curtin stores state and configuration files.
+
