@@ -9,3 +9,5 @@ packer_cache
 *.*.swp
 *.gz
 *.xz
+ubuntu/OVMF_VARS.fd
+ubuntu/seeds.iso
