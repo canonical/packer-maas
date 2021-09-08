@@ -7,13 +7,14 @@ The Packer template in this directory creates a Ubuntu AMD64 image for use with 
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
+* ovmf
 * cloud-image-utils
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
 ## Requirements (to deploy the image)
 
-* [MAAS](https://maas.io) 2.3+
-* [Curtin](https://launchpad.net/curtin) 18.1-59+
+* [MAAS](https://maas.io) 3.0+
+* [Curtin](https://launchpad.net/curtin) 21.0+
 
 ## Customizing the Image
 
@@ -38,10 +39,10 @@ be in packer-maas/ubuntu, where this file is located. Once in
 packer-maas/ubuntu you can generate an image with:
 
 ```
-$ sudo PACKER_LOG=1 packer build ubuntu.json
+$ sudo PACKER_LOG=1 packer build ubuntu-efi.json
 ```
 
-Note: ubuntu.json is configured to run Packer in headless mode. Only Packer
+Note: ubuntu-efi.json is configured to run Packer in headless mode. Only Packer
 output will be seen. If you wish to see the installation output connect to the
 VNC port given in the Packer output or change the value of headless to false in
 ubuntu.json.
@@ -51,11 +52,11 @@ Installation is non-interactive.
 ## Uploading an image to MAAS
 ```
 $ maas admin boot-resources create \
-    name='ubuntu/asouza' \
+    name='custom/myubuntu' \
     title='Ubuntu Custom' \
     architecture='amd64/generic' \
     filetype='ddgz' \
-    content@=custom-ubuntu.dd.gz
+    content@=custom-ubuntu-efi.dd.gz
 ```
 
 ## Default Username
