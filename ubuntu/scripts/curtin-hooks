@@ -1,13 +1,76 @@
-#!/bin/sh
-
-# ENV variables available
+#!/usr/bin/env python3
 #
-# OUTPUT_NETWORK_CONFIG: 
-#    This is a path to the file created during network discovery stage.
-# OUTPUT_FSTAB: 
-#    This is a path to the file created during partitioning stage.
-# CONFIG: 
-#    This is a path to the curtin config file. 
-# WORKING_DIR: 
-#    This is a path to a temporary directory where curtin stores state and configuration files.
+# curtin-hooks - Curtin installation hooks for Ubuntu
+#
+# Author: Alexsander de Souza <alexsander.souza@canonical.com>
+#
+# Copyright (C) 2021 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import shutil
+import platform
+
+from curtin import distro
+from curtin.config import load_command_config
+from curtin.util import load_command_environment
+from curtin.log import LOG
+from curtin.commands import curthooks, apt_config
+
+
+def curthook(cfg, target, state):
+    LOG.info('Running curtin builtin curthooks')
+    state_etcd = os.path.split(state['fstab'])[0]
+    machine = platform.machine()
+
+    distro_info = distro.get_distroinfo(target=target)
+    if not distro_info:
+        raise RuntimeError('Failed to determine target distro')
+    osfamily = distro_info.family
+    LOG.info('Configuring target system for distro: %s osfamily: %s',
+             distro_info.variant, osfamily)
+    
+    curthooks.disable_overlayroot(cfg, target)
+    curthooks.disable_update_initramfs(cfg, target, machine)
+    curthooks.add_swap(cfg, target, state.get('fstab'))
+    curthooks.install_missing_packages(cfg, target, osfamily=osfamily)
+    curthooks.configure_mdadm(cfg, state_etcd, target, osfamily=osfamily)
+    apt_config.apply_debconf_selections(cfg, target)
+
+    curthooks.apply_networking(target, state)
+    curthooks.handle_pollinate_user_agent(cfg, target)
+
+    # re-enable update_initramfs
+    curthooks.enable_update_initramfs(cfg, target, machine)
+    curthooks.update_initramfs(target, all_kernels=True)
+
+
+def cleanup():
+    """Remove curtin-hooks so its as if we were never here."""
+    curtin_dir = os.path.dirname(__file__)
+    shutil.rmtree(curtin_dir)
+
+
+def main():
+    state = load_command_environment()
+    config = load_command_config(None, state)
+    target = state['target']
+
+    curthook(config, target, state)
+    cleanup()
+
+
+if __name__ == "__main__":
+    main()
