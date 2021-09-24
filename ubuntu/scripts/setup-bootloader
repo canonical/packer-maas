@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# curtin.sh - Move curtin scripts to final destination
+# setup-bootloader - Install bootloader in the boot disk
 #
 # Author: Alexsander de Souza <alexsander.souza@canonical.com>
 #
@@ -19,18 +19,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-apt-get install -y jq
-mkdir -p /curtin
+export DEBIAN_FRONTEND=noninteractive
 
-# install scripts
-for s in curtin-hooks install-custom-packages setup-bootloader; do
-  if [ -f "/tmp/$s" ]; then
-    mv "/tmp/$s" /curtin/
-    chmod 750 "/curtin/$s"
-  fi
-done
+dpkg-reconfigure grub-efi-amd64
+update-grub
 
-# copy custom packages
-if [ -f /tmp/custom-packages.tar.gz ]; then
-  mv /tmp/custom-packages.tar.gz /curtin/
-fi
+grub-install \
+    --target=x86_64-efi \
+    --efi-directory=/boot/efi \
+    --bootloader-id=ubuntu \
+    --recheck

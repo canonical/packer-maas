@@ -23,14 +23,25 @@ import os
 import shutil
 import platform
 
-from curtin import distro
+from curtin import distro, util
 from curtin.config import load_command_config
-from curtin.util import load_command_environment
 from curtin.log import LOG
+from curtin.paths import target_path
+from curtin.util import load_command_environment, ChrootableTarget
 from curtin.commands import curthooks, apt_config
 
+def run_hook_in_target(target, hook):
+    """Look for "hook" in "target" and run in a chroot"""
+    target_hook = target_path(target, '/curtin/' + hook)
+    if os.path.isfile(target_hook):
+        LOG.debug("running %s" % target_hook)
+        with ChrootableTarget(target=target) as in_chroot:
+            in_chroot.subp(['/curtin/' + hook])
+        return True
+    return False
 
 def curthook(cfg, target, state):
+    """Configure network and bootloader"""
     LOG.info('Running curtin builtin curthooks')
     state_etcd = os.path.split(state['fstab'])[0]
     machine = platform.machine()
@@ -42,11 +53,33 @@ def curthook(cfg, target, state):
     LOG.info('Configuring target system for distro: %s osfamily: %s',
              distro_info.variant, osfamily)
     
+    sources = cfg.get('sources', {})
+    dd_image = len(util.get_dd_images(sources)) > 0
+
     curthooks.disable_overlayroot(cfg, target)
     curthooks.disable_update_initramfs(cfg, target, machine)
-    curthooks.add_swap(cfg, target, state.get('fstab'))
     curthooks.install_missing_packages(cfg, target, osfamily=osfamily)
-    curthooks.configure_mdadm(cfg, state_etcd, target, osfamily=osfamily)
+    
+    if not dd_image:
+        curthooks.configure_iscsi(cfg, state_etcd, target, osfamily=osfamily)
+        curthooks.configure_mdadm(cfg, state_etcd, target, osfamily=osfamily)
+        curthooks.copy_fstab(state.get('fstab'), target)
+        curthooks.add_swap(cfg, target, state.get('fstab'))
+
+    run_hook_in_target(target, 'install-custom-packages')
+
+    if not dd_image:
+        curthooks.setup_kernel_img_conf(target)
+
+        crypttab_location = os.path.join(os.path.split(state['fstab'])[0],
+                                        "crypttab")
+        if os.path.exists(crypttab_location):
+            curthooks.copy_crypttab(crypttab_location, target)
+
+        udev_rules_d = os.path.join(state['scratch'], "rules.d")
+        if os.path.isdir(udev_rules_d):
+            curthooks.copy_dname_rules(udev_rules_d, target)
+    
     apt_config.apply_debconf_selections(cfg, target)
 
     curthooks.apply_networking(target, state)
@@ -55,6 +88,8 @@ def curthook(cfg, target, state):
     # re-enable update_initramfs
     curthooks.enable_update_initramfs(cfg, target, machine)
     curthooks.update_initramfs(target, all_kernels=True)
+    
+    run_hook_in_target(target, 'setup-bootloader')
 
 
 def cleanup():

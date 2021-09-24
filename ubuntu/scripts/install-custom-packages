@@ -1,6 +1,6 @@
 #!/bin/bash -e
 #
-# curtin.sh - Move curtin scripts to final destination
+# install-custom-packages - Install custom packages
 #
 # Author: Alexsander de Souza <alexsander.souza@canonical.com>
 #
@@ -19,18 +19,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-apt-get install -y jq
-mkdir -p /curtin
+export DEBIAN_FRONTEND=noninteractive
 
-# install scripts
-for s in curtin-hooks install-custom-packages setup-bootloader; do
-  if [ -f "/tmp/$s" ]; then
-    mv "/tmp/$s" /curtin/
-    chmod 750 "/curtin/$s"
-  fi
-done
+PKG_TGZ="/curtin/custom-packages.tar.gz"
 
-# copy custom packages
-if [ -f /tmp/custom-packages.tar.gz ]; then
-  mv /tmp/custom-packages.tar.gz /curtin/
+if [ ! -f "${PKG_TGZ}" ]; then
+    exit 0
 fi
+
+WORKDIR=$(mktemp -d)
+
+cleanup() {
+    rm -rf "${WORKDIR}"
+}
+trap cleanup EXIT
+
+echo "remove existing kernels"
+dpkg -l 'linux-image-*' 'linux-headers-*' | awk '/^ii/{print $2}' | xargs apt-get -y purge
+
+echo "install new kernel"
+tar xzf "${PKG_TGZ}" -C "${WORKDIR}"
+apt install -y --no-install-recommends "${WORKDIR}"/linux-*.deb
+
+echo "purge unused packages"
+apt autoremove -y
