@@ -10,4 +10,6 @@ packer_cache
 *.gz
 *.xz
 ubuntu/OVMF_VARS.fd
-ubuntu/seeds.iso
+ubuntu/*.iso
+ubuntu/packages/*.deb
+ubuntu/packages/*.tar.gz

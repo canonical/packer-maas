@@ -17,10 +17,10 @@ autoinstall:
     swap:
       size: 0
     layout:
-      name: direct
+      name: lvm
 
   late-commands:
-      - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
-  
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+
   package_update: true
   package_upgrade: true
