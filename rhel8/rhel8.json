@@ -22,7 +22,7 @@
             "qemuargs": [
                 [ "-serial", "stdio" ]
             ],
-            "shutdown_timeout": "45m"
+            "shutdown_timeout": "1h"
         }
     ],
     "post-processors": [

@@ -2,9 +2,14 @@ __pycache__
 *.orig
 output-qemu
 packer_cache
+.ve
 *~
 \#*\#
 .#*
 *.*.swp
 *.gz
 *.xz
+ubuntu/OVMF_VARS.fd
+ubuntu/*.iso
+ubuntu/packages/*.deb
+ubuntu/packages/*.tar.gz

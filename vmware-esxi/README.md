@@ -7,9 +7,8 @@
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
-* parted
-
-* [Packer.](https://www.packer.io/intro/getting-started/install.html)
+* Python Pip
+* [Packer](https://www.packer.io/intro/getting-started/install.html)
 * The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
 
 ## Requirements (to deploy the image)
@@ -17,10 +16,16 @@
 * [MAAS](https://maas.io) 2.5 or above, [MAAS](https://maas.io) 2.6 required for storage configuration
 
 ## Customizing the Image
-The deployment image may be customized by modifying packer-maas/vmware-esxi/http/vmware-esxi-ks.cfg see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
+The deployment image may be customized by modifying packer-maas/vmware-esxi/KS.CFG see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
 
 ## Building an image
-Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
+You can easily build the image using the Makefile:
+
+```
+$ make ISO=/path/to/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso
+```
+
+Alternatively you can manually run packer. Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
 ```
 $ sudo PACKER_LOG=1 packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso' vmware-esxi.json
 ```
@@ -35,7 +40,7 @@ $ maas $PROFILE boot-resources create name='esxi/6.7' title='VMware ESXi 6.7' ar
 ```
 
 ## Requirements
-VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent then MAAS.
+VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent than MAAS.
 
 The machine building the deployment image must be a GNU/Linux host with a dual core x86_64 processor supporting hardware virtualization with at least 4GB of RAM and 10GB of disk space available. Additionally the qemu-kvm and qemu-utils packages must be installed on the build system.
 

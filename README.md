@@ -21,17 +21,20 @@ If you wish to use QEMU's UI also remove "headless": true
 If you keep "headless": true you can connect using VNC. Packer will output the
 IP and port to connect to when run.
 
-## Git Submodules
-Packer MAAS uses git submodules to retrieve required resource files during
-image building. Packer MAAS and all submodules can be cloned at once with:
+## Makefiles
+
+Each directory contains a Makefile to help build the image with the correct
+arguments. The default make target will remove the output-qemu directory and
+previously generated image before building the new image.
+
+The path to the Packer binary can be overridden with the `PACKER` variable:
 
 ```
-$ git clone --recurse-submodules git@github.com:canonical/packer-maas.git
+$ make PACKER=/home/user/go/bin/packer
 ```
 
-If Packer MAAS has already been checked out submodules can be retrieved with
+Images which require a user specified ISO can be set with the `ISO` variable:
 
 ```
-$ git submodule init
-$ git submodule update
+$ make ISO=/path/to/iso
 ```

@@ -1,0 +1,275 @@
+#!/usr/bin/env python3
+#
+# vcenter - Add the specified VMware ESXi host to a VMware vCenter datacenter.
+#
+# Author: Lee Trager <lee.trager@canonical.com>
+#
+# Copyright (C) 2019 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import json
+import os
+import sys
+from argparse import ArgumentParser
+
+import requests
+import yaml
+from requests.exceptions import ConnectionError, HTTPError
+
+
+class VCenterException(Exception):
+    """Raised when there is an error adding an ESXi host to vCenter."""
+
+
+def get_datacenter(session, vc_server, vc_datacenter):
+    """Make sure the given datacenter is valid."""
+    try:
+        response = session.get(
+            "https://%s/rest/vcenter/datacenter" % vc_server
+        )
+        response.raise_for_status()
+    except (ConnectionError, HTTPError) as e:
+        raise VCenterException(
+            "Unable to retrieve datacenter list from vCenter(%s): %s"
+            % (vc_server, e)
+        )
+    try:
+        parsed_response = json.loads(response.text)["value"]
+    except (json.JSONDecodeError, KeyError):
+        raise VCenterException(
+            "vCenter(%s) returned invalid datacenter data." % vc_server
+        )
+    for dc in parsed_response:
+        if vc_datacenter in (dc.get("name"), dc.get("datacenter")):
+            return dc["datacenter"]
+    raise VCenterException(
+        "Unable to find datacenter %s on vCenter(%s)"
+        % (vc_datacenter, vc_server)
+    )
+
+
+def get_folder(session, vc_server, datacenter):
+    """Get the folder for datacenter hosts."""
+    try:
+        response = session.get(
+            "https://%s/rest/vcenter/folder" % vc_server,
+            json={
+                "filter": {
+                    "datacenters": [datacenter],
+                    "type": "HOST",
+                },
+            },
+        )
+        response.raise_for_status()
+    except (ConnectionError, HTTPError) as e:
+        raise VCenterException(
+            "Unable to discover HOST folder on vCenter(%s) for datacenter(%s)"
+            ": %s" % (vc_server, datacenter, e)
+        )
+    try:
+        parsed_response = json.loads(response.text)
+    except json.JSONDecodeError:
+        raise VCenterException(
+            "vCenter(%s) returned invalid folder data." % vc_server
+        )
+    if (
+        "value" in parsed_response
+        and len(parsed_response["value"]) > 0
+        and "folder" in parsed_response["value"][0]
+    ):
+        return parsed_response["value"][0]["folder"]
+    else:
+        raise VCenterException(
+            "Unable to find HOST folder for datacenter(%s) on vCenter(%s)"
+            % (datacenter, vc_server)
+        )
+
+
+def add_esxi_host_to_vcenter(
+    session, vc_server, esxi_host, esxi_username, esxi_password, folder
+):
+    """Add the ESXi host to the specified vCenter."""
+    try:
+        response = session.post(
+            "https://%s/rest/vcenter/host" % vc_server,
+            json={
+                "spec": {
+                    "hostname": esxi_host,
+                    "user_name": esxi_username,
+                    "password": esxi_password,
+                    "folder": folder,
+                    # ESXi hosts generate a self signed certificate on
+                    # deployment.
+                    "thumbprint_verification": "NONE",
+                }
+            },
+        )
+        response.raise_for_status()
+    except (ConnectionError, HTTPError) as e:
+        raise VCenterException(
+            "Unable to add ESXi host(%s) to vCenter(%s): %s"
+            % (esxi_host, vc_server, e)
+        )
+    try:
+        return json.loads(response.text)["value"]
+    except (json.JSONDecodeError, KeyError):
+        raise VCenterException(
+            "vCenter(%s) returned invalid data when adding ESXi host(%s)"
+            % (vc_server, esxi_host)
+        )
+
+
+def register_esxi_host_with_vcenter(
+    vc_server,
+    vc_username,
+    vc_password,
+    vc_datacenter,
+    esxi_host,
+    esxi_username,
+    esxi_password,
+):
+    """Add an ESXi host to a datacenter in vCenter.
+
+    Uses the VMware vCenter REST API to add the specified ESXi host to a
+    datacenter on vCenter.
+    http://vmware.github.io/vsphere-automation-sdk-rest/6.7.1/index.html
+    """
+    with requests.Session() as session:
+        session.auth = requests.auth.HTTPBasicAuth(vc_username, vc_password)
+        # vCenter uses a self signed certificate
+        session.verify = False
+
+        # Login and get session cookie
+        try:
+            response = session.post(
+                "https://%s/rest/com/vmware/cis/session" % vc_server
+            )
+            response.raise_for_status()
+        except (ConnectionError, HTTPError) as e:
+            raise VCenterException(
+                "Unable to login to vCenter(%s): %s" % (vc_server, e)
+            )
+        datacenter = get_datacenter(session, vc_server, vc_datacenter)
+        folder = get_folder(session, vc_server, datacenter)
+        esxi_host = add_esxi_host_to_vcenter(
+            session, vc_server, esxi_host, esxi_username, esxi_password, folder
+        )
+        # Logout and invalidate session cookie.
+        try:
+            session.delete(
+                "https://%s/rest/com/vmware/cis/session" % vc_server
+            )
+        except (ConnectionError, HTTPError):
+            # If logout fails ignore it as the host has been added and it
+            # just means vCenter will have to expire our session key.
+            pass
+        return esxi_host
+
+
+def main():
+    parser = ArgumentParser(
+        description=(
+            "Add the specified VMware ESXi host to a VMware vCenter "
+            "datacenter."
+        )
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        help=(
+            "Path to YAML file containing credentails file. Values defined "
+            "in this file will override arguments. This file does not have "
+            "to exist."
+        ),
+    )
+    parser.add_argument(
+        "-s", "--server", help="The VMware vCenter server to join."
+    )
+    parser.add_argument(
+        "-u", "--username", help="The VMware vCenter username to use."
+    )
+    parser.add_argument(
+        "-p", "--password", help="The VMware vCenter password to use."
+    )
+    parser.add_argument(
+        "-D",
+        "--datacenter",
+        default="Datacenter",
+        help="The VMware vCenter datacenter to join.",
+    )
+    parser.add_argument(
+        "-H",
+        "--host",
+        help="The VMware ESXi host to add to the VMware vCenter datacenter.",
+    )
+    parser.add_argument(
+        "-U",
+        "--esxi-username",
+        default="root",
+        help=(
+            "The VMware ESXi username to use when joining a VMware vCenter "
+            "datacenter."
+        ),
+    )
+    parser.add_argument(
+        "-P",
+        "--esxi-password",
+        default="password123!",
+        help=(
+            "The VMware ESXi password to use when joining a VMware vCenter "
+            "datacenter."
+        ),
+    )
+
+    args = parser.parse_args()
+
+    cfg = {
+        "vc_server": args.server,
+        "vc_username": args.username,
+        "vc_password": args.password,
+        "vc_datacenter": args.datacenter,
+        "esxi_host": args.host,
+        "esxi_username": args.esxi_username,
+        "esxi_password": args.esxi_password,
+    }
+    if args.config and os.path.exists(args.config):
+        with open(args.config, "r") as f:
+            for key, value in yaml.safe_load(f).items():
+                if key == "configure" and not value:
+                    print("VMware vCenter registration disabled by MAAS!")
+                    sys.exit(os.EX_OK)
+                elif value:
+                    key = key.replace("vcenter", "vc")
+                    cfg[key] = value
+
+    missing_fields = [key for key, value in cfg.items() if not value]
+    if len(missing_fields) != 0:
+        parser.print_usage(file=sys.stderr)
+        print(
+            "%s: error: the following fields are missing: %s"
+            % (os.path.basename(sys.argv[0]), ", ".join(missing_fields)),
+            file=sys.stderr,
+        )
+        sys.exit(os.EX_USAGE)
+
+    try:
+        register_esxi_host_with_vcenter(**cfg)
+    except VCenterException as e:
+        print(e, file=sys.stderr)
+        sys.exit(os.EX_CANTCREAT)
+
+
+if __name__ == "__main__":
+    main()

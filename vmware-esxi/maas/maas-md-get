@@ -19,8 +19,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from argparse import ArgumentParser
-from email.utils import parsedate
 import http.client
 import socket
 import sys
@@ -28,6 +26,8 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from argparse import ArgumentParser
+from email.utils import parsedate
 
 import oauthlib.oauth1 as oauth
 import yaml
@@ -35,15 +35,16 @@ import yaml
 
 def authenticate_headers(url, headers, creds, clockskew=0):
     """Update and sign a dict of request headers."""
-    if creds.get('consumer_key') is not None:
+    if creds.get("consumer_key") is not None:
         timestamp = int(time.time()) + clockskew
         client = oauth.Client(
-            client_key=creds['consumer_key'],
-            client_secret=creds.get('consumer_secret', ''),
-            resource_owner_key=creds['token_key'],
-            resource_owner_secret=creds['token_secret'],
+            client_key=creds["consumer_key"],
+            client_secret=creds.get("consumer_secret", ""),
+            resource_owner_key=creds["token_key"],
+            resource_owner_secret=creds["token_secret"],
             signature_method=oauth.SIGNATURE_PLAINTEXT,
-            timestamp=str(timestamp))
+            timestamp=str(timestamp),
+        )
         _, signed_headers, _ = client.sign(url)
         headers.update(signed_headers)
 
@@ -67,20 +68,17 @@ def geturl(url, creds, headers=None, data=None):
             return ret.read().decode()
         except urllib.error.HTTPError as exc:
             error = exc
-            if 'date' not in exc.headers:
+            if "date" not in exc.headers:
                 print("date field not in %d headers" % exc.code)
                 pass
             elif exc.code in (http.client.UNAUTHORIZED, http.client.FORBIDDEN):
-                date = exc.headers['date']
-                try:
-                    ret_time = time.mktime(parsedate(date))
-                    clockskew = int(ret_time - time.time())
-                    print("updated clock skew to %d" % clockskew)
-                except:
-                    print("failed to convert date '%s'" % date)
+                date = exc.headers["date"]
+                ret_time = time.mktime(parsedate(date))
+                clockskew = int(ret_time - time.time())
+                print("updated clock skew to %d" % clockskew)
             elif exc.code == http.client.NOT_FOUND:
                 # Nothing to download.
-                return ''
+                return ""
 
         except Exception as exc:
             error = exc
@@ -93,21 +91,27 @@ def geturl(url, creds, headers=None, data=None):
 
 def main():
     parser = ArgumentParser(
-        description='Get data from the MAAS metadata server')
+        description="Get data from the MAAS metadata server"
+    )
     parser.add_argument(
-        '-c', '--config', help='Path to the MAAS metadata credentials file',
-        required=True)
-    parser.add_argument('entry', help='The metadata path to get')
+        "-c",
+        "--config",
+        help="Path to the MAAS metadata credentials file",
+        required=True,
+    )
+    parser.add_argument("entry", help="The metadata path to get")
 
     args = parser.parse_args()
 
-    with open(args.config, 'r') as f:
+    with open(args.config, "r") as f:
         cfg = yaml.safe_load(f)
 
-    if 'reporting' in cfg:
-        cfg = cfg['reporting']['maas']
-    url = '%s%s' % (
-        cfg['endpoint'][:cfg['endpoint'].find('status/')], args.entry)
+    if "reporting" in cfg:
+        cfg = cfg["reporting"]["maas"]
+    url = "%s%s" % (
+        cfg["endpoint"][: cfg["endpoint"].find("status/")],
+        args.entry,
+    )
 
     try:
         print(geturl(url, creds=cfg))
@@ -122,5 +126,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

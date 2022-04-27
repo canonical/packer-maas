@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+#
+# vendor-data-esxi - A partial implementation of cloud-inits vendor data parser
+#
+# Author: Lee Trager <lee.trager@canonical.com>
+#
+# Copyright (C) 2019-2021 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import sys
+from subprocess import CalledProcessError, check_call
+
+import yaml
+
+
+def process_ntp(config):
+    servers = config.get("servers", []) + config.get("pools", [])
+    if not servers:
+        return
+    try:
+        # VMware ESXi 7+ uses the esxcli command to configure NTP.
+        cmd = ["esxcli", "system", "ntp", "set", "--enabled", "true"]
+        for server in servers:
+            cmd.append("--server")
+            cmd.append(server)
+        check_call(cmd)
+    except CalledProcessError:
+        # VMware ESXi 6.7 requires NTP to be configured manually.
+        with open("/etc/ntp.conf", "a") as f:
+            f.write("\n# Configured by MAAS\n")
+            for server in servers:
+                f.write("server %s\n" % server)
+
+        # Allow NTP through VMware ESXi firewall
+        check_call(
+            [
+                "esxcli",
+                "network",
+                "firewall",
+                "ruleset",
+                "set",
+                "-r",
+                "ntpClient",
+                "-e",
+                "true",
+            ]
+        )
+        check_call(["/etc/init.d/ntpd", "restart"])
+
+
+def process_write_files(config):
+    for write_file in config:
+        print("INFO: Writing file %s" % write_file["path"])
+        if os.path.exists(write_file["path"]):
+            print(
+                "ERROR: File already exists, skipping writing!",
+                file=sys.stderr,
+            )
+            continue
+        dirname = os.path.dirname(write_file["path"])
+        if os.path.exists(dirname) and not os.path.isdir(dirname):
+            print(
+                "ERROR: %s is a file not a directory!" % dirname,
+                file=sys.stderr,
+            )
+            continue
+        else:
+            os.makedirs(dirname, exist_ok=True)
+        with open(write_file["path"], "w") as f:
+            f.write(write_file["content"])
+
+
+def main():
+    data = sys.stdin.read()
+    cloud_config = yaml.safe_load(data)
+    if "cloud-init" not in cloud_config:
+        print("No cloud-init data found!")
+        return
+    cloud_init = yaml.safe_load(cloud_config["cloud-init"])
+    if "ntp" in cloud_init:
+        process_ntp(cloud_init["ntp"])
+    else:
+        print("WARN: No NTP data found!", file=sys.stderr)
+    if "write_files" in cloud_init:
+        process_write_files(cloud_init["write_files"])
+
+
+if __name__ == "__main__":
+    main()
