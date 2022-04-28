@@ -21,7 +21,7 @@
             "headless": true,
             "http_directory": "{{user `http_directory`}}",
             "iso_checksum": "file:http://releases.ubuntu.com/20.04/SHA256SUMS",
-            "iso_url": "https://releases.ubuntu.com/focal/ubuntu-20.04.3-live-server-amd64.iso",
+            "iso_url": "https://releases.ubuntu.com/focal/ubuntu-20.04.4-live-server-amd64.iso",
             "iso_target_path": "packer_cache/ubuntu.iso",
             "memory": 1024,
             "type": "qemu",
