@@ -8,6 +8,7 @@ The Packer template in this directory creates a Ubuntu AMD64 image for use with 
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
+* qemu-system
 * ovmf
 * cloud-image-utils
 * [Packer](https://www.packer.io/intro/getting-started/install.html)
@@ -51,7 +52,7 @@ $ sudo PACKER_LOG=1 packer build ubuntu-flat.json
 
 Note: ubuntu-lvm.json and ubuntu-flat.json are configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or change the value of headless to false in the JSON file.
 
-Installation is non-interactive.
+Installation is non-interactive.  Note that the installation will attempt an SSH connection to the QEMU VM where the newly-built image is being booted.  This is the final provisioning step in the process.  Packer uses SSH to discover that the image has, in fact, booted, so there may be a number of failed tries -- over 3-5 minutes -- until the connection is successful.  This is normal behaviour for packer.
 
 ## Uploading images to MAAS
 
