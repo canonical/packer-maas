@@ -23,4 +23,9 @@ custom-ubuntu-lvm.dd.gz: clean seeds-lvm.iso OVMF_VARS.fd
 clean:
 	sudo ${RM} -rf output-qemu custom-ubuntu*.gz
 
+CUSTOM_PKGS:=${wildcard packages/*.deb}
+
+packages/custom-packages.tar.gz: ${CUSTOM_PKGS}
+	tar czf $@ -C packages ${notdir $^}
+
 .INTERMEDIATE: OVMF_VARS.fd

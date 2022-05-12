@@ -1,10 +1,10 @@
-#!/bin/bash -e
+#!/bin/sh
 #
-# install-custom-packages - Install custom packages
+# get-kernel - Downloads Ubuntu kernel packages
 #
 # Author: Alexsander de Souza <alexsander.souza@canonical.com>
 #
-# Copyright (C) 2021 Canonical
+# Copyright (C) 2022 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -18,29 +18,10 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+export LANG=C
 
-export DEBIAN_FRONTEND=noninteractive
+KERNEL=${KERNEL:-linux-image-generic}
 
-PKG_TGZ="/curtin/custom-packages.tar.gz"
+PKGS=$(apt-cache depends "${KERNEL}" | grep "  Depends:" | sed 's/  Depends: //')
 
-if [ ! -f "${PKG_TGZ}" ]; then
-    exit 0
-fi
-
-WORKDIR=$(mktemp -d)
-
-cleanup() {
-    rm -rf "${WORKDIR}"
-}
-trap cleanup EXIT
-
-echo "remove existing kernels"
-dpkg -l 'linux-image-*' 'linux-headers-*' | awk '/^ii/{print $2}' | xargs apt-get -y purge
-
-echo "install new kernel"
-tar xzf "${PKG_TGZ}" -C "${WORKDIR}"
-apt install -y --no-install-recommends "${WORKDIR}"/*.deb
-apt install --fix-broken
-
-echo "purge unused packages"
-apt autoremove -y
+apt-get download "${KERNEL}" ${PKGS}
