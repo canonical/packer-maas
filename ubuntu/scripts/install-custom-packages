@@ -18,7 +18,6 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 export DEBIAN_FRONTEND=noninteractive
 
 PKG_TGZ="/curtin/custom-packages.tar.gz"
@@ -38,9 +37,10 @@ echo "remove existing kernels"
 dpkg -l 'linux-image-*' 'linux-headers-*' | awk '/^ii/{print $2}' | xargs apt-get -y purge
 
 echo "install new kernel"
-tar xzf "${PKG_TGZ}" -C "${WORKDIR}"
-apt install -y --no-install-recommends "${WORKDIR}"/*.deb
-apt install --fix-broken
+tar xzvf "${PKG_TGZ}" -C "${WORKDIR}"
+DEBS=$(find "${WORKDIR}" -name '*.deb')
+apt-get install -y --no-install-recommends ${DEBS}
+apt-get install --fix-broken
 
 echo "purge unused packages"
-apt autoremove -y
+apt-get autoremove -y

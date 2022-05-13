@@ -12,4 +12,5 @@ packer_cache
 ubuntu/OVMF_VARS.fd
 ubuntu/*.iso
 ubuntu/packages/*.deb
+ubuntu/packages/*.bin
 ubuntu/packages/*.tar.gz
