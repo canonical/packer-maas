@@ -21,7 +21,11 @@
 export LANG=C
 
 KERNEL=${KERNEL:-linux-image-generic}
+ARCH=amd64
 
-PKGS=$(apt-cache depends "${KERNEL}" | grep "  Depends:" | sed 's/  Depends: //')
+PACKAGES=$(apt-cache depends --recurse --no-recommends --no-suggests \
+  --no-conflicts --no-breaks --no-replaces --no-enhances --no-pre-depends \
+  --option APT::Architectures="${ARCH}" \
+  ${KERNEL} | grep "^\w" | grep -v -f pkg_filter.list )
 
-apt-get download "${KERNEL}" ${PKGS}
+apt-get download -o Dir::Cache="./" -o Dir::Cache::archives="./" ${PACKAGES}
