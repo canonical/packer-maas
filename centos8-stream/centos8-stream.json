@@ -1,0 +1,41 @@
+{
+    "variables":
+        {
+            "centos8_stream_iso_url": "https://mirrors.edge.kernel.org/centos/8-stream/isos/x86_64/CentOS-Stream-8-x86_64-latest-boot.iso",
+            "centos8_stream_sha256sum_url": "https://mirrors.edge.kernel.org/centos/8-stream/isos/x86_64/CHECKSUM"
+        },
+    "builders": [
+        {
+            "type": "qemu",
+            "communicator": "none",
+            "iso_url": "{{user `centos8_stream_iso_url`}}",
+            "iso_checksum": "file:{{user `centos8_stream_sha256sum_url`}}",
+            "boot_command": [
+                "<up><tab> ",
+                "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos8-stream.ks ",
+                "console=ttyS0 inst.cmdline",
+                "<enter>"
+            ],
+            "boot_wait": "3s",
+            "disk_size": "4G",
+            "headless": true,
+            "memory": 2048,
+            "http_directory": "http",
+            "qemuargs": [
+                [ "-serial", "stdio" ]
+            ],
+            "shutdown_timeout": "1h"
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "shell-local",
+            "inline_shebang": "/bin/bash -e",
+            "inline": [
+                "source ../scripts/setup-nbd",
+                "OUTPUT=${OUTPUT:-centos8-stream.tar.gz}",
+                "source ../scripts/tar-root"
+            ]
+        }
+    ]
+}
