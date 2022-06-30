@@ -6,14 +6,14 @@ with MAAS.
 
 ## Prerequisites (to create the image)
 
-* A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
+* A machine running Ubuntu 22.04 with the ability to run KVM virtual machines.
 * qemu-utils
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
 ## Requirements (to deploy the image)
 
-* [MAAS](https://maas.io) 2.3+, [MAAS](https://maas.io) 2.7+ recommended
-* [Curtin](https://launchpad.net/curtin) 19.3-792+
+* [MAAS](https://maas.io) 3.0, [MAAS](https://maas.io) 3.2 recommended
+* [Curtin](https://launchpad.net/curtin) 21+
 
 ## Default user
 The default username is cloud-user
