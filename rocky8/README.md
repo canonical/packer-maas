@@ -12,7 +12,7 @@ The Packer template in this directory creates a Rocky 8 AMD64 image for use with
 ## Requirements to deploy the image
 
 * [MAAS](https://maas.io) 3.2+
-* [Curtin](https://launchpad.net/curtin) with [this bug](https://bugs.launchpad.net/curtin/+bug/1955671) resolved. In the meantime, you can manually change distro.py to deploy Rocky.
+* [Curtin](https://launchpad.net/curtin) 22.1. If you have a MAAS with an earlier Curtin version, you can [patch](https://code.launchpad.net/~xnox/curtin/+git/curtin/+merge/415604) distro.py to deploy Rocky.
 
 ## Customizing the image
 You can customize the deployment image by modifying http/rocky.ks. See the [RHEL kickstart documentation](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/performing_an_advanced_rhel_installation/kickstart-commands-and-options-reference_installing-rhel-as-an-experienced-user#part-or-partition_kickstart-commands-for-handling-storage) for more information.
