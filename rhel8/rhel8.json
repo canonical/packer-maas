@@ -20,7 +20,8 @@
             "memory": 2048,
             "http_directory": "http",
             "qemuargs": [
-                [ "-serial", "stdio" ]
+                [ "-serial", "stdio" ],
+                [ "-cpu", "host"]
             ],
             "shutdown_timeout": "1h"
         }
