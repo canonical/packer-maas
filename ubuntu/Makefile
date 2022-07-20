@@ -4,6 +4,16 @@ PACKER ?= packer
 
 all: custom-ubuntu-lvm.dd.gz
 
+lint:
+	packer validate -var customize_script=scripts/cloudimg/setup-boot.sh ubuntu-cloudimg.pkr.hcl
+	packer fmt -check -diff .
+
+format:
+	packer fmt .
+
+seeds-cloudimg.iso: user-data-cloudimg meta-data
+	cloud-localds $@ $^
+
 seeds-lvm.iso: user-data-lvm meta-data
 	cloud-localds $@ $^
 
