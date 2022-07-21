@@ -18,7 +18,7 @@
             ],
             "boot_wait": "3s",
             "disk_size": "4G",
-            "headless": false,
+            "headless": true,
             "memory": 2048,
             "http_directory": "http",
             "qemuargs": [
