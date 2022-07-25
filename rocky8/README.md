@@ -11,7 +11,7 @@ The Packer template in this directory creates a Rocky 8 AMD64 image for use with
 
 ## Requirements to deploy the image
 
-* [MAAS](https://maas.io) 3.2+
+* [MAAS](https://maas.io) 3.3 or later, as that version introduces support for Rocky
 * [Curtin](https://launchpad.net/curtin) 22.1. If you have a MAAS with an earlier Curtin version, you can [patch](https://code.launchpad.net/~xnox/curtin/+git/curtin/+merge/415604) distro.py to deploy Rocky.
 
 ## Customizing the image
