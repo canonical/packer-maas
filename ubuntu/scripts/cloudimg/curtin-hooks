@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+# curtin-hooks - Curtin installation hooks for Ubuntu
+#
+# Copyright (C) 2022 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import shutil
+
+from curtin.commands.curthooks import builtin_curthooks
+from curtin.config import load_command_config
+from curtin.util import load_command_environment
+
+
+def configure_custom_kernel(config):
+    """Amend the curtin config to explicity specify the kernel to install.
+
+    The name of the kernel to install should already have been written to the
+    CUSTOM_KERNEL file in the same directory as this file.
+    """
+    custom_kernel_path = os.path.join(
+        os.path.dirname(__file__), "CUSTOM_KERNEL")
+    with open(custom_kernel_path, "r") as custom_kernel_file:
+        custom_kernel_package = custom_kernel_file.read().strip()
+    kernel_config = config.setdefault("kernel", {})
+    kernel_config["package"] = custom_kernel_package
+    return config
+
+
+def cleanup():
+    """Remove curtin-hooks so its as if we were never here."""
+    curtin_dir = os.path.dirname(__file__)
+    shutil.rmtree(curtin_dir)
+
+
+def main():
+    state = load_command_environment()
+    config = load_command_config(None, state)
+    target = state['target']
+
+    config = configure_custom_kernel(config)
+    builtin_curthooks(config, target, state)
+    cleanup()
+
+
+if __name__ == "__main__":
+    main()
