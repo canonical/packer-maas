@@ -43,6 +43,7 @@ be in packer-maas/centos8-stream, where this file is located. Once in
 packer-maas/centos8-stream you can generate an image with:
 
 ```
+$ sudo packer init
 $ sudo PACKER_LOG=1 packer build centos8-stream.pkr.hcl
 ```
 

@@ -32,6 +32,7 @@ $ make
 You can also manually run packer. Set your current working directory to packer-maas/rocky8, where this file resides, and generate an image with:
 
 ```
+$ sudo packer init
 $ sudo PACKER_LOG=1 packer build rocky8.pkr.hcl
 ```
 The installation runs in a non-interactive mode.

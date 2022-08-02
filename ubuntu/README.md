@@ -43,6 +43,7 @@ The build the image you give the template a script which has all the
 customizations:
 
 ```shell
+$ sudo packer init
 $ sudo packer -var customize_script=my-changes.sh -var ubuntu_series=jammy \
     ubuntu-cloudimg.pkr.hcl
 ```
@@ -73,6 +74,7 @@ include it in the image.
 The easiest way of doing this is to use the `kernel` parameter:
 
 ```shell
+$ sudo packer init
 $ sudo packer build -var kernel=linux-lowlatency -var customize_script=my-changes.sh \
     ubuntu-cloudimg.pkr.hcl
 ```
@@ -89,6 +91,7 @@ By default, images are produces for amd64. You can build for arm64 as well if
 you specify the `architecture` parameter:
 
 ```shell
+$ sudo packer init
 $ sudo packer build -var architecture=arm64 -var customize_script=my-changes.sh \
     ubuntu-cloudimg.pkr.hcl
 ```
@@ -125,8 +128,10 @@ be in packer-maas/ubuntu, where this file is located. Once in
 packer-maas/ubuntu you can generate an image with:
 
 ```shell
+$ sudo packer init
 $ sudo PACKER_LOG=1 packer build ubuntu-lvm.pkr.hcl
 # or
+$ sudo packer init
 $ sudo PACKER_LOG=1 packer build ubuntu-flat.pkr.hcl
 ```
 

@@ -37,6 +37,7 @@ be in packer-maas/rhel8, where this file is located. Once in packer-maas/rhel8
 you can generate an image with:
 
 ```
+$ sudo packer init
 $ sudo PACKER_LOG=1 packer build -var 'rhel8_iso_path=/PATH/TO/rhel-8.3-x86_64-dvd.iso' rhel8.pkr.hcl
 ```
 
