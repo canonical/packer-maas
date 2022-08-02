@@ -10,12 +10,12 @@ packer {
 
 variable "rocky_iso_url" {
   type    = string
-  default = "https://download.rockylinux.org/pub/rocky/8.6/isos/x86_64/Rocky-8.6-x86_64-boot.iso"
+  default = "http://download.rockylinux.org/pub/rocky/8/isos/x86_64/Rocky-8.6-x86_64-boot.iso"
 }
 
 variable "rocky_sha256sum_url" {
   type    = string
-  default = "https://download.rockylinux.org/pub/rocky/8.6/isos/x86_64/CHECKSUM"
+  default = "http://download.rockylinux.org/pub/rocky/8/isos/x86_64/CHECKSUM"
 }
 
 source "qemu" "rocky8" {

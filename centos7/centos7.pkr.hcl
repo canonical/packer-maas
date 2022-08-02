@@ -10,12 +10,12 @@ packer {
 
 variable "centos7_iso_url" {
   type    = string
-  default = "https://mirrors.edge.kernel.org/centos/7.9.2009/isos/x86_64/CentOS-7-x86_64-NetInstall-2009.iso"
+  default = "https://mirrors.edge.kernel.org/centos/7/isos/x86_64/CentOS-7-x86_64-NetInstall-2009.iso"
 }
 
 variable "centos7_sha256sum_url" {
   type    = string
-  default = "https://mirrors.edge.kernel.org/centos/7.9.2009/isos/x86_64/sha256sum.txt"
+  default = "https://mirrors.edge.kernel.org/centos/7/isos/x86_64/sha256sum.txt"
 }
 
 source "qemu" "centos7" {
