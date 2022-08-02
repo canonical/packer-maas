@@ -7,7 +7,7 @@ The Packer template in this directory creates a Rocky 8 AMD64 image for use with
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
-* [Packer.](https://www.packer.io/intro/getting-started/install.html)
+* [Packer.](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
 
 ## Requirements to deploy the image
 
@@ -32,11 +32,11 @@ $ make
 You can also manually run packer. Set your current working directory to packer-maas/rocky8, where this file resides, and generate an image with:
 
 ```
-$ sudo PACKER_LOG=1 packer build rocky8.json
+$ sudo PACKER_LOG=1 packer build rocky8.pkr.hcl
 ```
 The installation runs in a non-interactive mode.
 
-Note: rocky8.json runs Packer in headless mode, with the serial port output from qemu redirected to stdio to give feedback on image creation process. If you wish to see more, change the value of `headless` to `false` in rocky8.json, remove `[ "-serial", "stdio" ]` from `qemuargs` section and select `View`, then `serial0` in the qemu window that appears during build. This lets you watch progress of the image build script. Press `ctrl-b 2` to switch to shell to explore more, and `ctrl-b 1` to go back to log view.
+Note: rocky8.pkr.hcl runs Packer in headless mode, with the serial port output from qemu redirected to stdio to give feedback on image creation process. If you wish to see more, change the value of `headless` to `false` in rocky8.pkr.hcl, remove `[ "-serial", "stdio" ]` from `qemuargs` section and select `View`, then `serial0` in the qemu window that appears during build. This lets you watch progress of the image build script. Press `ctrl-b 2` to switch to shell to explore more, and `ctrl-b 1` to go back to log view.
 
 ## Uploading an image to MAAS
 ```

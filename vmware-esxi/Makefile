@@ -7,7 +7,7 @@ VENV := .ve
 all: vmware-esxi.dd.gz
 
 vmware-esxi.dd.gz: clean
-	sudo PACKER_LOG=1 ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.json
+	sudo PACKER_LOG=1 ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.pkr.hcl
 	reset
 
 $(VENV): requirements-dev.txt requirements.txt

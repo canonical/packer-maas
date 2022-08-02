@@ -11,7 +11,7 @@ The Packer templates in this directory creates Ubuntu images for use with MAAS.
 * qemu-system
 * ovmf
 * cloud-image-utils
-* [Packer](https://www.packer.io/intro/getting-started/install.html)
+* [Packer](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
 
 ## Requirements (to deploy the image)
 
@@ -93,7 +93,7 @@ $ sudo packer build -var architecture=arm64 -var customize_script=my-changes.sh 
     ubuntu-cloudimg.pkr.hcl
 ```
 
-## ubuntu-flat.json and ubuntu-lvm.json
+## ubuntu-flat.pkr.hcl and ubuntu-lvm.pkr.hcl
 
 These templates use an Ubuntu server image to install the image to the VM. It
 takes longer than using a cloud image, but can be useful for certain use cases.
@@ -125,12 +125,12 @@ be in packer-maas/ubuntu, where this file is located. Once in
 packer-maas/ubuntu you can generate an image with:
 
 ```shell
-$ sudo PACKER_LOG=1 packer build ubuntu-lvm.json
+$ sudo PACKER_LOG=1 packer build ubuntu-lvm.pkr.hcl
 # or
-$ sudo PACKER_LOG=1 packer build ubuntu-flat.json
+$ sudo PACKER_LOG=1 packer build ubuntu-flat.pkr.hcl
 ```
 
-Note: ubuntu-lvm.json and ubuntu-flat.json are configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or change the value of headless to false in the JSON file.
+Note: ubuntu-lvm.pkr.hcl and ubuntu-flat.pkr.hcl are configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or change the value of headless to false in the HCL2 file.
 
 Installation is non-interactive.  Note that the installation will attempt an SSH connection to the QEMU VM where the newly-built image is being booted.  This is the final provisioning step in the process.  Packer uses SSH to discover that the image has, in fact, booted, so there may be a number of failed tries -- over 3-5 minutes -- until the connection is successful.  This is normal behaviour for packer.
 

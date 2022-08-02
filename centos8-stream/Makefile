@@ -5,7 +5,7 @@ PACKER ?= packer
 all: centos8-stream.tar.gz
 
 centos8-stream.tar.gz: clean
-	sudo PACKER_LOG=1 ${PACKER} build centos8-stream.json
+	sudo PACKER_LOG=1 ${PACKER} build centos8-stream.pkr.hcl
 	reset
 
 clean:
