@@ -1,15 +1,16 @@
-
-variable "centos8_iso_url" {
-  type    = string
-  default = "https://mirrors.edge.kernel.org/centos/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_64-boot.iso"
-}
 packer {
   required_version = ">= 1.7.0"
   required_plugins {
     qemu = {
       version = "~> 1.0"
+      source  = "github.com/hashicorp/qemu"
     }
   }
+}
+
+variable "centos8_iso_url" {
+  type    = string
+  default = "https://mirrors.edge.kernel.org/centos/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_64-boot.iso"
 }
 
 variable "centos8_sha256sum_url" {

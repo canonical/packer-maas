@@ -6,7 +6,7 @@ ISO ?= ${RHEL8_ISO_PATH}
 all: rhel8.tar.gz
 
 rhel8.tar.gz: clean
-	sudo ${PACKER} init && sudo PACKER_LOG=1 ${PACKER} build -var "rhel8_iso_path=${ISO}" rhel8.pkr.hcl
+	sudo ${PACKER} init rhel8.pkr.hcl && sudo PACKER_LOG=1 ${PACKER} build -var "rhel8_iso_path=${ISO}" rhel8.pkr.hcl
 	reset
 
 clean:
