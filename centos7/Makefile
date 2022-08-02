@@ -5,7 +5,7 @@ PACKER ?= packer
 all: centos7.tar.gz
 
 centos7.tar.gz: clean
-	sudo PACKER_LOG=1 ${PACKER} build centos7.pkr.hcl
+	sudo ${PACKER} init && sudo PACKER_LOG=1 ${PACKER} build centos7.pkr.hcl
 	reset
 
 clean:

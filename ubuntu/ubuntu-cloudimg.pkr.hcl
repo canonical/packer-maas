@@ -1,3 +1,12 @@
+packer {
+  required_version = ">= 1.7.0"
+  required_plugins {
+    qemu = {
+      version = "~> 1.0"
+    }
+  }
+}
+
 variable "ubuntu_series" {
   type        = string
   default     = "focal"

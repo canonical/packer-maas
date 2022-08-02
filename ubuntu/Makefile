@@ -25,10 +25,10 @@ OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS.fd
 
 custom-ubuntu.tar.gz: clean seeds-flat.iso OVMF_VARS.fd \
 			packages/custom-packages.tar.gz
-	sudo PACKER_LOG=1 ${PACKER} build ubuntu-flat.pkr.hcl && reset
+	sudo ${PACKER} init && sudo PACKER_LOG=1 ${PACKER} build ubuntu-flat.pkr.hcl && reset
 
 custom-ubuntu-lvm.dd.gz: clean seeds-lvm.iso OVMF_VARS.fd
-	sudo PACKER_LOG=1 ${PACKER} build ubuntu-lvm.pkr.hcl && reset
+	sudo ${PACKER} init && sudo PACKER_LOG=1 ${PACKER} build ubuntu-lvm.pkr.hcl && reset
 
 clean:
 	sudo ${RM} -rf output-qemu custom-ubuntu*.gz

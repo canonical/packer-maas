@@ -5,7 +5,7 @@ PACKER ?= packer
 all: centos6.tar.gz
 
 centos6.tar.gz: clean
-	sudo PACKER_LOG=1 ${PACKER} build centos6.pkr.hcl
+	sudo ${PACKER} init && sudo PACKER_LOG=1 ${PACKER} build centos6.pkr.hcl
 	reset
 
 clean:

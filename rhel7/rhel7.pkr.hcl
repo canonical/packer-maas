@@ -1,3 +1,11 @@
+packer {
+  required_version = ">= 1.7.0"
+  required_plugins {
+    qemu = {
+      version = "~> 1.0"
+    }
+  }
+}
 
 variable "rhel7_iso_path" {
   type    = string
