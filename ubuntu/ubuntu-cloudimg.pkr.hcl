@@ -28,6 +28,7 @@ variable "kernel" {
 
 variable "customize_script" {
   type        = string
+  default     = "/dev/null"
   description = "The filename of the script that will run in the VM to customize the image."
 }
 
