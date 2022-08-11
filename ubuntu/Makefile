@@ -11,9 +11,6 @@ lint:
 format:
 	packer fmt .
 
-seeds-cloudimg.iso: user-data-cloudimg meta-data
-	cloud-localds $@ $^
-
 seeds-lvm.iso: user-data-lvm meta-data
 	cloud-localds $@ $^
 
