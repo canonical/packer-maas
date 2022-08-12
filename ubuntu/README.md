@@ -24,19 +24,6 @@ This template builds a tgz image from the official Ubuntu cloud images. This
 results in an image that is very close to the ones that are on
 https://images.maas.io/.
 
-### Prerequisites
-
-Before the template can be used, `seeds-cloudimg.iso` needs to be created:
-
-```shell
-$ make seeds-cloudimg.iso
-```
-
-This combines user-data-cloudimg and meta-data into a seeds image that sets up
-the VM for image building. Most importantly it sets up ssh access for the root user. A the end of the image build process, this is change is reverted.
-
-You shouldn't modify any of those files.
-
 ### Building the image
 
 The build the image you give the template a script which has all the

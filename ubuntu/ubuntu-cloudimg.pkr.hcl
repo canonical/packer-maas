@@ -28,6 +28,7 @@ variable "kernel" {
 
 variable "customize_script" {
   type        = string
+  default     = "/dev/null"
   description = "The filename of the script that will run in the VM to customize the image."
 }
 
@@ -104,6 +105,9 @@ locals {
   ]
 }
 
+source "null" "dependencies" {
+  communicator = "none"
+}
 
 source "qemu" "cloudimg" {
   boot_wait      = "2s"
@@ -125,8 +129,8 @@ source "qemu" "cloudimg" {
     ["-cpu", "${lookup(local.qemu_cpu, var.architecture, "")}"],
     ["-device", "virtio-gpu-pci"],
     ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=/usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_CODE.fd"],
-    ["-drive", "if=pflash,format=raw,id=ovmf_vars,readonly=on,file=/usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd"],
-    ["-drive", "file=output-qemu/packer-qemu,format=qcow2"],
+    ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd"],
+    ["-drive", "file=output-cloudimg/packer-cloudimg,format=qcow2"],
     ["-drive", "file=seeds-cloudimg.iso,format=raw"]
   ]
   shutdown_command       = "sudo -S shutdown -P now"
@@ -136,6 +140,18 @@ source "qemu" "cloudimg" {
   ssh_username           = var.ssh_username
   ssh_wait_timeout       = "45m"
   use_backing_file       = true
+}
+
+build {
+  sources = ["source.null.dependencies"]
+
+  provisioner "shell-local" {
+    inline = [
+      "cp /usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd ${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd",
+      "cloud-localds seeds-cloudimg.iso user-data-cloudimg meta-data"
+    ]
+    inline_shebang = "/bin/bash -e"
+  }
 }
 
 build {
