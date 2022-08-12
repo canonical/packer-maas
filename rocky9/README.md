@@ -5,13 +5,13 @@ The Packer template in this directory creates a Rocky 9 AMD64 image for use with
 
 ## Prerequisites to create the image
 
-* A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines and with a CPU that supports x86-64-v2 extensions
+* A machine running Ubuntu 22.04+ with the ability to run KVM virtual machines and with a CPU that supports x86-64-v2 extensions
 * qemu-utils
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
 ## Requirements to deploy the image
 
-* [MAAS](https://maas.io) 3.3 or later, as Rocky support is introduced in that version
+* [MAAS](https://maas.io) 3.2.1 or later, as Rocky support is introduced in that version
 * [Curtin](https://launchpad.net/curtin) 22.1. If you have an earlier MAAS version, you can [patch](https://code.launchpad.net/~xnox/curtin/+git/curtin/+merge/415604) distro.py to deploy Rocky.
 
 ## Customizing the image
@@ -32,11 +32,11 @@ $ make
 You can also manually run packer. Set your current working directory to packer-maas/rocky9, where this file resides, and generate an image with:
 
 ```
-$ sudo PACKER_LOG=1 packer build rocky9.json
+$ sudo PACKER_LOG=1 packer build rocky9.pkr.hcl
 ```
 The installation runs in a non-interactive mode.
 
-Note: rocky9.json runs Packer in headless mode, with the serial port output from qemu redirected to stdio to give feedback on image creation process. If you wish to see more, change the value of `headless` to `false` in rocky9.json, remove `[ "-serial", "stdio" ]` from `qemuargs` section and select `View`, then `serial0` in the qemu window that appears during build. This lets you watch progress of the image build script. Press `ctrl-b 2` to switch to shell to explore more, and `ctrl-b 1` to go back to log view.
+Note: rocky9.pkr.hcl runs Packer in headless mode, with the serial port output from qemu redirected to stdio to give feedback on image creation process. If you wish to see more, change the value of `headless` to `false` in rocky9.pkr.hcl, remove `[ "-serial", "stdio" ]` from `qemuargs` section and select `View`, then `serial0` in the qemu window that appears during build. This lets you watch progress of the image build script. Press `ctrl-b 2` to switch to shell to explore more, and `ctrl-b 1` to go back to log view.
 
 ## Uploading an image to MAAS
 ```

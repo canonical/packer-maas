@@ -1,6 +1,6 @@
 __pycache__
 *.orig
-output-qemu
+output-*
 packer_cache
 .ve
 *~
