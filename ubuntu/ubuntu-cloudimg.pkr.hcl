@@ -126,7 +126,7 @@ source "qemu" "cloudimg" {
     ["-device", "virtio-gpu-pci"],
     ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=/usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_CODE.fd"],
     ["-drive", "if=pflash,format=raw,id=ovmf_vars,readonly=on,file=/usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd"],
-    ["-drive", "file=output-qemu/packer-qemu,format=qcow2"],
+    ["-drive", "file=output-cloudimg/packer-cloudimg,format=qcow2"],
     ["-drive", "file=seeds-cloudimg.iso,format=raw"]
   ]
   shutdown_command       = "sudo -S shutdown -P now"
