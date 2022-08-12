@@ -7,7 +7,7 @@ The Packer template in this directory creates a CentOS 7 AMD64 image for use wit
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils
-* [Packer.](https://www.packer.io/intro/getting-started/install.html)
+* [Packer.](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
 
 ## Requirements (to deploy the image)
 
@@ -40,13 +40,14 @@ be in packer-maas/centos7, where this file is located. Once in
 packer-maas/centos7 you can generate an image with:
 
 ```
-$ sudo PACKER_LOG=1 packer build centos7.json
+$ sudo packer init
+$ sudo PACKER_LOG=1 packer build centos7.pkr.hcl
 ```
 
-Note: centos7.json is configured to run Packer in headless mode. Only Packer
+Note: centos7.pkr.hcl is configured to run Packer in headless mode. Only Packer
 output will be seen. If you wish to see the installation output connect to the
 VNC port given in the Packer output or change the value of headless to false in
-centos7.json.
+centos7.pkr.hcl.
 
 Installation is non-interactive.
 

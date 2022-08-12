@@ -1,3 +1,13 @@
+packer {
+  required_version = ">= 1.7.0"
+  required_plugins {
+    qemu = {
+      version = "~> 1.0"
+      source  = "github.com/hashicorp/qemu"
+    }
+  }
+}
+
 variable "ubuntu_series" {
   type        = string
   default     = "focal"
@@ -95,14 +105,14 @@ locals {
 }
 
 
-source "qemu" "qemu" {
+source "qemu" "cloudimg" {
   boot_wait      = "2s"
   cpus           = 2
   disk_image     = true
   disk_size      = "4G"
   format         = "qcow2"
   headless       = var.headless
-  http_directory = "${var.http_directory}"
+  http_directory = var.http_directory
   iso_checksum   = "file:https://cloud-images.ubuntu.com/${var.ubuntu_series}/current/SHA256SUMS"
   iso_url        = "https://cloud-images.ubuntu.com/${var.ubuntu_series}/current/${var.ubuntu_series}-server-cloudimg-${var.architecture}.img"
   memory         = 2048
@@ -121,15 +131,15 @@ source "qemu" "qemu" {
   ]
   shutdown_command       = "sudo -S shutdown -P now"
   ssh_handshake_attempts = 500
-  ssh_password           = "${var.ssh_password}"
+  ssh_password           = var.ssh_password
   ssh_timeout            = "45m"
-  ssh_username           = "${var.ssh_username}"
+  ssh_username           = var.ssh_username
   ssh_wait_timeout       = "45m"
   use_backing_file       = true
 }
 
 build {
-  sources = ["source.qemu.qemu"]
+  sources = ["source.qemu.cloudimg"]
 
   provisioner "shell" {
     environment_vars = concat(local.proxy_env, ["DEBIAN_FRONTEND=noninteractive"])
@@ -140,7 +150,7 @@ build {
   provisioner "shell" {
     environment_vars  = concat(local.proxy_env, ["DEBIAN_FRONTEND=noninteractive"])
     expect_disconnect = true
-    scripts           = ["${var.customize_script}"]
+    scripts           = [var.customize_script]
   }
 
   provisioner "shell" {
