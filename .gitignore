@@ -9,9 +9,8 @@ packer_cache
 *.*.swp
 *.gz
 *.xz
-ubuntu/AAVMF_VARS.fd
-ubuntu/OVMF_VARS.fd
-ubuntu/*.iso
+*.iso
+ubuntu/*_VARS.fd
 ubuntu/packages/*.deb
 ubuntu/packages/*.bin
 ubuntu/packages/*.tar.gz

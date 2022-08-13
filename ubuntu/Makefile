@@ -2,10 +2,10 @@ PACKER ?= packer
 
 .PHONY: all clean
 
-all: custom-ubuntu-lvm.dd.gz
+all: custom-cloudimg.tar.gz
 
 lint:
-	packer validate -var customize_script=scripts/cloudimg/setup-boot.sh ubuntu-cloudimg.pkr.hcl
+	packer validate .
 	packer fmt -check -diff .
 
 format:
@@ -20,15 +20,18 @@ seeds-flat.iso: user-data-flat meta-data
 OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS.fd
 	cp -v $< $@
 
+custom-cloudimg.tar.gz: clean
+	sudo ${PACKER} init . && sudo PACKER_LOG=1 ${PACKER} build -only='cloudimg.*' .
+
 custom-ubuntu.tar.gz: clean seeds-flat.iso OVMF_VARS.fd \
 			packages/custom-packages.tar.gz
-	sudo ${PACKER} init ubuntu-flat.pkr.hcl && sudo PACKER_LOG=1 ${PACKER} build ubuntu-flat.pkr.hcl && reset
+	sudo ${PACKER} init . && sudo PACKER_LOG=1 ${PACKER} build -only=qemu.flat .
 
 custom-ubuntu-lvm.dd.gz: clean seeds-lvm.iso OVMF_VARS.fd
-	sudo ${PACKER} init ubuntu-lvm.pkr.hcl && sudo PACKER_LOG=1 ${PACKER} build ubuntu-lvm.pkr.hcl && reset
+	sudo ${PACKER} init . && sudo PACKER_LOG=1 ${PACKER} build -only=qemu.lvm .
 
 clean:
-	sudo ${RM} -rf output-qemu custom-ubuntu*.gz
+	sudo ${RM} -rf output-* custom-*.gz
 
 CUSTOM_PKGS:=${wildcard packages/*.deb}
 

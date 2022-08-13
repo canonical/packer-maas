@@ -22,7 +22,7 @@ The Packer templates in this directory creates Ubuntu images for use with MAAS.
 
 This template builds a tgz image from the official Ubuntu cloud images. This
 results in an image that is very close to the ones that are on
-https://images.maas.io/.
+<https://images.maas.io/>.
 
 ### Building the image
 
@@ -30,8 +30,8 @@ The build the image you give the template a script which has all the
 customizations:
 
 ```shell
-$ sudo packer init
-$ sudo packer -var customize_script=my-changes.sh -var ubuntu_series=jammy \
+sudo packer init
+sudo packer -var customize_script=my-changes.sh -var ubuntu_series=jammy \
     -only='cloudimg.*' .
 ```
 
@@ -46,13 +46,13 @@ If you want to put or use some files in the image, you can put those in the `htt
 Whatever file you put there, you can access from within your script like this:
 
 ```shell
-$ wget http://${PACKER_HTTP_IP}:${PACKER_HTTP_PORT}:/my-file
+wget http://${PACKER_HTTP_IP}:${PACKER_HTTP_PORT}:/my-file
 ```
 
 ### Installing a kernel
 
 Usually, images used by MAAS don't include a kernel. When a machine is deployed
-in MAAS, the approriate kernel is chosen for that machine and installed on top
+in MAAS, the appropriate kernel is chosen for that machine and installed on top
 of the chosen image.
 
 If you do want to force an image to always use a specific kernel, you can
@@ -61,8 +61,8 @@ include it in the image.
 The easiest way of doing this is to use the `kernel` parameter:
 
 ```shell
-$ sudo packer init
-$ sudo packer build -var kernel=linux-lowlatency -var customize_script=my-changes.sh \
+sudo packer init
+sudo packer build -var kernel=linux-lowlatency -var customize_script=my-changes.sh \
     -only='cloudimg.*' .
 ```
 
@@ -71,15 +71,14 @@ that case you also need to write the name of the kernel package to
 `/curtin/CUSTOM_KERNEL`. This is to ensure that MAAS won't install another
 kernel on deploy.
 
-
 ### Building different architectures
 
 By default, images are produces for amd64. You can build for arm64 as well if
 you specify the `architecture` parameter:
 
 ```shell
-$ sudo packer init
-$ sudo packer build -var architecture=arm64 -var customize_script=my-changes.sh \
+sudo packer init
+sudo packer build -var architecture=arm64 -var customize_script=my-changes.sh \
     -only='cloudimg.*' .
 ```
 
@@ -101,13 +100,13 @@ The Packer template downloads the Ubuntu net installer from the Internet. To tel
 You can easily build the image using the Makefile:
 
 ```shell
-$ make custom-ubuntu-lvm.dd.gz
+make custom-ubuntu-lvm.dd.gz
 ```
 
 to build a raw image with LVM, alternatively, you can build a TGZ image
 
 ```shell
-$ make custom-ubuntu.tar.gz
+make custom-ubuntu.tar.gz
 ```
 
 You can also manually run packer. Your current working directory must
@@ -115,19 +114,22 @@ be in packer-maas/ubuntu, where this file is located. Once in
 packer-maas/ubuntu you can generate an image with:
 
 ```shell
-$ sudo packer init
-$ sudo PACKER_LOG=1 packer build -only=qemu.lvm .
-# or
-$ sudo packer init
-$ sudo PACKER_LOG=1 packer build -only=qemu.flat .
+sudo packer init
+sudo PACKER_LOG=1 packer build -only=qemu.lvm .
+```
+
+or
+
+```shell
+sudo packer init
+sudo PACKER_LOG=1 packer build -only=qemu.flat .
 ```
 
 Note: ubuntu-lvm.pkr.hcl and ubuntu-flat.pkr.hcl are configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or change the value of headless to false in the HCL2 file.
 
-Installation is non-interactive.  Note that the installation will attempt an SSH connection to the QEMU VM where the newly-built image is being booted.  This is the final provisioning step in the process.  Packer uses SSH to discover that the image has, in fact, booted, so there may be a number of failed tries -- over 3-5 minutes -- until the connection is successful.  This is normal behaviour for packer.
+Installation is non-interactive.  Note that the installation will attempt an SSH connection to the QEMU VM where the newly-built image is being booted.  This is the final provisioning step in the process.  Packer uses SSH to discover that the image has, in fact, booted, so there may be a number of failed tries -- over 3-5 minutes -- until the connection is successful.  This is normal behavior for packer.
 
-
-###  Default Username
+### Default Username
 
 The default username is ```ubuntu```
 
@@ -136,7 +138,7 @@ The default username is ```ubuntu```
 TGZ image
 
 ```shell
-$ maas admin boot-resources create \
+maas admin boot-resources create \
     name='custom/ubuntu-tgz' \
     title='Ubuntu Custom TGZ' \
     architecture='amd64/generic' \
@@ -147,7 +149,7 @@ $ maas admin boot-resources create \
 LVM raw image
 
 ```shell
-$ maas admin boot-resources create \
+maas admin boot-resources create \
     name='custom/ubuntu-raw' \
     title='Ubuntu Custom RAW' \
     architecture='amd64/generic' \
