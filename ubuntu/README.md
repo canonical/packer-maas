@@ -32,7 +32,7 @@ customizations:
 ```shell
 $ sudo packer init
 $ sudo packer -var customize_script=my-changes.sh -var ubuntu_series=jammy \
-    ubuntu-cloudimg.pkr.hcl
+    -only='cloudimg.*' .
 ```
 
 `my-changes.sh` is a script you write which customizes the image from within
@@ -63,7 +63,7 @@ The easiest way of doing this is to use the `kernel` parameter:
 ```shell
 $ sudo packer init
 $ sudo packer build -var kernel=linux-lowlatency -var customize_script=my-changes.sh \
-    ubuntu-cloudimg.pkr.hcl
+    -only='cloudimg.*' .
 ```
 
 You can also install the kernel manually in your `my-changes.sh` script, but in
@@ -80,7 +80,7 @@ you specify the `architecture` parameter:
 ```shell
 $ sudo packer init
 $ sudo packer build -var architecture=arm64 -var customize_script=my-changes.sh \
-    ubuntu-cloudimg.pkr.hcl
+    -only='cloudimg.*' .
 ```
 
 ## ubuntu-flat.pkr.hcl and ubuntu-lvm.pkr.hcl
@@ -116,10 +116,10 @@ packer-maas/ubuntu you can generate an image with:
 
 ```shell
 $ sudo packer init
-$ sudo PACKER_LOG=1 packer build ubuntu-lvm.pkr.hcl
+$ sudo PACKER_LOG=1 packer build -only=qemu.lvm .
 # or
 $ sudo packer init
-$ sudo PACKER_LOG=1 packer build ubuntu-flat.pkr.hcl
+$ sudo PACKER_LOG=1 packer build -only=qemu.flat .
 ```
 
 Note: ubuntu-lvm.pkr.hcl and ubuntu-flat.pkr.hcl are configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or change the value of headless to false in the HCL2 file.
