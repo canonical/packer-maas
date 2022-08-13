@@ -36,7 +36,7 @@ build {
   sources = ["source.qemu.rocky8"]
 
   post-processor "shell-local" {
-    inline         = ["source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-rocky8.tar.gz}", "source ../scripts/tar-root"]
+    inline         = ["SOURCE=rocky8","source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-rocky8.tar.gz}", "source ../scripts/tar-root"]
     inline_shebang = "/bin/bash -e"
   }
 }

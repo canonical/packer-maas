@@ -31,7 +31,7 @@ build {
   sources = ["source.qemu.rhel7"]
 
   post-processor "shell-local" {
-    inline         = ["source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-rhel7.tar.gz}", "source ../scripts/tar-root"]
+    inline         = ["SOURCE=rhel7", "source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-rhel7.tar.gz}", "source ../scripts/tar-root"]
     inline_shebang = "/bin/bash -e"
   }
 }

@@ -36,7 +36,7 @@ build {
   sources = ["source.qemu.centos8-stream"]
 
   post-processor "shell-local" {
-    inline         = ["source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-centos8-stream.tar.gz}", "source ../scripts/tar-root"]
+    inline         = ["SOURCE=centos8-stream", "source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-centos8-stream.tar.gz}", "source ../scripts/tar-root"]
     inline_shebang = "/bin/bash -e"
   }
 }

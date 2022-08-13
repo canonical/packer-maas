@@ -36,7 +36,7 @@ build {
   sources = ["source.qemu.centos6"]
 
   post-processor "shell-local" {
-    inline         = ["source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-centos6.tar.gz}", "source ../scripts/tar-root"]
+    inline         = ["SOURCE=centos6", "source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-centos6.tar.gz}", "source ../scripts/tar-root"]
     inline_shebang = "/bin/bash -e"
   }
 }
