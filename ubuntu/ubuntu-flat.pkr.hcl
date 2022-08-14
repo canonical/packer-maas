@@ -1,3 +1,9 @@
+variable "flat_filename" {
+  type        = string
+  default     = "custom-ubuntu.tar.gz"
+  description = "The filename of the tarball to produce"
+}
+
 source "qemu" "flat" {
   boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   boot_wait       = "2s"
@@ -54,7 +60,7 @@ build {
       "SOURCE=flat",
       "IMG_FMT=raw",
       "source ../scripts/setup-nbd",
-      "OUTPUT=$${OUTPUT:-custom-ubuntu.tar.gz}",
+      "OUTPUT=${var.flat_filename}",
       "source ./scripts/tar-rootfs",
     ]
     inline_shebang = "/bin/bash -e"

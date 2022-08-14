@@ -8,6 +8,12 @@ packer {
   }
 }
 
+variable "filename" {
+  type        = string
+  default     = "rocky9.tar.gz"
+  description = "The filename of the tarball to produce"
+}
+
 variable "headless" {
   type        = bool
   default     = true
@@ -42,7 +48,12 @@ build {
   sources = ["source.qemu.rocky9"]
 
   post-processor "shell-local" {
-    inline         = ["SOURCE=rocky9", "source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-rocky9.tar.gz}", "source ../scripts/tar-root"]
+    inline = [
+      "SOURCE=rocky9",
+      "source ../scripts/setup-nbd",
+      "OUTPUT=${var.filename}",
+      "source ../scripts/tar-root"
+    ]
     inline_shebang = "/bin/bash -e"
   }
 }

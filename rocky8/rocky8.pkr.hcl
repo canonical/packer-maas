@@ -8,6 +8,12 @@ packer {
   }
 }
 
+variable "filename" {
+  type        = string
+  default     = "rocky8.tar.gz"
+  description = "The filename of the tarball to produce"
+}
+
 variable "rocky_iso_url" {
   type    = string
   default = "http://download.rockylinux.org/pub/rocky/8/isos/x86_64/Rocky-8.6-x86_64-boot.iso"
@@ -36,7 +42,12 @@ build {
   sources = ["source.qemu.rocky8"]
 
   post-processor "shell-local" {
-    inline         = ["SOURCE=rocky8","source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-rocky8.tar.gz}", "source ../scripts/tar-root"]
+    inline = [
+      "SOURCE=rocky8",
+      "source ../scripts/setup-nbd",
+      "OUTPUT=${var.filename}",
+      "source ../scripts/tar-root"
+    ]
     inline_shebang = "/bin/bash -e"
   }
 }
