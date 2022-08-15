@@ -8,6 +8,12 @@ packer {
   }
 }
 
+variable "filename" {
+  type        = string
+  default     = "centos8-stream.tar.gz"
+  description = "The filename of the tarball to produce"
+}
+
 variable "centos8_stream_iso_url" {
   type    = string
   default = "https://mirrors.edge.kernel.org/centos/8-stream/isos/x86_64/CentOS-Stream-8-x86_64-latest-boot.iso"
@@ -36,7 +42,12 @@ build {
   sources = ["source.qemu.centos8-stream"]
 
   post-processor "shell-local" {
-    inline         = ["source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-centos8-stream.tar.gz}", "source ../scripts/tar-root"]
+    inline = [
+      "SOURCE=centos8-stream",
+      "source ../scripts/setup-nbd",
+      "OUTPUT=${var.filename}",
+      "source ../scripts/tar-root"
+    ]
     inline_shebang = "/bin/bash -e"
   }
 }

@@ -8,6 +8,12 @@ packer {
   }
 }
 
+variable "filename" {
+  type        = string
+  default     = "centos6.tar.gz"
+  description = "The filename of the tarball to produce"
+}
+
 variable "centos6_iso_url" {
   type    = string
   default = "https://mirrors.edge.kernel.org/centos/6.10/isos/x86_64/CentOS-6.10-x86_64-netinstall.iso"
@@ -36,7 +42,12 @@ build {
   sources = ["source.qemu.centos6"]
 
   post-processor "shell-local" {
-    inline         = ["source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-centos6.tar.gz}", "source ../scripts/tar-root"]
+    inline = [
+      "SOURCE=centos6",
+      "source ../scripts/setup-nbd",
+      "OUTPUT=${var.filename}",
+      "source ../scripts/tar-root"
+    ]
     inline_shebang = "/bin/bash -e"
   }
 }

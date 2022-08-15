@@ -8,6 +8,12 @@ packer {
   }
 }
 
+variable "filename" {
+  type        = string
+  default     = "rhel7.tar.gz"
+  description = "The filename of the tarball to produce"
+}
+
 variable "rhel7_iso_path" {
   type    = string
   default = "${env("RHEL7_ISO_PATH")}"
@@ -31,7 +37,12 @@ build {
   sources = ["source.qemu.rhel7"]
 
   post-processor "shell-local" {
-    inline         = ["source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-rhel7.tar.gz}", "source ../scripts/tar-root"]
+    inline = [
+      "SOURCE=rhel7",
+      "source ../scripts/setup-nbd",
+      "OUTPUT=${var.filename}",
+      "source ../scripts/tar-root"
+    ]
     inline_shebang = "/bin/bash -e"
   }
 }

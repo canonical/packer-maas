@@ -8,6 +8,12 @@ packer {
   }
 }
 
+variable "filename" {
+  type        = string
+  default     = "centos7.tar.gz"
+  description = "The filename of the tarball to produce"
+}
+
 variable "centos7_iso_url" {
   type    = string
   default = "https://mirrors.edge.kernel.org/centos/7/isos/x86_64/CentOS-7-x86_64-NetInstall-2009.iso"
@@ -36,7 +42,12 @@ build {
   sources = ["source.qemu.centos7"]
 
   post-processor "shell-local" {
-    inline         = ["source ../scripts/setup-nbd", "OUTPUT=$${OUTPUT:-centos7.tar.gz}", "source ../scripts/tar-root"]
+    inline = [
+      "SOURCE=centos7",
+      "source ../scripts/setup-nbd",
+      "OUTPUT=${var.filename}",
+      "source ../scripts/tar-root"
+    ]
     inline_shebang = "/bin/bash -e"
   }
 }
