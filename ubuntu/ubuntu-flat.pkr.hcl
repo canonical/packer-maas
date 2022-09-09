@@ -1,3 +1,13 @@
+packer {
+  required_version = ">= 1.7.0"
+  required_plugins {
+    qemu = {
+      version = "~> 1.0"
+      source  = "github.com/hashicorp/qemu"
+    }
+  }
+}
+
 variable "flat_filename" {
   type        = string
   default     = "custom-ubuntu.tar.gz"
