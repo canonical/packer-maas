@@ -6,9 +6,9 @@ source "qemu" "lvm" {
   format          = "raw"
   headless        = var.headless
   http_directory  = var.http_directory
-  iso_checksum    = "file:http://releases.ubuntu.com/20.04/SHA256SUMS"
+  iso_checksum    = "file:http://releases.ubuntu.com/jammy/SHA256SUMS"
   iso_target_path = "packer_cache/ubuntu.iso"
-  iso_url         = "https://releases.ubuntu.com/focal/ubuntu-20.04.4-live-server-amd64.iso"
+  iso_url         = "https://releases.ubuntu.com/jammy/ubuntu-22.04.1-live-server-amd64.iso"
   memory          = 1024
   qemuargs = [
     ["-vga", "qxl"],
