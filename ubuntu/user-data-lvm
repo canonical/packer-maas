@@ -10,7 +10,6 @@ autoinstall:
     variant: us
   ssh:
     install-server: true
-
   storage:
     grub:
       update_nvram: true
@@ -18,9 +17,7 @@ autoinstall:
       size: 0
     layout:
       name: lvm
-
   late-commands:
     - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
-
   package_update: true
   package_upgrade: true

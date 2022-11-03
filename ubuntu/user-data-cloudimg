@@ -10,7 +10,6 @@ preserve_hostname: true
 runcmd:
   - sed -i -e '/^[#]*PermitRootLogin/s/^.*$/PermitRootLogin yes/' /etc/ssh/sshd_config
   - systemctl restart ssh
-
 bootcmd:
   - mkdir /run/packer_backup
   - mkdir /run/packer_backup/etc
