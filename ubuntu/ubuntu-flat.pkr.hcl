@@ -8,14 +8,14 @@ source "qemu" "flat" {
   boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   boot_wait       = "2s"
   cpus            = 2
-  disk_size       = "4G"
+  disk_size       = "8G"
   format          = "raw"
   headless        = var.headless
   http_directory  = var.http_directory
   iso_checksum    = "file:http://releases.ubuntu.com/jammy/SHA256SUMS"
   iso_target_path = "packer_cache/ubuntu.iso"
   iso_url         = "https://releases.ubuntu.com/jammy/ubuntu-22.04.1-live-server-amd64.iso"
-  memory          = 1024
+  memory          = 2048
   qemuargs = [
     ["-vga", "qxl"],
     ["-device", "virtio-blk-pci,drive=drive0,bootindex=0"],
