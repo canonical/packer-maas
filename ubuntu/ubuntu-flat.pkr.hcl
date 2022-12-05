@@ -24,7 +24,7 @@ source "qemu" "flat" {
     ["-drive", "if=pflash,format=raw,readonly=on,file=/usr/share/OVMF/OVMF_CODE.fd"],
     ["-drive", "if=pflash,format=raw,file=OVMF_VARS.fd"],
     ["-drive", "file=output-flat/packer-flat,if=none,id=drive0,cache=writeback,discard=ignore,format=raw"],
-    ["-drive", "file=seeds-flat.iso,format=raw,cache=none,if=none,id=drive1"],
+    ["-drive", "file=seeds-flat.iso,format=raw,cache=none,if=none,id=drive1,readonly"],
     ["-drive", "file=packer_cache/ubuntu.iso,if=none,id=cdrom0,media=cdrom"]
   ]
   shutdown_command       = "sudo -S shutdown -P now"
