@@ -16,6 +16,7 @@ and upload images.
 | CentOS 8 Stream | Beta |
 | RHEL 7 | EOL |
 | RHEL 8 | Stable |
+| RHEL 9 | Beta |
 | Rocky 8 | Beta |
 | Rocky 9 | Beta |
 | Ubuntu  | Stable |
