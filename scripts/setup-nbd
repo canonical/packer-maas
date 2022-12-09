@@ -60,3 +60,5 @@ while [ ! -e "${nbd}p1" ] && [ $tries -lt 60 ]; do
     sleep 1
     tries=$((tries+1))
 done
+
+fdisk -l "${nbd}"

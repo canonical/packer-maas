@@ -24,10 +24,18 @@ if [ $UID -ne 0 ]; then
     exit 1
 fi
 
+ROOT_PARTITION=${ROOT_PARTITION:-p1}
 TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
 
+cleanup() {
+    umount $TMP_DIR
+    qemu-nbd -d "$nbd"
+    [ -d "${TMP_DIR}" ] && rm -rf "${TMP_DIR}"
+}
+trap cleanup EXIT
+
 echo 'Mounting root partition...'
-mount "${nbd}p1" $TMP_DIR
+mount "${nbd}${ROOT_PARTITION}" $TMP_DIR
 
 if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
     echo 'Adding Curtin hooks...'
@@ -45,7 +53,4 @@ if [ -n "$MANIFEST" ]; then
     umount $TMP_DIR/dev
 fi
 
-echo 'Unmounting image...'
-umount $TMP_DIR
-qemu-nbd -d $nbd
-rmdir $TMP_DIR
+echo 'Done'

@@ -1,0 +1,20 @@
+#cloud-config
+users:
+  - name: root
+    lock_passwd: false
+    hashed_passwd: "$6$canonical$roPxUIapYzwvCBD54lgmhW.lPmd0T5sEx21KYE3i606l1iemOryAUwqLhtQOVqYJx8qEEl0qbvMc9f8fyBHLK/"
+    ssh_redirect_user: false
+  - name: sles
+    lock_passwd: false
+    groups: users
+    ssh_redirect_user: false
+    sudo: ALL=(ALL) NOPASSWD:ALL
+ssh_pwauth: True
+disable_root: false
+preserve_hostname: true
+runcmd:
+  - sed -i -e '/^[#]*PermitRootLogin/s/^.*$/PermitRootLogin yes/' /etc/ssh/sshd_config
+  - systemctl restart ssh
+bootcmd:
+  - mkdir -p /run/packer_backup/etc/ssh
+  - cp --preserve /etc/ssh/sshd_config /run/packer_backup/etc/ssh/

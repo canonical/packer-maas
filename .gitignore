@@ -10,7 +10,8 @@ packer_cache
 *.gz
 *.xz
 *.iso
-ubuntu/*_VARS.fd
+*.qcow2
+*_VARS.fd
 ubuntu/packages/*.deb
 ubuntu/packages/*.bin
 ubuntu/packages/*.tar.gz
