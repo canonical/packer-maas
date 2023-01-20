@@ -19,6 +19,8 @@ and upload images.
 | RHEL 9 | Beta |
 | Rocky 8 | Beta |
 | Rocky 9 | Beta |
+| SLES 12 | Beta |
+| SLES 15 | Beta |
 | Ubuntu  | Stable |
 | VMWare ESXi 6 | EOL |
 | VMWare ESXi 7 | Stable |
