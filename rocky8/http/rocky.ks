@@ -1,7 +1,7 @@
 url --url="https://download.rockylinux.org/pub/rocky/8/BaseOS/x86_64/os/"
 url --mirrorlist="http://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=BaseOS-8"
-repo --name="AppStream" --mirrorlist="http://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=rocky-AppStream-8.6"
-repo --name="Extras" --mirrorlist="http://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=rocky-extras-8.6"
+repo --name="AppStream" --mirrorlist="http://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=rocky-AppStream-8.7"
+repo --name="Extras" --mirrorlist="http://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=rocky-extras-8.7"
 
 eula --agreed
 
