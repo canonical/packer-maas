@@ -48,8 +48,9 @@ Installation is non-interactive.
 
 ```shell
 maas $PROFILE boot-resources create \
-    name='suse/sles12.5' title='SLES 12-SP5' \
+    name='custom/sles12.5' title='SLES 12-SP5' \
     architecture='amd64/generic' filetype='tgz' \
+    base_image='ubuntu/trusty' \
     content@=sles12.tar.gz
 ```
 
