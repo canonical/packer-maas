@@ -10,4 +10,4 @@ rhel8.tar.gz: clean
 	reset
 
 clean:
-	sudo ${RM} -rf output-qemu rhel8.tar.gz
+	sudo ${RM} -rf output-rhel8 rhel8.tar.gz
