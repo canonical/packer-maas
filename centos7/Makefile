@@ -9,4 +9,4 @@ centos7.tar.gz: clean
 	reset
 
 clean:
-	sudo ${RM} -rf output-qemu centos7.tar.gz
+	sudo ${RM} -rf output-centos7 centos7.tar.gz

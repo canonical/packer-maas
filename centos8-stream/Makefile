@@ -9,4 +9,4 @@ centos8-stream.tar.gz: clean
 	reset
 
 clean:
-	sudo ${RM} -rf output-qemu centos8-stream.tar.gz
+	sudo ${RM} -rf output-centos8-stream centos8-stream.tar.gz

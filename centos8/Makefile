@@ -9,4 +9,4 @@ centos8.tar.gz: clean
 	reset
 
 clean:
-	sudo ${RM} -rf output-qemu centos8.tar.gz
+	sudo ${RM} -rf output-centos8 centos8.tar.gz

@@ -9,4 +9,4 @@ rocky8.tar.gz: clean
 	reset
 
 clean:
-	sudo ${RM} -rf output-qemu rocky8.tar.gz
+	sudo ${RM} -rf output-rocky8 rocky8.tar.gz

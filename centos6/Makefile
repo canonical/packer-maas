@@ -9,4 +9,4 @@ centos6.tar.gz: clean
 	reset
 
 clean:
-	sudo ${RM} -rf output-qemu centos6.tar.gz
+	sudo ${RM} -rf output-centos6 centos6.tar.gz
