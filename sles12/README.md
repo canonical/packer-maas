@@ -14,8 +14,8 @@ The Packer template in this directory creates a SLES 12 AMD64 image for use with
 
 ## Requirements (to deploy the image)
 
-* [MAAS](https://maas.io) 3.3+
-* [Curtin](https://launchpad.net/curtin) 22.1+
+* [MAAS](https://maas.io) 3.4+
+* [Curtin](https://launchpad.net/curtin) 23.1+
 
 ## Customizing the Image
 
