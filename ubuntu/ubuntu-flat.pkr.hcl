@@ -12,9 +12,9 @@ source "qemu" "flat" {
   format          = "raw"
   headless        = var.headless
   http_directory  = var.http_directory
-  iso_checksum    = "file:http://releases.ubuntu.com/jammy/SHA256SUMS"
+  iso_checksum    = "sha256:10f19c5b2b8d6db711582e0e27f5116296c34fe4b313ba45f9b201a5007056cb"
   iso_target_path = "packer_cache/ubuntu.iso"
-  iso_url         = "https://releases.ubuntu.com/jammy/ubuntu-22.04.2-live-server-amd64.iso"
+  iso_url         = "https://old-releases.ubuntu.com/releases/22.04.1/ubuntu-22.04.1-live-server-amd64.iso"
   memory          = 2048
   qemuargs = [
     ["-vga", "qxl"],
