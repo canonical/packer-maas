@@ -36,6 +36,10 @@ clean:
 CUSTOM_PKGS:=${wildcard packages/*.deb}
 
 packages/custom-packages.tar.gz: ${CUSTOM_PKGS}
+ifeq ($(strip $(CUSTOM_PKGS)),)
+	tar czf $@ -C packages -T /dev/null
+else
 	tar czf $@ -C packages ${notdir $^}
+endif
 
 .INTERMEDIATE: OVMF_VARS.fd
