@@ -26,4 +26,4 @@ format: $(VENV)
 	$(VENV)/bin/black -q $(py_files)
 
 clean:
-	sudo ${RM} -rf output-qemu vmware-esxi.dd vmware-esxi.dd.gz $(VENV)
+	sudo ${RM} -rf output-esxi vmware-esxi.dd vmware-esxi.dd.gz $(VENV)
