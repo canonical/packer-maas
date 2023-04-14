@@ -20,7 +20,7 @@ source "qemu" "esxi" {
   cd_label         = "kickstart"
   communicator     = "none"
   disk_interface   = "ide"
-  disk_size        = "10G"
+  disk_size        = "32G"
   format           = "raw"
   headless         = true
   iso_checksum     = "none"

@@ -65,9 +65,9 @@ def is_esxi67():
     return get_esxi_version()[0:2] == (6, 7)
 
 
-def is_esxi7():
-    """Return true if running on VMware ESXi 7.X.Y."""
-    return get_esxi_version()[0] == 7
+def has_esx_os_data():
+    """Return true if running on VMware ESXi 7.X.Y. or newer"""
+    return get_esxi_version()[0] >= 7
 
 
 def get_disks():
@@ -190,7 +190,7 @@ def process_disk_wipes(disks):
             # customized.
             if is_esxi67() and os.path.exists("%s:3" % disk["path"]):
                 datastore_partition = "3"
-            elif is_esxi7() and os.path.exists("%s:8" % disk["path"]):
+            elif has_esx_os_data() and os.path.exists("%s:8" % disk["path"]):
                 datastore_partition = "8"
             else:
                 datastore_partition = None
@@ -280,7 +280,7 @@ def partition_disks(disks, partitions):
         # datastore which can be extended.
         if disk.get("grub_device") and (
             (is_esxi67() and part["number"] != 3 and part["number"] <= 9)
-            or (is_esxi7() and part["number"] <= 7)
+            or (has_esx_os_data() and part["number"] <= 7)
         ):
             continue
         elif not disk.get("partitioned"):
