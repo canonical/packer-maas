@@ -93,6 +93,10 @@ def get_disks():
         r"Revis:\s+(?P<revis>.*)\s*$"
     )
 
+    serial_regex = re.compile(
+        r"^(?P<name>\S+?)__+(?P<model>\S+?)__+(?P<serial>\S+?)__+$"
+    )
+
     for line in output.splitlines():
         if not line.startswith(" " * 3):
             # Each section starts with the device name, all fields are defined
@@ -101,15 +105,17 @@ def get_disks():
                 disks.append(disk)
                 other_names = False
             name = line.strip()
+            m = serial_regex.search(name)
             disk = {
                 "name": name,
                 "other_names": [],
                 "blocksize": disk_block_sizes.get(name, 0),
+                "serial": m.group("serial") if m else "",
             }
         elif disk:
             if other_names and not line.startswith(" " * 6):
-                # Other names is a list which contains the serial. Entries must
-                # start with 6 spaces.
+                # Other names is a list of alias.
+                # Entries must start with 6 spaces.
                 other_names = False
             line = line.strip()
             if line.startswith("Size"):
@@ -139,6 +145,8 @@ def get_disk(disks, model, serial):
         # udev will sometimes replace a space in the model name with an
         # underscore.
         if disk["model"] == model or disk["model"].replace(" ", "_") == model:
+            if serial == disk["serial"]:
+                return disk
             for other_name in disk["other_names"]:
                 # VMware doesn't provide the exact serial number. It provides
                 # a list of other names, one of which contains the serial
@@ -255,7 +263,7 @@ def get_ending_sector(blocksize, starting_sector, size):
     if size.endswith("B"):
         size = size[:-1]
 
-    mpliers = {"B": 1, "K": 2 ** 10, "M": 2 ** 20, "G": 2 ** 30, "T": 2 ** 40}
+    mpliers = {"B": 1, "K": 2**10, "M": 2**20, "G": 2**30, "T": 2**40}
 
     mplier = "B"
     for m in mpliers:
