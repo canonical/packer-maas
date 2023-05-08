@@ -6,7 +6,7 @@ associated scripts, and configuration for creating deployable OS images for [MAA
 See README.md in each directory for documentation on how to customize, build,
 and upload images.
 
-Read more about how [custom images](https://maas.io/docs/about-creating-custom-images) work.
+Read more about how [custom images](https://maas.io/docs/how-to-customise-images) work.
 
 ## Existing templates
 
