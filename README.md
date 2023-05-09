@@ -16,6 +16,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | CentOS 7 | Stable |
 | CentOS 8 | EOL |
 | CentOS 8 Stream | Beta |
+| CentOS 9 Stream | Beta |
 | RHEL 7 | EOL |
 | RHEL 8 | Stable |
 | RHEL 9 | Beta |
