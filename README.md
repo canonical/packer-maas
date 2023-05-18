@@ -26,6 +26,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | Ubuntu  | Stable |
 | VMWare ESXi 6 | EOL |
 | VMWare ESXi 7 | Stable |
+| VMWare ESXi 8 | Beta |
 
 ### Maturity level
 
