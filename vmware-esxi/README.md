@@ -7,6 +7,8 @@
 ## Prerequisites (to create the images)
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
+* Dual core x86_64 processor supporting hardware virtualization with at least 4GB of RAM and 32GB of disk space available.
+* qemu-kvm
 * qemu-utils
 * Python Pip
 * [Packer](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
@@ -15,6 +17,8 @@
 ## Requirements (to deploy the image)
 
 * [MAAS](https://maas.io) 2.5 or above, [MAAS](https://maas.io) 2.6 required for storage configuration
+
+VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent than MAAS.
 
 ## Customizing the Image
 
@@ -25,14 +29,14 @@ The deployment image may be customized by modifying packer-maas/vmware-esxi/KS.C
 You can easily build the image using the Makefile:
 
 ```shell
-make ISO=/path/to/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso
+make ISO=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso
 ```
 
 Alternatively you can manually run packer. Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
 
 ```shell
 sudo packer init
-sudo PACKER_LOG=1 packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-6.7.0.update03-14320388.x86_64.iso' .
+sudo PACKER_LOG=1 packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso' .
 ```
 
 Note: vmware-esxi.pkr.hcl is configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or remove the line containing "headless" in vmware-esxi.pkr.hcl.
@@ -43,22 +47,19 @@ Installation is non-interactive.
 
 ```shell
 maas $PROFILE boot-resources create \
-  name='esxi/6.7' title='VMware ESXi 6.7' \
+  name='esxi/8.0b' title='VMware ESXi 8.0b' \
   architecture='amd64/generic' filetype='ddgz' \
   content@=vmware-esxi.dd.gz
 ```
 
-## Requirements
-
-VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent than MAAS.
-
-The machine building the deployment image must be a GNU/Linux host with a dual core x86_64 processor supporting hardware virtualization with at least 4GB of RAM and 10GB of disk space available. Additionally the qemu-kvm and qemu-utils packages must be installed on the build system.
-
-### libvirt testing
-
-While VMware ESXi does not support running in any virtual machine it is possible to deploy to one. The libvirt machine must be a KVM instance with at least CPU 2 cores and 4GB of RAM. To give VMware ESXi access to hardware virtualization go into machine settings, CPUs, and select 'copy host CPU configuration.' VMware ESXi has no support for libvirt drivers, instead an emulated IDE disk, and an emulated e1000 NIC must be used.
-
 ## Known limitations
+
+### VMWare support
+
+MAAS uses cloning as the mechanism to deploy all supported OS. **This is [explicitly not supported by VMWare since ESXi 7.0 U2](https://kb.vmware.com/s/article/84280)**, as doing so could lead to data corruption if VMFS volumes are shared among hosts cloned using the same image. There's [no known workaround](https://kb.vmware.com/s/article/84349) for this limitation.
+
+This image should be safe for standalone hosts and if you don't use any kind of shared storage.
+**Use this image at your own risk**
 
 ### Storage
 
@@ -74,6 +75,10 @@ Only datastores may be configured using the devices available on the system. The
   * No other bond modes are currently supported.
 
 **WARNING**: VMware ESXi does not allow VMs to use a PortGroup that has a VMK attached to it. All configured devices will have a VMK attached. To use a vSwitch with VMs you must leave a device or alias unconfigured in MAAS.
+
+### libvirt testing
+
+While VMware ESXi does not support running in any virtual machine it is possible to deploy to one. The libvirt machine must be a KVM instance with at least CPU 2 cores and 4GB of RAM. To give VMware ESXi access to hardware virtualization go into machine settings, CPUs, and select 'copy host CPU configuration.' VMware ESXi has no support for libvirt drivers, instead an emulated IDE disk, and an emulated e1000 NIC must be used.
 
 ### Image fails to build due to qemu-nbd error
 
