@@ -16,7 +16,7 @@ variable "filename" {
 
 variable "rocky_iso_url" {
   type    = string
-  default = "http://download.rockylinux.org/pub/rocky/8/isos/x86_64/Rocky-8.7-x86_64-boot.iso"
+  default = "http://download.rockylinux.org/pub/rocky/8/isos/x86_64/Rocky-x86_64-boot.iso"
 }
 
 variable "rocky_sha256sum_url" {
