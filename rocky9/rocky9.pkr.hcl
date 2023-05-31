@@ -22,7 +22,7 @@ variable "headless" {
 
 variable "rocky_iso_url" {
   type    = string
-  default = "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9.1-x86_64-boot.iso"
+  default = "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-x86_64-boot.iso"
 }
 
 variable "rocky_sha256sum_url" {

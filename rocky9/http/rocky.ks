@@ -1,7 +1,7 @@
 url --url="https://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/"
 url --mirrorlist="http://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=BaseOS-9"
-repo --name="AppStream" --mirrorlist="https://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=rocky-AppStream-9.1"
-repo --name="Extras" --mirrorlist="http://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=rocky-extras-9.1"
+repo --name="AppStream" --mirrorlist="https://mirrors.rockylinux.org/mirrorlist?arch=x86_64&release=9&repo=AppStream-9"
+repo --name="Extras" --mirrorlist="https://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=extras-9"
 
 eula --agreed
 
@@ -14,7 +14,7 @@ firstboot --disable
 # System language, keyboard and timezone
 lang en_US.UTF-8
 keyboard us
-timezone UTC --isUtc
+timezone UTC --utc
 
 # Set the first NIC to acquire IPv4 address via DHCP
 network --device eth0 --bootproto=dhcp
