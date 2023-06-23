@@ -1,4 +1,5 @@
 PACKER ?= packer
+PACKER_LOG ?= 0
 
 .PHONY: all clean
 
@@ -24,14 +25,14 @@ OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS.fd
 	cp -v $< $@
 
 custom-cloudimg.tar.gz: check-deps clean
-	sudo ${PACKER} init . && sudo PACKER_LOG=1 ${PACKER} build -only='cloudimg.*' .
+	sudo ${PACKER} init . && sudo PACKER_LOG=${PACKER_LOG} ${PACKER} build -only='cloudimg.*' .
 
 custom-ubuntu.tar.gz: check-deps clean seeds-flat.iso OVMF_VARS.fd \
 			packages/custom-packages.tar.gz
-	sudo ${PACKER} init . && sudo PACKER_LOG=1 ${PACKER} build -only=qemu.flat .
+	sudo ${PACKER} init . && sudo PACKER_LOG=${PACKER_LOG} ${PACKER} build -only=qemu.flat .
 
 custom-ubuntu-lvm.dd.gz: check-deps clean seeds-lvm.iso OVMF_VARS.fd
-	sudo ${PACKER} init . && sudo PACKER_LOG=1 ${PACKER} build -only=qemu.lvm .
+	sudo ${PACKER} init . && sudo PACKER_LOG=${PACKER_LOG} ${PACKER} build -only=qemu.lvm .
 
 clean:
 	sudo ${RM} -rf output-* custom-*.gz
