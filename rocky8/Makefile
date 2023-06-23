@@ -4,7 +4,10 @@ PACKER ?= packer
 
 all: rocky8.tar.gz
 
-rocky8.tar.gz: clean
+check-deps:
+	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+
+rocky8.tar.gz: check-deps clean
 	sudo ${PACKER} init rocky8.pkr.hcl && sudo PACKER_LOG=1 ${PACKER} build rocky8.pkr.hcl
 	reset
 

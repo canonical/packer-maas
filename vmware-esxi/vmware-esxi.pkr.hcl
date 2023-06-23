@@ -38,23 +38,21 @@ build {
     inline = [
       "SOURCE=esxi",
       "IMG_FMT=raw",
-      "source ../scripts/setup-nbd",
-      "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
+      "source ../scripts/fuse-nbd",
       "echo 'Adding curtin-hooks to image...'",
-      "mount $${nbd}p1 $TMP_DIR",
-      "cp -r curtin $TMP_DIR",
+      "mount_part 1 $TMP_DIR/curtin"
+      "cp -rv curtin $TMP_DIR/curtin/",
       "sync -f $TMP_DIR/curtin",
-      "umount $TMP_DIR",
+      "fusermount -u $TMP_DIR/curtin",
       "echo 'Adding post-install scripts to image...'",
-      "mount $${nbd}p6 $TMP_DIR",
-      "cp -r maas $TMP_DIR",
+      "mount_part 6 $TMP_DIR/maas"
+      "cp -rv maas $TMP_DIR/maas/",
       "python3 -m pip install -r requirements.txt --no-compile --target $TMP_DIR/maas",
       "find $TMP_DIR/maas -name __pycache__ -type d -or -name *.so | xargs rm -rf",
       "echo 'Unmounting image...'",
       "sync -f $TMP_DIR/maas",
-      "umount $TMP_DIR",
-      "qemu-nbd -d $nbd",
-    "rmdir $TMP_DIR"]
+      "fusermount -u $TMP_DIR/maas",
+      ]
     inline_shebang = "/bin/bash -e"
   }
   post-processor "compress" {

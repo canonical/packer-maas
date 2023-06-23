@@ -7,7 +7,7 @@ The Packer template in this directory creates a Rocky 9 AMD64 image for use with
 ## Prerequisites to create the image
 
 * A machine running Ubuntu 22.04+ with the ability to run KVM virtual machines and with a CPU that supports x86-64-v2 extensions
-* qemu-utils
+* qemu-utils, libnbd-bin, nbdkit and fuse2fs
 * [Packer.](https://www.packer.io/intro/getting-started/install.html)
 
 ## Requirements to deploy the image

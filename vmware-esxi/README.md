@@ -9,7 +9,7 @@
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * Dual core x86_64 processor supporting hardware virtualization with at least 4GB of RAM and 32GB of disk space available.
 * qemu-kvm
-* qemu-utils
+* qemu-utils, libnbd-bin, nbdkit and fuse2fs
 * Python Pip
 * [Packer](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
 * The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)

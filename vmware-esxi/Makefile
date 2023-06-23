@@ -6,7 +6,10 @@ VENV := .ve
 
 all: vmware-esxi.dd.gz
 
-vmware-esxi.dd.gz: clean
+check-deps:
+	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+
+vmware-esxi.dd.gz: check-deps clean
 	sudo ${PACKER} init vmware-esxi.pkr.hcl && sudo PACKER_LOG=1 ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.pkr.hcl
 	reset
 

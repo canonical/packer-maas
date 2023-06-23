@@ -44,9 +44,9 @@ build {
   post-processor "shell-local" {
     inline = [
       "SOURCE=centos6",
-      "source ../scripts/setup-nbd",
       "OUTPUT=${var.filename}",
-      "source ../scripts/tar-root"
+      "source ../scripts/fuse-nbd",
+      "source ../scripts/fuse-tar-root"
     ]
     inline_shebang = "/bin/bash -e"
   }

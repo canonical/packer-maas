@@ -116,9 +116,10 @@ build {
     inline = [
       "IMG_FMT=qcow2",
       "SOURCE=cloudimg",
-      "source ../scripts/setup-nbd",
+      "ROOT_PARTITION=1",
       "OUTPUT=${var.filename}",
-      "source ./scripts/cloudimg/tar-rootfs"
+      "source ../scripts/fuse-nbd",
+      "source ../scripts/fuse-tar-root"
     ]
     inline_shebang = "/bin/bash -e"
   }

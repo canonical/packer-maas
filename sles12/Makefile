@@ -5,7 +5,10 @@ ISO ?= SLES12-SP5-JeOS.x86_64-12.5-OpenStack-Cloud-GM.qcow2
 
 all: sles12.tar.gz
 
-sles12.tar.gz: clean
+check-deps:
+	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+
+sles12.tar.gz: check-deps clean
 	sudo ${PACKER} init sles.pkr.hcl && sudo PACKER_LOG=1 ${PACKER} build -var "sles12_iso_path=${ISO}" -on-error=ask sles.pkr.hcl
 	reset
 
