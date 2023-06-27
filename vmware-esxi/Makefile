@@ -8,7 +8,7 @@ VENV := .ve
 all: vmware-esxi.dd.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+	dpkg -s libnbd-bin nbdkit packer fusefat > /dev/null
 
 vmware-esxi.dd.gz: check-deps clean
 	sudo ${PACKER} init vmware-esxi.pkr.hcl && sudo PACKER_LOG=${PACKER_LOG} ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.pkr.hcl

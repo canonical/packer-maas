@@ -39,7 +39,9 @@ trap cleanup EXIT
 function mount_part() {
     PART=$1
     MOUNTPOINT=$2
+    FUSEDRV=${3:-fuse2fs}
     DEV=${TMP_DIR}/p${PART}
+    [ -d ${MOUNTPOINT} ] || mkdir -p ${MOUNTPOINT}
     mkdir ${DEV}
     nbdfuse ${DEV} \
         --command nbdkit -s nbd \
@@ -48,11 +50,15 @@ function mount_part() {
     retries=0
     until [ -f "${DEV}/nbd" ]; do
         sleep 1
-        if ((++retries>10)); then
+        if ((++retries > 10)); then
             return 1
         fi
     done
-    fuse2fs ${DEV}/nbd ${MOUNTPOINT}
+    case "${FUSEDRV}" in
+    "fusefat") fusefat ${DEV}/nbd ${MOUNTPOINT} -o rw+ -s ;;
+    "fuse2fs") fuse2fs ${DEV}/nbd ${MOUNTPOINT} ;;
+    *) echo "Unsupported Fuse driver" && exit 1 ;;
+    esac
 }
 
 qemu-nbd --socket=$(pwd)/qemu-img.sock \

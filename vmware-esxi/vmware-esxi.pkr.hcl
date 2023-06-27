@@ -14,7 +14,7 @@ variable "vmware_esxi_iso_path" {
 }
 
 source "qemu" "esxi" {
-  boot_command     = ["<enter><wait>", "<leftShift>O", " ks=cdrom:/KS.CFG", " cpuUniformityHardCheckPanic=FALSE", " com1_Port=0x3f8 tty2Port=com1", "<enter>"]
+  boot_command     = ["<enter><wait>", "<leftShift>O", " ks=cdrom:/KS.CFG", " cpuUniformityHardCheckPanic=FALSE", "systemMediaSize=min", " com1_Port=0x3f8 tty2Port=com1", "<enter>"]
   boot_wait        = "3s"
   cd_files         = ["./KS.CFG"]
   cd_label         = "kickstart"
@@ -40,18 +40,18 @@ build {
       "IMG_FMT=raw",
       "source ../scripts/fuse-nbd",
       "echo 'Adding curtin-hooks to image...'",
-      "mount_part 1 $TMP_DIR/curtin"
-      "cp -rv curtin $TMP_DIR/curtin/",
-      "sync -f $TMP_DIR/curtin",
-      "fusermount -u $TMP_DIR/curtin",
+      "mount_part 1 $TMP_DIR/boot fusefat",
+      "cp -rv curtin $TMP_DIR/boot/",
+      "sync -f $TMP_DIR/boot",
+      "fusermount -u $TMP_DIR/boot",
       "echo 'Adding post-install scripts to image...'",
-      "mount_part 6 $TMP_DIR/maas"
-      "cp -rv maas $TMP_DIR/maas/",
-      "python3 -m pip install -r requirements.txt --no-compile --target $TMP_DIR/maas",
-      "find $TMP_DIR/maas -name __pycache__ -type d -or -name *.so | xargs rm -rf",
+      "mount_part 6 $TMP_DIR/altbootbank fusefat",
+      "cp -rv maas $TMP_DIR/altbootbank/",
+      "python3 -m pip install -r requirements.txt --no-compile --target $TMP_DIR/altbootbank",
+      "find $TMP_DIR/altbootbank -name __pycache__ -type d -or -name *.so | xargs rm -rf",
       "echo 'Unmounting image...'",
-      "sync -f $TMP_DIR/maas",
-      "fusermount -u $TMP_DIR/maas",
+      "sync -f $TMP_DIR/altbootbank",
+      "fusermount -u $TMP_DIR/altbootbank",
       ]
     inline_shebang = "/bin/bash -e"
   }
