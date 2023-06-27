@@ -6,7 +6,7 @@ PACKER_LOG ?= 0
 all: custom-cloudimg.tar.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+	dpkg -s libnbd-bin nbdkit packer fuse2fs cloud-image-utils ovmf > /dev/null
 
 lint:
 	packer validate .
