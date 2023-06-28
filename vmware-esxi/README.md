@@ -79,11 +79,3 @@ Only datastores may be configured using the devices available on the system. The
 ### libvirt testing
 
 While VMware ESXi does not support running in any virtual machine it is possible to deploy to one. The libvirt machine must be a KVM instance with at least CPU 2 cores and 4GB of RAM. To give VMware ESXi access to hardware virtualization go into machine settings, CPUs, and select 'copy host CPU configuration.' VMware ESXi has no support for libvirt drivers, instead an emulated IDE disk, and an emulated e1000 NIC must be used.
-
-### Image fails to build due to qemu-nbd error
-
-If the image fails to build due to a qemu-nbd error try disconnecting the device with
-
-```shell
-sudo qemu-nbd -d /dev/nbd4
-```

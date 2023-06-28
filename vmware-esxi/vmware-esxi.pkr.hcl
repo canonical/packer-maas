@@ -39,19 +39,7 @@ build {
       "SOURCE=esxi",
       "IMG_FMT=raw",
       "source ../scripts/fuse-nbd",
-      "echo 'Adding curtin-hooks to image...'",
-      "mount_part 1 $TMP_DIR/boot fusefat",
-      "cp -rv curtin $TMP_DIR/boot/",
-      "sync -f $TMP_DIR/boot",
-      "fusermount -u $TMP_DIR/boot",
-      "echo 'Adding post-install scripts to image...'",
-      "mount_part 6 $TMP_DIR/altbootbank fusefat",
-      "cp -rv maas $TMP_DIR/altbootbank/",
-      "python3 -m pip install -r requirements.txt --no-compile --target $TMP_DIR/altbootbank",
-      "find $TMP_DIR/altbootbank -name __pycache__ -type d -or -name *.so | xargs rm -rf",
-      "echo 'Unmounting image...'",
-      "sync -f $TMP_DIR/altbootbank",
-      "fusermount -u $TMP_DIR/altbootbank",
+      "source ./post.sh",
       ]
     inline_shebang = "/bin/bash -e"
   }

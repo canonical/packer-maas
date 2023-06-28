@@ -21,12 +21,22 @@
 
 import os
 import shutil
+import subprocess
 import tempfile
-from subprocess import check_call
 
 import yaml
 from curtin.config import load_command_config
+from curtin.log import LOG
 from curtin.util import load_command_environment
+
+
+def exec_prog(*cmdline: str) -> None:
+    with open(os.devnull, "w") as devnull:
+        subprocess.check_call(
+            *cmdline,
+            stdout=devnull,
+            stderr=subprocess.STDOUT,
+        )
 
 
 def write_config(target, config):
@@ -55,8 +65,15 @@ def write_config(target, config):
     if altbootbank_blkdev is None:
         raise Exception("ERROR: Unable to find /altbootbank block device!")
 
+    LOG.info("altbootbank found at %s", altbootbank_blkdev)
+
     altbootbank_mount_point = tempfile.mkdtemp(prefix="curtin-hooks-")
-    check_call(["mount", altbootbank_blkdev, altbootbank_mount_point])
+    exec_prog("mount", altbootbank_blkdev, altbootbank_mount_point)
+
+    scripts_pkg = os.path.join(os.path.dirname(__file__), "scripts.tar.xz")
+    LOG.info("MAAS scripts found at %s", scripts_pkg)
+    exec_prog("tar", "xJf", scripts_pkg, "-C", altbootbank_mount_point)
+    os.remove(scripts_pkg)
 
     curtin_cfg_path = os.path.join(
         altbootbank_mount_point, "maas", "curtin.cfg"
@@ -64,7 +81,9 @@ def write_config(target, config):
     with open(curtin_cfg_path, "w") as f:
         f.write(yaml.dump(config))
 
-    check_call(["umount", altbootbank_blkdev])
+    LOG.info("wrote Curtin config to %s", curtin_cfg_path)
+
+    exec_prog("umount", altbootbank_mount_point)
 
 
 def cleanup():
