@@ -129,10 +129,10 @@ build {
   post-processor "shell-local" {
     inline = [
       "SOURCE=sles12",
-      "ROOT_PARTITION=p3",
-      "source ../scripts/setup-nbd",
+      "ROOT_PARTITION=3",
       "OUTPUT=${var.filename}",
-      "source ../scripts/tar-root"
+      "source ../scripts/fuse-nbd",
+      "source ../scripts/fuse-tar-root"
     ]
     inline_shebang = "/bin/bash -e"
   }

@@ -59,9 +59,10 @@ build {
     inline = [
       "SOURCE=flat",
       "IMG_FMT=raw",
-      "source ../scripts/setup-nbd",
+      "ROOT_PARTITION=2",
       "OUTPUT=${var.flat_filename}",
-      "source ./scripts/tar-rootfs",
+      "source ../scripts/fuse-nbd",
+      "source ../scripts/fuse-tar-root"
     ]
     inline_shebang = "/bin/bash -e"
   }

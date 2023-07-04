@@ -1,0 +1,69 @@
+#!/bin/bash -e
+#
+# fuse-nbd - Mount Packer image for customization
+#
+# Author: Alexsander Silva de Souza <alexsander.souza@canonical.com>
+#
+# Copyright (C) 2023 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+PACKER_OUTPUT=output-${SOURCE:-qemu}/packer-${SOURCE:-qemu}
+IMG_FMT=${IMG_FMT:-qcow2}
+
+if [ ! -f "${PACKER_OUTPUT}" ]; then
+    echo "ERROR: Not in the same path as template!" >&2
+    exit
+fi
+
+TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
+cleanup() {
+    for dev in $(ls -d ${TMP_DIR}/p*); do
+        fusermount -u ${dev}
+    done
+    rm -rf "${TMP_DIR}"
+}
+trap cleanup EXIT
+
+function mount_part() {
+    PART=$1
+    MOUNTPOINT=$2
+    FUSEDRV=${3:-fuse2fs}
+    DEV=${TMP_DIR}/p${PART}
+    [ -d ${MOUNTPOINT} ] || mkdir -p ${MOUNTPOINT}
+    mkdir ${DEV}
+    nbdfuse ${DEV} \
+        --command nbdkit -s nbd \
+        socket=$(pwd)/qemu-img.sock \
+        --filter=partition partition=${PART} &
+    retries=0
+    until [ -f "${DEV}/nbd" ]; do
+        sleep 1
+        if ((++retries > 10)); then
+            return 1
+        fi
+    done
+    case "${FUSEDRV}" in
+    "fusefat") fusefat ${DEV}/nbd ${MOUNTPOINT} -o rw+ -s ;;
+    "fuse2fs") fuse2fs ${DEV}/nbd ${MOUNTPOINT} ;;
+    *) echo "Unsupported Fuse driver" && exit 1 ;;
+    esac
+}
+
+qemu-nbd --socket=$(pwd)/qemu-img.sock \
+    --format=${IMG_FMT} \
+    --shared=10 \
+    ${PACKER_OUTPUT} &
+
+mkdir "${TMP_DIR}/root"

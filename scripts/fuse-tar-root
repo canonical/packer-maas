@@ -1,10 +1,10 @@
 #!/bin/bash -e
 #
-# tar-root - Create a tar.gz from a binded /dev/nbd device
+# fuse-nbd - Create a tar.gz from a binded fuse device
 #
-# Author: Lee Trager <lee.trager@canonical.com>
+# Author: Alexsander Silva de Souza <alexsander.souza@canonical.com>
 #
-# Copyright (C) 2020-2021 Canonical
+# Copyright (C) 2023 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -19,38 +19,27 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-if [ $UID -ne 0 ]; then
-    echo "ERROR: Must be run as root!" >&2
-    exit 1
-fi
-
-ROOT_PARTITION=${ROOT_PARTITION:-p1}
-TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
-
-cleanup() {
-    umount $TMP_DIR
-    qemu-nbd -d "$nbd"
-    [ -d "${TMP_DIR}" ] && rm -rf "${TMP_DIR}"
-}
-trap cleanup EXIT
+ROOT_PARTITION=${ROOT_PARTITION:-1}
+ROOT_MOUNT=${TMP_DIR}/root
 
 echo 'Mounting root partition...'
-mount "${nbd}${ROOT_PARTITION}" $TMP_DIR
+mount_part "${ROOT_PARTITION}" "${ROOT_MOUNT}"
 
 if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
     echo 'Adding Curtin hooks...'
-    cp -r ${CURTIN_HOOKS:-curtin} $TMP_DIR
+    cp -r ${CURTIN_HOOKS:-curtin} ${ROOT_MOUNT}
 fi
 
-echo "Creating MAAS image $OUTPUT..."
-tar -Sczpf $OUTPUT --acls --selinux --xattrs -C $TMP_DIR .
+echo "Creating MAAS image ${OUTPUT}..."
+tar -Sczpf "${OUTPUT}" --acls --selinux --xattrs -C $ROOT_MOUNT .
 
 if [ -n "$MANIFEST" ]; then
     echo "Creating manifest..."
     # RPM on CentOS/RHEL 7 needs /dev mounted so it can use /dev/urandom
-    mount -o bind /dev $TMP_DIR/dev
-    chroot $TMP_DIR rpm -qa | sort -u -o $MANIFEST
-    umount $TMP_DIR/dev
+    mount -o bind /dev "${ROOT_MOUNT}/dev"
+    chroot "${ROOT_MOUNT}" rpm -qa | sort -u -o $MANIFEST
+    umount "${ROOT_MOUNT}/dev"
 fi
 
+fusermount -u "${ROOT_MOUNT}"
 echo 'Done'

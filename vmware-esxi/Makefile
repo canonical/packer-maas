@@ -1,4 +1,5 @@
 PACKER ?= packer
+PACKER_LOG ?= 0
 ISO ?= ${VMWARE_ESXI_ISO_PATH}
 VENV := .ve
 
@@ -6,9 +7,11 @@ VENV := .ve
 
 all: vmware-esxi.dd.gz
 
-vmware-esxi.dd.gz: clean
-	sudo ${PACKER} init vmware-esxi.pkr.hcl && sudo PACKER_LOG=1 ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.pkr.hcl
-	reset
+check-deps:
+	dpkg -s libnbd-bin nbdkit packer fusefat > /dev/null
+
+vmware-esxi.dd.gz: check-deps clean
+	sudo ${PACKER} init vmware-esxi.pkr.hcl && sudo PACKER_LOG=${PACKER_LOG} ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.pkr.hcl
 
 $(VENV): requirements-dev.txt requirements.txt
 	python3 -m venv --system-site-packages --clear $@

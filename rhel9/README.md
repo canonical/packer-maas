@@ -7,7 +7,7 @@ The Packer template in this directory creates a RHEL 9 AMD64 image for use with 
 ## Prerequisites (to create the image)
 
 * A machine running Ubuntu 22.04+ with the ability to run KVM virtual machines.
-* qemu-utils
+* qemu-utils, libnbd-bin, nbdkit and fuse2fs
 * [Packer](https://www.packer.io/intro/getting-started/install.html), v1.8.0 or newer
 * The [RHEL 9 DVD ISO](https://developers.redhat.com/products/rhel/download)
 
