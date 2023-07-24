@@ -1,6 +1,6 @@
 PACKER ?= packer
 export PACKER_LOG ?= 0
-SUDO ?= sudo -E
+SUDO ?= sudo
 ISO ?= rhel-baseos-9.1-x86_64-dvd.iso
 
 .PHONY: all clean

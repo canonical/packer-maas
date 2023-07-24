@@ -1,6 +1,6 @@
 PACKER ?= packer
 export PACKER_LOG ?= 0
-SUDO ?= sudo -E
+SUDO ?= sudo
 ISO ?= SLES12-SP5-JeOS.x86_64-12.5-OpenStack-Cloud-GM.qcow2
 
 .PHONY: all clean

@@ -1,6 +1,6 @@
 PACKER ?= packer
 export PACKER_LOG ?= 0
-SUDO ?= sudo -E
+SUDO ?= sudo
 ISO ?= SLE-15-SP4-Full-x86_64-GM-Media1.iso
 
 .PHONY: all clean

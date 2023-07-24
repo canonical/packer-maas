@@ -1,6 +1,6 @@
 PACKER ?= packer
 export PACKER_LOG ?= 0
-SUDO ?= sudo -E
+SUDO ?= sudo
 ISO ?= ${RHEL8_ISO_PATH}
 
 .PHONY: all clean
