@@ -41,5 +41,6 @@ if [ -n "$MANIFEST" ]; then
     umount "${ROOT_MOUNT}/dev"
 fi
 
+sync
 fusermount -u "${ROOT_MOUNT}"
 echo 'Done'

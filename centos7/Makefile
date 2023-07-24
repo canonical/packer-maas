@@ -1,5 +1,6 @@
 PACKER ?= packer
-PACKER_LOG ?= 0
+export PACKER_LOG ?= 0
+SUDO ?= sudo
 
 .PHONY: all clean check-deps
 
@@ -9,7 +10,7 @@ check-deps:
 	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
 
 centos7.tar.gz: clean check-deps
-	sudo ${PACKER} init centos7.pkr.hcl && sudo PACKER_LOG=${PACKER_LOG} ${PACKER} build centos7.pkr.hcl
+	${SUDO} ${PACKER} init centos7.pkr.hcl && ${SUDO} ${PACKER} build centos7.pkr.hcl
 
 clean:
-	sudo ${RM} -rf output-centos7 centos7.tar.gz
+	${SUDO} ${RM} -rf output-centos7 centos7.tar.gz
