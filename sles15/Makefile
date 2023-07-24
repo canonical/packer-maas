@@ -1,5 +1,6 @@
 PACKER ?= packer
-export PACKER_LOG ?= 0
+PACKER_LOG ?= 0
+export PACKER_LOG
 SUDO ?= sudo
 ISO ?= SLE-15-SP4-Full-x86_64-GM-Media1.iso
 

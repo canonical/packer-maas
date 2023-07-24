@@ -1,5 +1,6 @@
 PACKER ?= packer
-export PACKER_LOG ?= 0
+PACKER_LOG ?= 0
+export PACKER_LOG
 SUDO ?= sudo
 
 .PHONY: all clean check-deps
