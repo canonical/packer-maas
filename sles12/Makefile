@@ -1,5 +1,6 @@
 PACKER ?= packer
-export PACKER_LOG ?= 0
+PACKER_LOG ?= 0
+export PACKER_LOG
 SUDO ?= sudo
 ISO ?= SLES12-SP5-JeOS.x86_64-12.5-OpenStack-Cloud-GM.qcow2
 

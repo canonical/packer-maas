@@ -1,5 +1,6 @@
 PACKER ?= packer
-export PACKER_LOG ?= 0
+PACKER_LOG ?= 0
+export PACKER_LOG
 SUDO ?= sudo
 ISO ?= ${VMWARE_ESXI_ISO_PATH}
 VENV := .ve
