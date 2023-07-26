@@ -26,9 +26,12 @@ your proxy server. Alternatively you may redefine iso_url to a local file,
 set iso_checksum_type to none to disable checksuming, and remove
 iso_checksum_url.
 
-To use a proxy during the installation add the --proxy=$HTTP_PROXY flag to every
-line starting with url or repo in http/centos6.ks. Alternatively you may set the
---mirrorlist values to a local mirror.
+To use a proxy during the installation define the `KS_PROXY` variable in the
+environment, as bellow:
+
+```shell
+export KS_PROXY="--proxy=${HTTP_PROXY}"
+```
 
 ## Building an image
 
