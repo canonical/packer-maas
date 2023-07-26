@@ -18,4 +18,4 @@ http/rocky.ks: http/rocky.ks.in
 	envsubst < $< | tee $@
 
 clean:
-	${SUDO} ${RM} -rf output-rocky9 rocky9.tar.gz
+	${SUDO} ${RM} -rf output-rocky9 rocky9.tar.gz http/rocky.ks

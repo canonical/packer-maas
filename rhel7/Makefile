@@ -19,4 +19,4 @@ http/rhel7.ks: http/rhel7.ks.in
 	envsubst < $< | tee $@
 
 clean:
-	${SUDO} ${RM} -rf output-rhel7 rhel7.tar.gz
+	${SUDO} ${RM} -rf output-rhel7 rhel7.tar.gz http/rhel7.ks

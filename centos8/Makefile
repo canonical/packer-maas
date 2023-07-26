@@ -18,4 +18,4 @@ http/centos8.ks: http/centos8.ks.in
 	envsubst < $< | tee $@
 
 clean:
-	${SUDO} ${RM} -rf output-centos8 centos8.tar.gz
+	${SUDO} ${RM} -rf output-centos8 centos8.tar.gz http/centos8.ks

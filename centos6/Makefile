@@ -18,4 +18,4 @@ http/centos6.ks: http/centos6.ks.in
 	envsubst < $< | tee $@
 
 clean:
-	${SUDO} ${RM} -rf output-centos6 centos6.tar.gz
+	${SUDO} ${RM} -rf output-centos6 centos6.tar.gz http/centos6.ks
