@@ -23,7 +23,11 @@ The deployment image may be customized using `cloud-init` configuration. Check t
 
 ## Building the image using a proxy
 
-The Packer template pulls all packages from the upstream image. To use a proxy during the installation add the `--proxy=$HTTP_PROXY` flag to every line starting with url or repo in `http/sles.xml`.
+The Packer template pulls all packages from the upstream image. To use a proxy during the installation define the `KS_PROXY` variable in the environment, as bellow:
+
+```shell
+export KS_PROXY="--proxy=\"${HTTP_PROXY}\""
+```
 
 ## Building an image
 

@@ -21,9 +21,13 @@ You can customize the deployment image by modifying http/rocky.ks. See the [RHEL
 
 ## Building the image using a proxy
 
-The Packer template downloads the Rocky ISO image from the Internet. You can tell Packer to use a proxy by setting the HTTP_PROXY environment variable to point to your proxy server. You can also  redefine rocky_iso_url to a local file. If you want to skip the base image integrity check, set iso_checksum_type to none and remove iso_checksum.
+The Packer template downloads the Rocky ISO image from the Internet. You can tell Packer to use a proxy by setting the HTTP_PROXY environment variable to point to your proxy server. You can also redefine rocky_iso_url to a local file. If you want to skip the base image integrity check, set iso_checksum_type to none and remove iso_checksum.
 
-You can add the --proxy=$HTTP_PROXY flag to every line starting with url in http/rocky.ks to use a proxy during installation.
+To use a proxy during the installation define the `KS_PROXY` variable in the environment, as bellow:
+
+```shell
+export KS_PROXY="--proxy=\"${HTTP_PROXY}\""
+```
 
 ## Building an image
 
