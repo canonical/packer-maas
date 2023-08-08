@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+set -ex
 
 PACKER_OUTPUT=output-${SOURCE:-qemu}/packer-${SOURCE:-qemu}
 IMG_FMT=${IMG_FMT:-qcow2}
@@ -26,6 +27,8 @@ if [ ! -f "${PACKER_OUTPUT}" ]; then
     echo "ERROR: Not in the same path as template!" >&2
     exit
 fi
+
+sync -f ${PACKER_OUTPUT}
 
 TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
 cleanup() {
