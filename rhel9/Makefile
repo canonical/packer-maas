@@ -10,7 +10,11 @@ export PACKER_LOG KS_PROXY
 all: rhel9.tar.gz
 
 check-deps:
-	dpkg -s libnbd0 nbdkit packer fuse2fs > /dev/null
+        @if [ $(shell lsb_release -sr|cut -d. -f1) -le 20 ];then \
+                dpkg -s libnbd0 nbdkit packer fuse2fs > /dev/null; \
+        elif [ $(shell lsb_release -sr|cut -d. -f1) -gt 20 ];then \
+                dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null; \
+        fi
 
 rhel9.tar.gz: check-deps clean http/rhel9.ks
 	${SUDO} ${PACKER} init rhel9.pkr.hcl && ${SUDO} ${PACKER} build -var "rhel9_iso_path=${ISO}" rhel9.pkr.hcl
