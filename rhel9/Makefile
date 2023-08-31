@@ -10,7 +10,7 @@ export PACKER_LOG KS_PROXY
 all: rhel9.tar.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+	dpkg -s libnbd0 nbdkit packer fuse2fs > /dev/null
 
 rhel9.tar.gz: check-deps clean http/rhel9.ks
 	${SUDO} ${PACKER} init rhel9.pkr.hcl && ${SUDO} ${PACKER} build -var "rhel9_iso_path=${ISO}" rhel9.pkr.hcl
