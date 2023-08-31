@@ -9,7 +9,7 @@
 * A machine running Ubuntu 18.04 or 20.04 with the ability to run KVM virtual machines.
 * Dual core x86_64 processor supporting hardware virtualization with at least 8GB of RAM and 32GB of disk space available.
 
-## Packages (to create the images)
+## Package Prerequisites (to create the images)
 
 * build-essential
 * fuse2fs
@@ -26,7 +26,7 @@
 * qemu-block-extra
 * qemu-system-x86
 * qemu-utils
-* packer - from Hashicorp repositories], v1.9.0 or newer
+* packer - from Hashicorp repository, v1.9.0 or newer
 
 ```shell
 wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg
