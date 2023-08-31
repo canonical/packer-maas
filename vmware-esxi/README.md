@@ -66,6 +66,7 @@ Note: vmware-esxi.pkr.hcl is configured to run Packer in headless mode. Only Pac
 Installation is non-interactive.
 
 ## Uploading an image to MAAS
+_Note: If using snap-based MAAS, the image to be uploaded needs reside under your home directory._
 
 ```shell
 maas $PROFILE boot-resources create \
