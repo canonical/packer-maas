@@ -8,8 +8,11 @@ SUDO ?= sudo
 all: custom-cloudimg.tar.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs cloud-image-utils ovmf > /dev/null
-
+	@if [ $(shell lsb_release -sr|cut -d. -f1) -le 20 ];then \
+		dpkg -s libnbd0 nbdkit packer fuse2fs fusefat cloud-image-utils ovmf > /dev/null; \
+	elif [ $(shell lsb_release -sr|cut -d. -f1) -gt 20 ];then \
+		dpkg -s libnbd-bin nbdkit packer fuse2fs fusefat cloud-image-utils ovmf > /dev/null; \
+	fi
 lint:
 	packer validate .
 	packer fmt -check -diff .
