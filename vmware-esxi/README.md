@@ -2,16 +2,38 @@
 
 ## Introduction
 
-[MAAS](https://maas.io) 2.5 and above has the ability to deploy VMware ESXi as a custom image. [MAAS](https://maas.io) cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
+[MAAS](https://maas.io) 3.3 and above has the ability to deploy VMware ESXi as a custom image. [MAAS](https://maas.io) cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
 
 ## Prerequisites (to create the images)
 
-* A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
-* Dual core x86_64 processor supporting hardware virtualization with at least 4GB of RAM and 32GB of disk space available.
-* qemu-kvm
-* qemu-utils, libnbd-bin, nbdkit and fusefat
-* Python Pip
-* [Packer](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
+* A machine running Ubuntu 18.04 or 20.04 with the ability to run KVM virtual machines.
+* Dual core x86_64 processor supporting hardware virtualization with at least 8GB of RAM and 32GB of disk space available.
+
+## Packages (to create the images)
+
+* build-essential
+* fuse2fs
+* fusefat
+* libnbd0
+* libosinfo-bin
+* libvirt-daemon
+* libvirt-daemon-system
+* nbdfuse
+* nbdkit
+* ovmf
+* python3-dev
+* python3-pip
+* qemu-block-extra
+* qemu-system-x86
+* qemu-utils
+* packer - from Hashicorp repositories], v1.9.0 or newer
+
+```shell
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install packer
+```
+
 * The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
 
 ## Requirements (to deploy the image)
