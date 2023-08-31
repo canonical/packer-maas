@@ -10,7 +10,11 @@ VENV := .ve
 all: vmware-esxi.dd.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fusefat > /dev/null
+        @if [ $(shell lsb_release -sr|cut -d. -f1) -le 20 ];then \
+                dpkg -s libnbd0 nbdkit packer fuse2fs fusefat > /dev/null; \
+        elif [ $(shell lsb_release -sr|cut -d. -f1) -gt 20 ];then \
+                dpkg -s libnbd-bin nbdkit packer fuse2fs fusefat > /dev/null; \
+        fi
 
 scripts.tar.xz:
 	export TMP_DIR=$$(mktemp -d /tmp/packer-maas-XXXX);\
