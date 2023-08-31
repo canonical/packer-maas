@@ -1,8 +1,8 @@
 packer {
-  required_version = ">= 1.7.0"
+  required_version = ">= 1.9.0"
   required_plugins {
     qemu = {
-      version = "~> 1.0"
+      version = ">= 1.0.9"
       source  = "github.com/hashicorp/qemu"
     }
   }
@@ -14,7 +14,7 @@ variable "vmware_esxi_iso_path" {
 }
 
 source "qemu" "esxi" {
-  boot_command     = ["<enter><wait>", "<leftShift>O", " ks=cdrom:/KS.CFG", " cpuUniformityHardCheckPanic=FALSE", "systemMediaSize=min", " com1_Port=0x3f8 tty2Port=com1", "<enter>"]
+  boot_command     = ["<enter><wait>", "<leftShift>O", "<spacebar>", "ks=cdrom:/KS.CFG", "<spacebar>", "cpuUniformityHardCheckPanic=FALSE, "<spacebar>", "systemMediaSize=min, "<spacebar>", "com1_Port=0x3f8, "<spacebar>", "tty2Port=com1", "<enter>"]
   boot_wait        = "3s"
   cd_files         = ["./KS.CFG"]
   cd_label         = "kickstart"
@@ -25,9 +25,9 @@ source "qemu" "esxi" {
   headless         = true
   iso_checksum     = "none"
   iso_url          = var.vmware_esxi_iso_path
-  memory           = 4096
+  memory           = 8192
   net_device       = "vmxnet3"
-  qemuargs         = [["-cpu", "host"], ["-smp", "2,sockets=2,cores=1,threads=1"], ["-serial", "stdio"]]
+  qemuargs         = [["-cpu", "max"], ["-smp", "2,sockets=2,cores=1,threads=1"], ["-serial", "stdio"]]
   shutdown_timeout = "1h"
 }
 
