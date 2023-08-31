@@ -35,7 +35,7 @@ make ISO=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso
 Alternatively you can manually run packer. Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
 
 ```shell
-sudo packer init
+sudo packer init .
 sudo PACKER_LOG=1 packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso' .
 ```
 
