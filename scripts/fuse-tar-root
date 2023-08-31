@@ -42,5 +42,5 @@ if [ -n "$MANIFEST" ]; then
 fi
 
 sync
-fusermount -u "${ROOT_MOUNT}"
+fusermount -z -u "${ROOT_MOUNT}"
 echo 'Done'
