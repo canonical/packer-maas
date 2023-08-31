@@ -4,7 +4,7 @@
 
 [MAAS](https://maas.io) 3.3 and above has the ability to deploy VMware ESXi as a custom image. [MAAS](https://maas.io) cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
 
-## Prerequisites (to create the images)
+## Hardware Prerequisites (to create the images)
 
 * A machine running Ubuntu 18.04 or 20.04 with the ability to run KVM virtual machines.
 * Dual core x86_64 processor supporting hardware virtualization with at least 8GB of RAM and 32GB of disk space available.
@@ -38,7 +38,7 @@ sudo apt update && sudo apt install packer
 
 ## Requirements (to deploy the image)
 
-* [MAAS](https://maas.io) 2.5 or above, [MAAS](https://maas.io) 2.6 required for storage configuration
+* [MAAS](https://maas.io) 3.3 or above
 
 VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent than MAAS.
 
