@@ -1,8 +1,8 @@
 packer {
-  required_version = ">= 1.7.0"
+  required_version = ">= 1.9.0"
   required_plugins {
     qemu = {
-      version = "~> 1.0"
+      version = ">= 1.0.9"
       source  = "github.com/hashicorp/qemu"
     }
   }
@@ -28,8 +28,8 @@ source "qemu" "rhel9" {
   http_directory   = "http"
   iso_checksum     = "none"
   iso_url          = var.rhel9_iso_path
-  memory           = 2048
-  qemuargs         = [["-serial", "stdio"], ["-cpu", "host"]]
+  memory           = 4096
+  qemuargs         = [["-serial", "stdio"], ["-cpu", "max"]]
   shutdown_timeout = "1h"
 }
 
