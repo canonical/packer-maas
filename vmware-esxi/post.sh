@@ -9,4 +9,4 @@ cp -v scripts.tar.xz $TMP_DIR/boot/curtin/
 
 echo 'Unmounting image...'
 sync -f $TMP_DIR/boot
-fusermount -z $TMP_DIR/boot
+fusermount -z -u $TMP_DIR/boot
