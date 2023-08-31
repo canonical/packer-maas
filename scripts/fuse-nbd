@@ -33,7 +33,7 @@ sync -f ${PACKER_OUTPUT}
 TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
 cleanup() {
     for dev in $(ls -d ${TMP_DIR}/p*); do
-        fusermount -u ${dev}
+        fusermount -z -u ${dev}
     done
     rm -rf "${TMP_DIR}"
 }
