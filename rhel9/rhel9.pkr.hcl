@@ -20,7 +20,7 @@ variable "rhel9_iso_path" {
 }
 
 source "qemu" "rhel9" {
-  boot_command     = ["<up><tab> ", "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rhel9.ks ", "console=ttyS0 inst.cmdline", "<enter>"]
+  boot_command     = ["<up><tab>", "<spacebar>", "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/rhel9.ks", "<spacebar>", "console=ttyS0", "<spacebar>", "inst.cmdline", "<enter>"]
   boot_wait        = "3s"
   communicator     = "none"
   disk_size        = "4G"
