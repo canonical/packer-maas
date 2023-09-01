@@ -18,7 +18,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-set -ex
+set -x
 
 PACKER_OUTPUT=output-${SOURCE:-qemu}/packer-${SOURCE:-qemu}
 IMG_FMT=${IMG_FMT:-qcow2}
@@ -32,9 +32,10 @@ sync -f ${PACKER_OUTPUT}
 
 TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
 cleanup() {
-    cd
+    cd;
     for dev in $(ls -d ${TMP_DIR}/p*); do
         fusermount -z -u ${dev}
+        [ -d ${dev} ] && umount -f ${dev}
     done
     rm -rf "${TMP_DIR}"
 }
@@ -46,7 +47,7 @@ function mount_part() {
     FUSEDRV=${3:-fuse2fs}
     DEV=${TMP_DIR}/p${PART}
     [ -d ${MOUNTPOINT} ] || mkdir -p ${MOUNTPOINT}
-    mkdir ${DEV}
+    mkdir -p ${DEV}
     nbdfuse ${DEV} \
         --command nbdkit -s nbd \
         socket=$(pwd)/qemu-img.sock \
@@ -70,4 +71,4 @@ qemu-nbd --socket=$(pwd)/qemu-img.sock \
     --shared=10 \
     ${PACKER_OUTPUT} &
 
-mkdir "${TMP_DIR}/root"
+mkdir -p "${TMP_DIR}/root"
