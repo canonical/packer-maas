@@ -35,9 +35,10 @@ cleanup() {
     cd;
     for dev in $(ls -d ${TMP_DIR}/p*); do
         fusermount -z -u ${dev}
-        [ -d ${dev} ] && umount -f ${dev}
+        [ -d ${dev} ] && umount -f ${dev} || true
     done
     rm -rf "${TMP_DIR}"
+    return 0;
 }
 trap cleanup EXIT
 
