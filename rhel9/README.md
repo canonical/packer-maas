@@ -43,7 +43,7 @@ be in packer-maas/rhel9, where this file is located. Once in packer-maas/rhel9
 you can generate an image with:
 
 ```shell
-sudo packer init
+sudo packer init .
 sudo PACKER_LOG=1 packer build -var 'rhel9_iso_path=/PATH/TO/rhel-baseos-9.1-x86_64-dvd.iso' .
 ```
 
