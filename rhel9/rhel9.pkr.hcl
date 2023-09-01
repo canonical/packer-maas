@@ -43,6 +43,6 @@ build {
       "source ../scripts/fuse-nbd",
       "source ../scripts/fuse-tar-root"
     ]
-    inline_shebang = "/bin/bash -e"
+    inline_shebang = "/bin/bash -x"
   }
 }
