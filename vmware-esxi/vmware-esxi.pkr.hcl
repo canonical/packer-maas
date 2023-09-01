@@ -14,7 +14,7 @@ variable "vmware_esxi_iso_path" {
 }
 
 source "qemu" "esxi" {
-  boot_command     = ["<enter><wait>", "<leftShift>O", "<spacebar>", "ks=cdrom:/KS.CFG", "<spacebar>", "cpuUniformityHardCheckPanic=FALSE", "<spacebar>", "systemMediaSize=min, "<spacebar>", "com1_Port=0x3f8", "<spacebar>", "tty2Port=com1", "<enter>"]
+  boot_command     = ["<enter><wait>", "<leftShift>O", "<spacebar>", "ks=cdrom:/KS.CFG", "<spacebar>", "cpuUniformityHardCheckPanic=FALSE", "<spacebar>", "systemMediaSize=min", "<spacebar>", "com1_Port=0x3f8", "<spacebar>", "tty2Port=com1", "<enter>"]
   boot_wait        = "3s"
   cd_files         = ["./KS.CFG"]
   cd_label         = "kickstart"
