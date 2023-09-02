@@ -39,8 +39,10 @@ if [ -n "$MANIFEST" ]; then
     mount -o bind /dev "${ROOT_MOUNT}/dev"
     chroot "${ROOT_MOUNT}" rpm -qa | sort -u -o $MANIFEST
     umount "${ROOT_MOUNT}/dev"
+    if grep -qs "${ROOT_MOUNT}/dev " /proc/mounts; then umount -f ${ROOT_MOUNT}/dev ; else true ; fi
 fi
 
 sync
 fusermount -z -u "${ROOT_MOUNT}"
+if grep -qs "${ROOT_MOUNT} " /proc/mounts; then umount -f ${ROOT_MOUNT} ; else true ; fi
 echo 'Done'
