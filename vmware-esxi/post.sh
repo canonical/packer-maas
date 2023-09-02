@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 echo 'Adding curtin-hooks to image...'
 mount_part 1 $TMP_DIR/boot fusefat
