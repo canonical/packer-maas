@@ -35,7 +35,7 @@ cleanup() {
     cd;
     for dev in $(ls -d ${TMP_DIR}/p*); do
         fusermount -z -u ${dev}
-        [ -d ${dev} ] && umount -f ${dev} || true
+        if grep -qs "${dev} " /proc/mounts; then umount -f ${dev} ; else true ; fi
     done
     rm -rf "${TMP_DIR}"
     return 0;
