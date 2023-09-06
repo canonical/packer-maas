@@ -15,7 +15,7 @@ centos8.tar.gz: check-deps clean http/centos8.ks
 	${SUDO} ${PACKER} init centos8.pkr.hcl && ${PACKER} build centos8.pkr.hcl
 
 http/centos8.ks: http/centos8.ks.in
-	envsubst < $< | tee $@
+	envsubst '$KS_PROXY' < $< | tee $@
 
 clean:
 	${SUDO} ${RM} -rf output-centos8 centos8.tar.gz http/centos8.ks

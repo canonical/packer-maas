@@ -15,7 +15,7 @@ centos8-stream.tar.gz: check-deps clean http/centos8-stream.ks
 	${SUDO} ${PACKER} init centos8-stream.pkr.hcl && ${SUDO} ${PACKER} build centos8-stream.pkr.hcl
 
 http/centos8-stream.ks: http/centos8-stream.ks.in
-	envsubst < $< | tee $@
+	envsubst '$KS_PROXY' < $< | tee $@
 
 clean:
 	${SUDO} ${RM} -rf output-centos8-stream centos8-stream.tar.gz http/centos8-stream.ks

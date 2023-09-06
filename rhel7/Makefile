@@ -16,7 +16,7 @@ rhel7.tar.gz: check-deps clean http/rhel7.ks
 	${SUDO} ${PACKER} init rhel7.pkr.hcl && ${SUDO} ${PACKER} build -var "rhel7_iso_path=${ISO}" rhel7.pkr.hcl
 
 http/rhel7.ks: http/rhel7.ks.in
-	envsubst < $< | tee $@
+	envsubst '$KS_PROXY' < $< | tee $@
 
 clean:
 	${SUDO} ${RM} -rf output-rhel7 rhel7.tar.gz http/rhel7.ks
