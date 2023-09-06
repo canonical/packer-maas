@@ -30,8 +30,8 @@ The build the image you give the template a script which has all the
 customizations:
 
 ```shell
-sudo packer init .
-sudo packer build -var customize_script=my-changes.sh -var ubuntu_series=jammy \
+packer init .
+packer build -var customize_script=my-changes.sh -var ubuntu_series=jammy \
     -only='cloudimg.*' .
 ```
 
@@ -61,8 +61,8 @@ include it in the image.
 The easiest way of doing this is to use the `kernel` parameter:
 
 ```shell
-sudo packer init .
-sudo packer build -var kernel=linux-lowlatency -var customize_script=my-changes.sh \
+packer init .
+packer build -var kernel=linux-lowlatency -var customize_script=my-changes.sh \
     -only='cloudimg.*' .
 ```
 
@@ -77,8 +77,8 @@ By default, images are produces for amd64. You can build for arm64 as well if
 you specify the `architecture` parameter:
 
 ```shell
-sudo packer init .
-sudo packer build -var architecture=arm64 -var customize_script=my-changes.sh \
+packer init .
+packer build -var architecture=arm64 -var customize_script=my-changes.sh \
     -only='cloudimg.*' .
 ```
 
@@ -114,15 +114,15 @@ be in packer-maas/ubuntu, where this file is located. Once in
 packer-maas/ubuntu you can generate an image with:
 
 ```shell
-sudo packer init .
-sudo PACKER_LOG=1 packer build -only=qemu.lvm .
+packer init .
+PACKER_LOG=1 packer build -only=qemu.lvm .
 ```
 
 or
 
 ```shell
-sudo packer init .
-sudo PACKER_LOG=1 packer build -only=qemu.flat .
+packer init .
+PACKER_LOG=1 packer build -only=qemu.flat .
 ```
 
 Note: ubuntu-lvm.pkr.hcl and ubuntu-flat.pkr.hcl are configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or change the value of headless to false in the HCL2 file.
@@ -143,7 +143,7 @@ maas admin boot-resources create \
     title='Ubuntu Custom TGZ' \
     architecture='amd64/generic' \
     filetype='tgz' \
-    content@=custom-ubuntu.tar.gz
+    content@=custom-cloudimg.tar.gz
 ```
 
 LVM raw image

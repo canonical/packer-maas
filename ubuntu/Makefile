@@ -1,7 +1,6 @@
 PACKER ?= packer
 PACKER_LOG ?= 0
 export PACKER_LOG
-SUDO ?= sudo
 
 .PHONY: all clean
 
@@ -27,17 +26,19 @@ OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS.fd
 	cp -v $< $@
 
 custom-cloudimg.tar.gz: check-deps clean
-	${SUDO} ${PACKER} init . && ${SUDO} ${PACKER} build -only='cloudimg.*' .
+	${PACKER} init . && ${PACKER} build -only='cloudimg.*' .
 
 custom-ubuntu.tar.gz: check-deps clean seeds-flat.iso OVMF_VARS.fd \
 			packages/custom-packages.tar.gz
-	${SUDO} ${PACKER} init . && ${SUDO} ${PACKER} build -only=qemu.flat .
+	${PACKER} init . && ${PACKER} build -only=qemu.flat .
 
 custom-ubuntu-lvm.dd.gz: check-deps clean seeds-lvm.iso OVMF_VARS.fd
-	${SUDO} ${PACKER} init . && ${SUDO} ${PACKER} build -only=qemu.lvm .
+	${PACKER} init . && ${PACKER} build -only=qemu.lvm .
 
 clean:
-	${SUDO} ${RM} -rf output-* custom-*.gz
+	${RM} -rf output-* custom-*.gz \
+		seeds-flat.iso seeds-lvm.iso seeds-cloudimg.iso \
+		OVMF_VARS.fd
 
 CUSTOM_PKGS:=${wildcard packages/*.deb}
 
@@ -48,4 +49,5 @@ else
 	tar czf $@ -C packages ${notdir $^}
 endif
 
-.INTERMEDIATE: OVMF_VARS.fd
+.INTERMEDIATE: OVMF_VARS.fd packages/custom-packages.tar.gz \
+	seeds-flat.iso seeds-lvm.iso seeds-cloudimg.iso

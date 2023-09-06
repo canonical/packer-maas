@@ -43,8 +43,8 @@ be in packer-maas/rhel7, where this file is located. Once in packer-maas/rhel7
 you can generate an image with:
 
 ```shell
-sudo packer init
-sudo PACKER_LOG=1 packer build -var 'rhel7_iso_path=/PATH/TO/rhel-server-7.9-x86_64-dvd.iso' .
+packer init
+PACKER_LOG=1 packer build -var 'rhel7_iso_path=/PATH/TO/rhel-server-7.9-x86_64-dvd.iso' .
 ```
 
 Note: rhel7.pkr.hcl is configured to run Packer in headless mode. Only Packer

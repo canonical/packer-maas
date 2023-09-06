@@ -37,8 +37,8 @@ be in `packer-maas/sles15`, where this file is located. Once in packer-maas/sles
 you can generate an image with:
 
 ```shell
-sudo packer init
-sudo PACKER_LOG=1 packer build -var 'sles15_iso_path=/PATH/TO/SLE-15-SP4-Full-x86_64-GM-Media1.iso' .
+packer init
+PACKER_LOG=1 packer build -var 'sles15_iso_path=/PATH/TO/SLE-15-SP4-Full-x86_64-GM-Media1.iso' .
 ```
 
 Note: `sles.pkr.hcl` is configured to run Packer in headless mode. Only Packer

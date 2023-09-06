@@ -51,8 +51,8 @@ be in packer-maas/centos8, where this file is located. Once in
 packer-maas/centos8 you can generate an image with:
 
 ```shell
-sudo packer init
-sudo PACKER_LOG=1 packer build .
+packer init
+PACKER_LOG=1 packer build .
 ```
 
 Note: centos8.pkr.hcl is configured to run Packer in headless mode. Only Packer
