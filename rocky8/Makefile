@@ -15,7 +15,7 @@ rocky8.tar.gz: check-deps clean http/rocky.ks
 	${SUDO} ${PACKER} init rocky8.pkr.hcl && ${SUDO} ${PACKER} build rocky8.pkr.hcl
 
 http/rocky.ks: http/rocky.ks.in
-	envsubst < $< | tee $@
+	envsubst '$KS_PROXY' < $< | tee $@
 
 clean:
 	${SUDO} ${RM} -rf output-rocky8 rocky8.tar.gz http/rocky.ks

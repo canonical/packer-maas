@@ -15,7 +15,7 @@ centos7.tar.gz: clean check-deps http/centos7.ks
 	${SUDO} ${PACKER} init centos7.pkr.hcl && ${SUDO} ${PACKER} build centos7.pkr.hcl
 
 http/centos7.ks: http/centos7.ks.in
-	envsubst < $< | tee $@
+	envsubst '$KS_PROXY' < $< | tee $@
 
 clean:
 	${SUDO} ${RM} -rf output-centos7 centos7.tar.gz http/centos7.ks
