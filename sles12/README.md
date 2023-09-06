@@ -40,8 +40,8 @@ make ISO=/PATH/TO/SLES12-SP5-JeOS.x86_64-12.5-OpenStack-Cloud-GM.qcow2
 Alternatively you can manually run packer. Your current working directory must be in `packer-maas/sles12`, where this file is located. Once in `packer-maas/sles12` you can generate an image with:
 
 ```shell
-sudo packer init
-sudo PACKER_LOG=1 packer build -var 'sles_iso_path=/PATH/TO/SLES12-SP5-JeOS.x86_64-12.5-OpenStack-Cloud-GM.qcow2' .
+packer init
+PACKER_LOG=1 packer build -var 'sles_iso_path=/PATH/TO/SLES12-SP5-JeOS.x86_64-12.5-OpenStack-Cloud-GM.qcow2' .
 ```
 
 Note: `sles.pkr.hcl` is configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the packer output or change the value of `headless` to false in `sles.pkr.hcl`.

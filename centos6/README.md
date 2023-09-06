@@ -46,8 +46,8 @@ be in packer-maas/centos6, where this file is located. Once in
 packer-maas/centos6 you can generate an image with:
 
 ```shell
-sudo packer init
-sudo PACKER_LOG=1 packer build .
+packer init
+PACKER_LOG=1 packer build .
 ```
 
 Note: centos6.pkr.hcl is configured to run Packer in headless mode. Only Packer

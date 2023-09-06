@@ -41,7 +41,7 @@ make
 You can also manually run packer. Set your current working directory to packer-maas/rocky9, where this file resides, and generate an image with:
 
 ```shell
-sudo PACKER_LOG=1 packer build .
+PACKER_LOG=1 packer build .
 ```
 
 The installation runs in a non-interactive mode.
