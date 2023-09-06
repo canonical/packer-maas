@@ -59,7 +59,7 @@ function mount_part() {
     done
     case "${FUSEDRV}" in
     "fusefat") fusefat ${DEV}/nbd ${MOUNTPOINT} -o rw+ -s ;;
-    "fuse2fs") fuse2fs ${DEV}/nbd ${MOUNTPOINT} ;;
+    "fuse2fs") fuse2fs ${DEV}/nbd ${MOUNTPOINT} -o fakeroot ;;
     *) echo "Unsupported Fuse driver" && exit 1 ;;
     esac
 }

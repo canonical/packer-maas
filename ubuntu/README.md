@@ -143,7 +143,7 @@ maas admin boot-resources create \
     title='Ubuntu Custom TGZ' \
     architecture='amd64/generic' \
     filetype='tgz' \
-    content@=custom-ubuntu.tar.gz
+    content@=custom-cloudimg.tar.gz
 ```
 
 LVM raw image
