@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-apt-get install -qy netplan.io cloud-init
+DEBIAN_FRONTEND=noninteractive apt-get install -qy netplan.io cloud-init
 
 cat > /etc/sysctl.d/99-cloudimg-ipv6.conf <<EOF
 net.ipv6.conf.all.use_tempaddr = 0
