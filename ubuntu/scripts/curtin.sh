@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-apt-get install -y jq
+DEBIAN_FRONTEND=noninteractive apt-get install -y jq
 mkdir -p /curtin
 
 # install scripts
