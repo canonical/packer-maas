@@ -1,3 +1,7 @@
+#!/usr/bin/make -f
+
+include ../scripts/check.mk
+
 PACKER ?= packer
 PACKER_LOG ?= 0
 
@@ -8,7 +12,7 @@ export PACKER_LOG KS_PROXY
 all: centos8-stream.tar.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+	$(call check_packages_deps)
 
 centos8-stream.tar.gz: check-deps clean http/centos8-stream.ks
 	${PACKER} init centos8-stream.pkr.hcl && ${PACKER} build centos8-stream.pkr.hcl

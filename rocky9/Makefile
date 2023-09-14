@@ -1,3 +1,7 @@
+#!/usr/bin/make -f
+
+include ../scripts/check.mk
+
 PACKER ?= packer
 PACKER_LOG ?= 0
 
@@ -8,7 +12,7 @@ export PACKER_LOG KS_PROXY
 all: rocky9.tar.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+	$(call check_packages_deps)
 
 rocky9.tar.gz: check-deps clean http/rocky.ks
 	${PACKER} init rocky9.pkr.hcl && ${PACKER} build rocky9.pkr.hcl

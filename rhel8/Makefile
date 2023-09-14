@@ -1,3 +1,7 @@
+#!/usr/bin/make -f
+
+include ../scripts/check.mk
+
 PACKER ?= packer
 PACKER_LOG ?= 0
 ISO ?= ${RHEL8_ISO_PATH}
@@ -9,7 +13,7 @@ export PACKER_LOG KS_PROXY
 all: rhel8.tar.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+	$(call check_packages_deps)
 
 rhel8.tar.gz: check-deps clean http/rhel8.ks
 	${PACKER} init rhel8.pkr.hcl && ${PACKER} build -var "rhel8_iso_path=${ISO}" rhel8.pkr.hcl

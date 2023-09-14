@@ -1,3 +1,7 @@
+#!/usr/bin/make -f
+
+include ../scripts/check.mk
+
 PACKER ?= packer
 PACKER_LOG ?= 0
 ISO ?= rhel-baseos-9.1-x86_64-dvd.iso
@@ -9,7 +13,7 @@ export PACKER_LOG KS_PROXY
 all: rhel9.tar.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs > /dev/null
+	$(call check_packages_deps)
 
 rhel9.tar.gz: check-deps clean http/rhel9.ks
 	${PACKER} init rhel9.pkr.hcl && ${PACKER} build -var "rhel9_iso_path=${ISO}" rhel9.pkr.hcl
