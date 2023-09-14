@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # curtin.sh - Move curtin scripts to final destination
 #
@@ -18,6 +18,8 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+export DEBIAN_FRONTEND=noninteractive
 
 apt-get install -y jq
 mkdir -p /curtin

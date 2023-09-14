@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # install-custom-kernel.sh - Install custom kernel, if specified
 #

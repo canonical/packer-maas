@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # setup-boot.sh - Set up the image after initial boot
 #
@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+export DEBIAN_FRONTEND=noninteractive
 
 # Configure apt proxy if needed.
 packer_apt_proxy_config="/etc/apt/apt.conf.d/packer-proxy.conf"
