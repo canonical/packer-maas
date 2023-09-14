@@ -2,7 +2,7 @@
 
 ## Introduction
 
-MAAS](https://maas.io) 3.3 and above has the ability to deploy VMware ESXi as a custom image. [MAAS](https://maas.io) cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
+[MAAS](https://maas.io) has the ability to deploy VMware ESXi as a custom image. MAAS cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
 
 ## Hardware Prerequisites (to create the images)
 
