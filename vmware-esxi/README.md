@@ -2,21 +2,36 @@
 
 ## Introduction
 
-[MAAS](https://maas.io) 2.5 and above has the ability to deploy VMware ESXi as a custom image. [MAAS](https://maas.io) cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
+MAAS](https://maas.io) 3.3 and above has the ability to deploy VMware ESXi as a custom image. [MAAS](https://maas.io) cannot directly deploy the VMware ESXi ISO, a specialized image must be created from the ISO. Canonical has created a Packer template to automatically do this for you.
 
-## Prerequisites (to create the images)
+## Hardware Prerequisites (to create the images)
 
-* A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
-* Dual core x86_64 processor supporting hardware virtualization with at least 4GB of RAM and 32GB of disk space available.
-* qemu-kvm
-* qemu-utils, libnbd-bin, nbdkit and fusefat
-* Python Pip
-* [Packer](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
+* A machine running Ubuntu 18.04 or 20.04 with the ability to run KVM virtual machines.
+* Dual core x86_64 processor supporting hardware virtualization with at least 8GB of RAM and 32GB of disk space available.
+
+## Package Prerequisites (to create the images)
+
+* build-essential
+* fuse2fs
+* fusefat
+* libnbd0
+* libosinfo-bin
+* libvirt-daemon
+* libvirt-daemon-system
+* nbdfuse
+* nbdkit
+* ovmf
+* python3-dev
+* python3-pip
+* qemu-block-extra
+* qemu-system-x86
+* qemu-utils
+* Packer - from upstream repository, v1.9.0 or newer
 * The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
 
 ## Requirements (to deploy the image)
 
-* [MAAS](https://maas.io) 2.5 or above, [MAAS](https://maas.io) 2.6 required for storage configuration
+* [MAAS](https://maas.io) 3.0 or above
 
 VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com/resources/compatibility/search.php) which are more stringent than MAAS.
 
@@ -35,7 +50,7 @@ make ISO=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso
 Alternatively you can manually run packer. Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
 
 ```shell
-sudo packer init
+sudo packer init .
 sudo PACKER_LOG=1 packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso' .
 ```
 
@@ -44,6 +59,8 @@ Note: vmware-esxi.pkr.hcl is configured to run Packer in headless mode. Only Pac
 Installation is non-interactive.
 
 ## Uploading an image to MAAS
+
+_Note: If using snap-based MAAS, the image to be uploaded needs reside under your home directory._
 
 ```shell
 maas $PROFILE boot-resources create \
