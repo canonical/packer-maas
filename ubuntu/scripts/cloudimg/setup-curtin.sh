@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # cloud-img-setup-curtin.sh - Set up curtin curthooks, if needed.
 #

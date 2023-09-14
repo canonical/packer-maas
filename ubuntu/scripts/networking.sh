@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # networking.sh - Prepare image to boot with cloud-init
 #
@@ -18,6 +18,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+export DEBIAN_FRONTEND=noninteractive
 
 apt-get install -qy netplan.io cloud-init
 

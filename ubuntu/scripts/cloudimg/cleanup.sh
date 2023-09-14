@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash -ex
 #
 # cleanup.sh - Clean up what we did to be able to build the image.
 #
