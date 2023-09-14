@@ -1,3 +1,7 @@
+#!/usr/bin/make -f
+
+include ../scripts/check.mk
+
 PACKER ?= packer
 PACKER_LOG ?= 0
 export PACKER_LOG
@@ -7,7 +11,7 @@ export PACKER_LOG
 all: custom-cloudimg.tar.gz
 
 check-deps:
-	dpkg -s libnbd-bin nbdkit packer fuse2fs cloud-image-utils ovmf > /dev/null
+	$(call check_packages_deps,cloud-image-utils ovmf,cloud-image-utils ovmf)
 
 lint:
 	packer validate .
