@@ -27,20 +27,22 @@ mount_part "${ROOT_PARTITION}" "${ROOT_MOUNT}"
 
 if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
     echo 'Adding Curtin hooks...'
-    cp -r ${CURTIN_HOOKS:-curtin} ${ROOT_MOUNT}
+    cp -r "${CURTIN_HOOKS:-curtin}" "${ROOT_MOUNT}"
 fi
 
 echo "Creating MAAS image ${OUTPUT}..."
-tar -Sczpf "${OUTPUT}" --acls --selinux --xattrs -C $ROOT_MOUNT .
+tar -Sczpf "${OUTPUT}" --acls --selinux --xattrs --exclude='agent.*' --exclude='*.socket' -C "$ROOT_MOUNT" .
 
 if [ -n "$MANIFEST" ]; then
     echo "Creating manifest..."
     # RPM on CentOS/RHEL 7 needs /dev mounted so it can use /dev/urandom
     mount -o bind /dev "${ROOT_MOUNT}/dev"
-    chroot "${ROOT_MOUNT}" rpm -qa | sort -u -o $MANIFEST
+    chroot "${ROOT_MOUNT}" rpm -qa | sort -u -o "$MANIFEST"
     umount "${ROOT_MOUNT}/dev"
+    grep -qs "${ROOT_MOUNT}/dev " /proc/mounts && umount -f "${ROOT_MOUNT}/dev"
 fi
 
 sync
-fusermount -u "${ROOT_MOUNT}"
+fusermount -z -u "${ROOT_MOUNT}"
+grep -qs "${ROOT_MOUNT} " /proc/mounts && umount -f "${ROOT_MOUNT}"
 echo 'Done'

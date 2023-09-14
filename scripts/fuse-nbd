@@ -28,12 +28,14 @@ if [ ! -f "${PACKER_OUTPUT}" ]; then
     exit
 fi
 
-sync -f ${PACKER_OUTPUT}
+sync -f "${PACKER_OUTPUT}"
 
 TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
 cleanup() {
-    for dev in $(ls -d ${TMP_DIR}/p*); do
-        fusermount -u ${dev}
+    for dev in "${TMP_DIR}"/p*/; do
+        dev=${dev%*/}
+        fusermount -u -z "${dev}"
+        grep -qs "${dev} " /proc/mounts && umount -f "${dev}"
     done
     rm -rf "${TMP_DIR}"
 }
@@ -44,12 +46,12 @@ function mount_part() {
     MOUNTPOINT=$2
     FUSEDRV=${3:-fuse2fs}
     DEV=${TMP_DIR}/p${PART}
-    [ -d ${MOUNTPOINT} ] || mkdir -p ${MOUNTPOINT}
-    mkdir ${DEV}
-    nbdfuse ${DEV} \
+    mkdir -p "${MOUNTPOINT}"
+    mkdir -p "${DEV}"
+    nbdfuse "${DEV}" \
         --command nbdkit -s nbd \
-        socket=$(pwd)/qemu-img.sock \
-        --filter=partition partition=${PART} &
+        socket="$(pwd)"/qemu-img.sock \
+        --filter=partition partition="${PART}" &
     retries=0
     until [ -f "${DEV}/nbd" ]; do
         sleep 1
@@ -58,15 +60,15 @@ function mount_part() {
         fi
     done
     case "${FUSEDRV}" in
-    "fusefat") fusefat ${DEV}/nbd ${MOUNTPOINT} -o rw+ -s ;;
-    "fuse2fs") fuse2fs ${DEV}/nbd ${MOUNTPOINT} -o fakeroot ;;
+    "fusefat") fusefat "${DEV}"/nbd "${MOUNTPOINT}" -o rw+ -s ;;
+    "fuse2fs") fuse2fs "${DEV}"/nbd "${MOUNTPOINT}" -o fakeroot ;;
     *) echo "Unsupported Fuse driver" && exit 1 ;;
     esac
 }
 
-qemu-nbd --socket=$(pwd)/qemu-img.sock \
-    --format=${IMG_FMT} \
+qemu-nbd --socket="$(pwd)"/qemu-img.sock \
+    --format="${IMG_FMT}" \
     --shared=10 \
-    ${PACKER_OUTPUT} &
+    "${PACKER_OUTPUT}" &
 
-mkdir "${TMP_DIR}/root"
+mkdir -p "${TMP_DIR}/root"
