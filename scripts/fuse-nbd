@@ -70,5 +70,6 @@ qemu-nbd --socket="$(pwd)"/qemu-img.sock \
     --format="${IMG_FMT}" \
     --shared=10 \
     "${PACKER_OUTPUT}" &
+sleep 5
 
 mkdir -p "${TMP_DIR}/root"
