@@ -1,0 +1,23 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ubuntu
+    username: ubuntu
+    password: "$6$canonical.$0zWaW71A9ke9ASsaOcFTdQ2tx1gSmLxMPrsH0rF0Yb.2AEKNPV1lrF94n6YuPJmnUy2K2/JSDtxuiBDey6Lpa/"
+  keyboard:
+    layout: us
+    variant: ''
+  ssh:
+    install-server: true
+  storage:
+    grub:
+      update_nvram: true
+    swap:
+      size: 0
+    layout:
+      name: lvm
+  late-commands:
+    - echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ubuntu
+  package_update: true
+  package_upgrade: true
