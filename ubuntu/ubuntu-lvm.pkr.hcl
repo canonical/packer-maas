@@ -1,3 +1,12 @@
+packer {
+  required_plugins {
+    qemu = {
+      source  = "github.com/hashicorp/qemu"
+      version = "~> 1"
+    }
+  }
+}
+
 source "qemu" "lvm" {
   boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   boot_wait       = "2s"
