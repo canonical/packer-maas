@@ -109,6 +109,12 @@ to build a raw image with LVM, alternatively, you can build a TGZ image
 make custom-ubuntu.tar.gz
 ```
 
+To build a virtualbox image for vagrant using the Makefile:
+
+```shell
+make custom-ubuntu-virtual.box
+```
+
 You can also manually run packer. Your current working directory must
 be in packer-maas/ubuntu, where this file is located. Once in
 packer-maas/ubuntu you can generate an image with:

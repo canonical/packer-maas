@@ -34,6 +34,6 @@ build {
   }
 
   post-processor "vagrant" {
-    output = "custom-ubuntu-virtbox.box"
+    output = "custom-ubuntu-virtual.box"
   }
 }

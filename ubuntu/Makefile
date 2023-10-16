@@ -42,7 +42,7 @@ custom-ubuntu.tar.gz: check-deps clean seeds-flat.iso OVMF_VARS.fd \
 custom-ubuntu-lvm.dd.gz: check-deps clean seeds-lvm.iso OVMF_VARS.fd
 	${PACKER} init . && ${PACKER} build -only=qemu.lvm .
 
-custom-ubuntu-box.box: check-deps clean seeds-box.iso OVMF_VARS.fd
+custom-ubuntu-virtual.box: check-deps clean seeds-box.iso OVMF_VARS.fd
 	${PACKER} init . && ${PACKER} build -only=virtualbox-iso.box .
 
 clean:
