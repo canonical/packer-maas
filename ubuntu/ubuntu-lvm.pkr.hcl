@@ -47,4 +47,8 @@ build {
   post-processor "compress" {
     output = "custom-ubuntu-lvm.dd.gz"
   }
+
+  post-processor "vagrant" {
+    output = "custom-ubuntu-lvm.box"
+  }
 }
