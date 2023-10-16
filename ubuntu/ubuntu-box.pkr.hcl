@@ -1,9 +1,5 @@
 packer {
   required_plugins {
-    qemu = {
-      source  = "github.com/hashicorp/qemu"
-      version = "~> 1"
-    }
     virtualbox = {
       version = "~> 1"
       source  = "github.com/hashicorp/virtualbox"

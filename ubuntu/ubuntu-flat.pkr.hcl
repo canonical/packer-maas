@@ -4,15 +4,6 @@ variable "flat_filename" {
   description = "The filename of the tarball to produce"
 }
 
-packer {
-  required_plugins {
-    qemu = {
-      source  = "github.com/hashicorp/qemu"
-      version = "~> 1"
-    }
-  }
-}
-
 source "qemu" "flat" {
   boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   boot_wait       = "2s"
