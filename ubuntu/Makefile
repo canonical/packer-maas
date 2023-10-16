@@ -26,7 +26,7 @@ seeds-lvm.iso: user-data-lvm meta-data
 seeds-flat.iso: user-data-flat meta-data
 	cloud-localds $@ $^
 
-seeds-virtbox.iso: user-data-virtbox meta-data
+seeds-box.iso: user-data-box meta-data
 	cloud-localds $@ $^
 
 OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS.fd
@@ -42,12 +42,12 @@ custom-ubuntu.tar.gz: check-deps clean seeds-flat.iso OVMF_VARS.fd \
 custom-ubuntu-lvm.dd.gz: check-deps clean seeds-lvm.iso OVMF_VARS.fd
 	${PACKER} init . && ${PACKER} build -only=qemu.lvm .
 
-custom-ubuntu-virtbox.box: check-deps clean seeds-virtbox.iso OVMF_VARS.fd
-	${PACKER} init . && ${PACKER} build -only=virtualbox-iso.lvm .
+custom-ubuntu-box.box: check-deps clean seeds-box.iso OVMF_VARS.fd
+	${PACKER} init . && ${PACKER} build -only=virtualbox-iso.box .
 
 clean:
 	${RM} -rf output-* custom-*.gz \
-		seeds-flat.iso seeds-lvm.iso seeds-virtbox.iso seeds-cloudimg.iso \
+		seeds-flat.iso seeds-lvm.iso seeds-box.iso seeds-cloudimg.iso \
 		OVMF_VARS.fd
 
 CUSTOM_PKGS:=${wildcard packages/*.deb}
@@ -60,4 +60,4 @@ else
 endif
 
 .INTERMEDIATE: OVMF_VARS.fd packages/custom-packages.tar.gz \
-	seeds-flat.iso seeds-lvm.iso seeds-virtbox.iso seeds-cloudimg.iso
+	seeds-flat.iso seeds-lvm.iso seeds-box.iso seeds-cloudimg.iso

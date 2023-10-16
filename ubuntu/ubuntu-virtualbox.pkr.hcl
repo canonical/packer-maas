@@ -1,4 +1,4 @@
-source "virtualbox-iso" "lvm" {
+source "virtualbox-iso" "box" {
   boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   boot_wait       = "2s"
   cpus            = 2
@@ -15,11 +15,11 @@ source "virtualbox-iso" "lvm" {
   ssh_timeout            = "45m"
   ssh_username           = "ubuntu"
   ssh_wait_timeout       = "45m"
-  vm_name        = "packer-lvm"
+  vm_name        = "packer-box"
 }
 
 build {
-  sources = ["source.virtualbox-iso.lvm"]
+  sources = ["source.virtualbox-iso.box"]
 
   provisioner "file" {
     destination = "/tmp/curtin-hooks"
