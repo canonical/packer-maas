@@ -12,7 +12,7 @@ packer {
 }
 
 source "virtualbox-iso" "box" {
-  boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
+   boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   boot_wait       = "2s"
   cpus            = 2
   disk_size       = 8192
@@ -20,6 +20,7 @@ source "virtualbox-iso" "box" {
   headless        = var.headless
   http_directory  = var.http_directory
   iso_checksum    = "file:http://releases.ubuntu.com/jammy/SHA256SUMS"
+  iso_target_path = "packer_cache/ubuntu.iso"
   iso_url         = "https://releases.ubuntu.com/jammy/ubuntu-22.04.3-live-server-amd64.iso"
   memory          = 2048
   shutdown_command       = "sudo -S shutdown -P now"
@@ -28,7 +29,16 @@ source "virtualbox-iso" "box" {
   ssh_timeout            = "45m"
   ssh_username           = "ubuntu"
   ssh_wait_timeout       = "45m"
-  vm_name        = "packer-box"
+  vboxmanage = [
+    ["modifyvm", "{{.Name}}", "--vram", "16"],
+    ["modifyvm", "{{.Name}}", "--graphicscontroller", "vmsvga"],
+    ["storagectl", "{{.Name}}", "--name", "IDE Controller", "--add", "ide"],
+    ["storageattach", "{{.Name}}", "--storagectl", "IDE Controller", "--port", "0", "--device", "0", "--type", "hdd", "--medium", "output-lvm/packer-lvm.vdi"],
+    ["storageattach", "{{.Name}}", "--storagectl", "IDE Controller", "--port", "1", "--device", "0", "--type", "dvddrive", "--medium", "seeds-lvm.iso"],
+    ["storageattach", "{{.Name}}", "--storagectl", "IDE Controller", "--port", "2", "--device", "0", "--type", "dvddrive", "--medium", "packer_cache/ubuntu.iso"],
+    ["modifyvm", "{{.Name}}", "--firmware", "efi"],
+    ["modifyvm", "{{.Name}}", "--boot1", "disk", "--boot2", "dvd"]
+  ]
 }
 
 build {
