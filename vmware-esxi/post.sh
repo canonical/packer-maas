@@ -11,3 +11,5 @@ echo 'Unmounting image...'
 sync -f "$TMP_DIR"/boot
 fusermount -z -u "$TMP_DIR"/boot
 grep -qs "$TMP_DIR/boot " /proc/mounts && umount -f "$TMP_DIR"/boot
+
+echo 'Done'
