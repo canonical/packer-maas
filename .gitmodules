@@ -1,0 +1,9 @@
+[submodule "windows/cloudbase-init"]
+	path = windows/cloudbase-init
+	url = https://github.com/cloudbase/cloudbase-init.git
+[submodule "windows/windows-curtin-hooks"]
+	path = windows/windows-curtin-hooks
+	url = https://github.com/cloudbase/windows-curtin-hooks.git
+[submodule "windows/packer-windows"]
+	path = windows/packer-windows
+	url = https://github.com/StefanScherer/packer-windows.git
