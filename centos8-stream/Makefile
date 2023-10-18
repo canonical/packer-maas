@@ -11,8 +11,7 @@ export PACKER_LOG KS_PROXY
 
 all: centos8-stream.tar.gz
 
-check-deps:
-	$(call check_packages_deps)
+$(eval $(call check_packages_deps))
 
 centos8-stream.tar.gz: check-deps clean http/centos8-stream.ks
 	${PACKER} init centos8-stream.pkr.hcl && ${PACKER} build centos8-stream.pkr.hcl

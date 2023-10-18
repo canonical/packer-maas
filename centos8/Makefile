@@ -11,8 +11,7 @@ export PACKER_LOG KS_PROXY
 
 all: centos8.tar.gz
 
-check-deps:
-	$(call check_packages_deps)
+$(eval $(call check_packages_deps))
 
 centos8.tar.gz: check-deps clean http/centos8.ks
 	${PACKER} init centos8.pkr.hcl && ${PACKER} build centos8.pkr.hcl

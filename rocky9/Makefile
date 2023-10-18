@@ -11,8 +11,7 @@ export PACKER_LOG KS_PROXY
 
 all: rocky9.tar.gz
 
-check-deps:
-	$(call check_packages_deps)
+$(eval $(call check_packages_deps))
 
 rocky9.tar.gz: check-deps clean http/rocky.ks
 	${PACKER} init rocky9.pkr.hcl && ${PACKER} build rocky9.pkr.hcl

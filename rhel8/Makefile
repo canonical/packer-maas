@@ -12,8 +12,7 @@ export PACKER_LOG KS_PROXY
 
 all: rhel8.tar.gz
 
-check-deps:
-	$(call check_packages_deps)
+$(eval $(call check_packages_deps))
 
 rhel8.tar.gz: check-deps clean http/rhel8.ks
 	${PACKER} init rhel8.pkr.hcl && ${PACKER} build -var "rhel8_iso_path=${ISO}" rhel8.pkr.hcl
