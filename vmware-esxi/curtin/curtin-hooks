@@ -31,12 +31,11 @@ from curtin.util import load_command_environment
 
 
 def exec_prog(*cmdline: str) -> None:
-    with open(os.devnull, "w") as devnull:
-        subprocess.check_call(
-            *cmdline,
-            stdout=devnull,
-            stderr=subprocess.STDOUT,
-        )
+    subprocess.check_call(
+        cmdline,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.STDOUT,
+    )
 
 
 def write_config(target, config):
