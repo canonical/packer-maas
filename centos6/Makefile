@@ -11,8 +11,7 @@ export PACKER_LOG KS_PROXY
 
 all: centos6.tar.gz
 
-check-deps:
-	$(call check_packages_deps)
+$(eval $(call check_packages_deps))
 
 centos6.tar.gz: check-deps clean http/centos6.ks
 	${PACKER} init centos6.pkr.hcl && ${PACKER} build centos6.pkr.hcl

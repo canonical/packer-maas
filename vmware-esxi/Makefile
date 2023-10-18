@@ -13,8 +13,7 @@ VENV := .ve
 
 all: vmware-esxi.dd.gz
 
-check-deps:
-	$(call check_packages_deps,fusefat,fusefat )
+$(eval $(call check_packages_deps,fusefat,fusefat ))
 
 scripts.tar.xz:
 	export TMP_DIR=$$(mktemp -d /tmp/packer-maas-XXXX);\

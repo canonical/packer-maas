@@ -10,8 +10,7 @@ export PACKER_LOG
 
 all: custom-cloudimg.tar.gz
 
-check-deps:
-	$(call check_packages_deps,cloud-image-utils ovmf,cloud-image-utils ovmf)
+$(eval $(call check_packages_deps,cloud-image-utils ovmf,cloud-image-utils ovmf))
 
 lint:
 	packer validate .

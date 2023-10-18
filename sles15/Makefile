@@ -11,8 +11,7 @@ ISO ?= SLE-15-SP4-Full-x86_64-GM-Media1.iso
 
 all: sles15.tar.gz
 
-check-deps:
-	$(call check_packages_deps)
+$(eval $(call check_packages_deps))
 
 sles15.tar.gz: check-deps clean
 	${PACKER} init sles.pkr.hcl && ${PACKER} build -var "sles15_iso_path=${ISO}" -on-error=ask sles.pkr.hcl
