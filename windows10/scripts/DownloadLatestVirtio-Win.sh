@@ -3,7 +3,7 @@
 # Create iso directory
 if ! test -d ../iso;
 then
-  mkdir -p iso
+  mkdir -p ../iso
 fi
 
 # Download virtio-win.iso
