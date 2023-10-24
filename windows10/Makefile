@@ -2,6 +2,10 @@
 
 include ../scripts/check.mk
 
+ISO_PATH ?=
+WINDOWS_IMAGE ?= default_image
+PRODUCT_KEY ?=
+
 PACKER ?= packer
 PACKER_LOG ?= 0
 
@@ -13,8 +17,12 @@ all: win10.dd.gz
 
 $(eval $(call check_packages_deps))
 
-win10.dd.gz:
+win10.dd.gz: check-deps clean
 	${PACKER} init . && ${PACKER} build .
+
+custom-win10.dd.gz: check-deps clean
+	./scripts/setup.sh "$(ISO_PATH)" "$(WINDOWS_IMAGE)" "$(PRODUCT_KEY)"
+#	${PACKER} init . && ${PACKER} build .
 
 clean:
 	${RM} -rf output-win10 win10.dd.gz

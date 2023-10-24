@@ -10,6 +10,7 @@ The Packer templates in this directory creates Windows 10 images for use with MA
 * qemu-utils
 * qemu-system
 * ovmf
+* [wimlib-tools](https://wimlib.net/)
 * [cloudbase-init](https://cloudbase.it/cloudbase-init/#download), v1.1.4 or newer
 * [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/index.html), v2.15.4 or newer
 * [Packer](https://www.packer.io/intro/getting-started/install.html), v1.9.4 or newer
@@ -40,6 +41,17 @@ wget http://${PACKER_HTTP_IP}:${PACKER_HTTP_PORT}:/my-file
 ```
 
 ### Customizing the Image
+
+It is possible to make a custom windows image based on an iso file using the `make custom-win10.dd.gz ISO_PATH="./iso/your_iso"`
+
+This will read your iso file's install.wim and prompt you to select the desired windows image which will then be updated in the Autounattend.xml file.
+you can also pass the name of the windows image and the product key through the `make custom-win10.dd.gz` command.
+
+Example:
+
+`make custom-win10.dd.gz ISO_PATH="./iso/19045.2006.220908-0225.22h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso" WINDOWS_IMAGE="Windows 10 Enterprise Evaluation" PRODUCT_KEY="12345-12345-12345-12345-12435"`
+
+### Customizing the Image DEPRECATED INFORMATION
 
 It is possible to customize the image either during the Windows installation or afterwards, before packing the final image. The former is done by editing the [Autounattend.xml](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/update-windows-settings-and-scripts-create-your-own-answer-file-sxs?view=windows-10) file.
 The latter is performed by the collection of ansible playbooks under `./ansible`.
@@ -83,7 +95,7 @@ maas admin boot-resources create \
     title='Windows10 Custom RAW' \
     architecture='amd64/generic' \
     filetype='ddgz' \
-    content@=custom-windows10.dd.gz
+    content@=custom-win10.dd.gz
 ```
 
 ## Credits

@@ -123,7 +123,7 @@
                 <!--ProductKey>
                     <Key>XXXXX-XXXXX-XXXXX-XXXXX-XXXXX</Key>
                     <WillShowUI>Never</WillShowUI>
-                </ProductKey-->
+                </ProductKey>-->
                 <AcceptEula>true</AcceptEula>
             </UserData>
             <ImageInstall>
@@ -140,7 +140,7 @@
                     <InstallFrom>
                         <MetaData wcm:action="add">
                             <Key>/IMAGE/NAME</Key>
-                            <Value>Windows 10 ENTERPRISE EVALUATION</Value>
+                            <Value>Windows 10 Enterprise Evaluation</Value>
                         </MetaData>
                     </InstallFrom>
                 </OSImage>
