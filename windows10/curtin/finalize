@@ -1,0 +1,25 @@
+#!/bin/bash
+
+PYTHON2=`/bin/which python`
+PYTHON3=`/bin/which python3`
+
+PYTHON=${PYTHON2:-$PYTHON3}
+
+if [ -z $PYTHON ]
+then
+    echo "Failed to find python interpretor"
+    exit 1
+fi
+
+SCRIPT_DIR=`/usr/bin/dirname $0`
+ABSPATH=`/bin/readlink -m $SCRIPT_DIR`
+
+FINALIZE="$ABSPATH/finalize.py"
+
+if [ ! -e $FINALIZE ]
+then
+    echo "No finalize script available"
+    exit 0
+fi
+
+$PYTHON $FINALIZE

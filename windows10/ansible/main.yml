@@ -1,0 +1,8 @@
+- hosts: all
+  tasks:
+  - name: Customization | Disable Fast Startup (hybrid boot/hiberboot)
+    win_regedit:
+      path: "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power"
+      name: HiberbootEnabled
+      type: dword
+      data: "0"
