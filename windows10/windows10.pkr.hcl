@@ -59,6 +59,6 @@ build {
   }
 
   post-processor "compress" {
-    output = "windows.dd.gz"
+    output = "win10.dd.gz"
   }
 }
