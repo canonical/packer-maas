@@ -107,7 +107,6 @@ build {
     inline = [
       "SOURCE=windows_server-2022",
       "IMG_FMT=raw",
-      "source ../scripts/fuse-nbd",
       "source ./post.sh",
       ]
     inline_shebang = "/bin/bash -e"
