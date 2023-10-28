@@ -25,7 +25,7 @@ custom-windows10.dd.gz: check-deps clean
 	${PACKER} init . && ${PACKER} build .
 
 clean:
-	${RM} -rf output-win10 win10.dd.gz
+	${RM} -rf output-windows10 windows10.dd.gz
 
 lint:
 	packer validate .

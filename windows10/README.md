@@ -30,16 +30,6 @@ Before you can go about building the image there are a few thing to setup.
 4. Get the latest [virtio-win iso](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/?C=M;O=D) drivers from redhat and save them to the ./iso directory. Alternativley run the `windows10/scripts/DownloadLatestVirtio-Win.sh` script to get the latest version automatically.
 
 
-#### Accessing external files from you script
-
-If you want to put or use some files in the image, you can put those in the `http` directory.
-
-Whatever file you put there, you can access from within your script like this:
-
-```shell
-wget http://${PACKER_HTTP_IP}:${PACKER_HTTP_PORT}:/my-file
-```
-
 ### Customizing the Image
 
 It is possible to make a custom windows image based on an iso file using the `make custom-win10.dd.gz ISO_PATH="./iso/your_iso"`
@@ -67,7 +57,7 @@ This is just the bare minimum, there is a lot of default variables used in the A
 You can easily build the image using the Makefile:
 
 ```shell
-make win10.dd.gz
+make windows10.dd.gz
 ```
 
 You can also manually run packer. Your current working directory must
@@ -76,7 +66,7 @@ packer-maas/ubuntu you can generate an image with:
 
 ```shell
 packer init .
-PACKER_LOG=1 packer build -only=qemu.win10 .
+PACKER_LOG=1 packer build -only=qemu.windows10 .
 ```
 
 Note: windows10.pkr.hcl is configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or change the value of headless to false in the HCL2 file.
@@ -89,13 +79,26 @@ The default username is ```defaultuser```
 
 ## Uploading images to MAAS
 
+[**YOUR IMAGE MUST HAVE WINDOWS FIRST AS THE NAME**](https://discourse.maas.io/t/need-help-to-deploy-windows-11-custom-image/6891/3)
+
 ```shell
 maas admin boot-resources create \
-    name='custom/windows10-raw' \
-    title='Windows10 Custom RAW' \
+    name='windows/windows10-custom' \
+    title='Windows10 Custom' \
     architecture='amd64/generic' \
     filetype='ddgz' \
-    content@=custom-win10.dd.gz
+    content@=windows10.dd.gz
 ```
 
+## Booting your UEFI image
+
+- Make sure to change the system to UEFI boot mode
+- Change your boot order so that your intel NIC comes before the drive to be installed to.
+- If you are running your own DHCP server like OPNsense you must set the x64 UEFI/EBC filename to grubx64.efi
+
 ## Credits
+
+- [joefitzgerald](https://github.com/joefitzgerald/packer-windows)'s packer windows templates
+- [cagyirey](https://github.com/cagyirey/packer-windows-imaging-tools)'s windows imaging tools
+- [Kari Finn](https://www.tenforums.com/tutorials/96683-create-media-automated-unattended-install-windows-10-a.html)'s autounattend tutorials on tenfourms.com
+- All of the creators of these awesome opensource tools I got to play around with!

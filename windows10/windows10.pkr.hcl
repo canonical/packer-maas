@@ -37,7 +37,7 @@ source "qemu" "win10" {
 }
 
 build {
-  sources = ["source.qemu.win10"]
+  sources = ["source.qemu.windows10"]
 
   provisioner "file" {
     source      = "./curtin"
