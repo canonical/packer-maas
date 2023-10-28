@@ -38,6 +38,12 @@ source "qemu" "win10" {
 
 build {
   sources = ["source.qemu.win10"]
+
+  provisioner "file" {
+    source      = "./curtin"
+    destination = "C:"
+  }
+
   provisioner "ansible" {
     skip_version_check  = false
     playbook_file = "./ansible/main.yml"
@@ -49,16 +55,7 @@ build {
     ]
   }
 
-  provisioner "file" {
-    source      = "./curtin"
-    destination = "C:"
-  }
-
-  provisioner "powershell" {
-    script = "./scripts/install-cloudbase-init.ps1"
-  }
-
   post-processor "compress" {
-    output = "win10.dd.gz"
+    output = "windows10.dd.gz"
   }
 }

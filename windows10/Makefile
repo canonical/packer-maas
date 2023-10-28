@@ -13,16 +13,16 @@ export PACKER_LOG
 
 .PHONY: all clean
 
-all: win10.dd.gz
+all: windows10.dd.gz
 
 $(eval $(call check_packages_deps))
 
-win10.dd.gz: check-deps clean
+windows10.dd.gz: check-deps clean
 	${PACKER} init . && ${PACKER} build .
 
-custom-win10.dd.gz: check-deps clean
+custom-windows10.dd.gz: check-deps clean
 	./scripts/setup.sh "$(ISO_PATH)" "$(WINDOWS_IMAGE)" "$(PRODUCT_KEY)"
-#	${PACKER} init . && ${PACKER} build .
+	${PACKER} init . && ${PACKER} build .
 
 clean:
 	${RM} -rf output-win10 win10.dd.gz

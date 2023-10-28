@@ -1,8 +1,7 @@
 - hosts: all
   tasks:
-  - name: Customization | Disable Fast Startup (hybrid boot/hiberboot)
-    win_regedit:
-      path: "HKLM:\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power"
-      name: HiberbootEnabled
-      type: dword
-      data: "0"
+  - name: Install Cloudbase-Init
+    ansible.windows.win_package:
+      path: https://www.cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi
+      product_id: '{ED85F19F-057A-4EE6-BC8D-F576DEACE78D}'
+      arguments: /qn /l*v log.txt
