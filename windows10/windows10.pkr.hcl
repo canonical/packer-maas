@@ -1,5 +1,5 @@
 
-source "qemu" "win10" {
+source "qemu" "windows10" {
   accelerator      = "kvm"
   firmware         =  "/usr/share/ovmf/OVMF.fd"
   machine_type     = "q35"
