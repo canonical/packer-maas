@@ -6,6 +6,12 @@ PACKER ?= packer
 PACKER_LOG ?= 0
 export PACKER_LOG
 
+SERIES ?= jammy
+URL ?= http://releases.ubuntu.com
+SUMS ?= SHA256SUMS
+
+ISO=$(shell wget -O- -q ${URL}/${SERIES}/${SUMS} | grep live-server | cut -d'*' -f2)
+
 .PHONY: all clean
 
 all: custom-cloudimg.tar.gz
@@ -29,15 +35,18 @@ OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS.fd
 	cp -v $< $@
 
 custom-cloudimg.tar.gz: check-deps clean
-	${PACKER} init . && ${PACKER} build -only='cloudimg.*' .
+	${PACKER} init . && ${PACKER} build -only='cloudimg.*' -var ubuntu_series=${SERIES} .
 
 custom-ubuntu.tar.gz: check-deps clean seeds-flat.iso OVMF_VARS.fd \
 			packages/custom-packages.tar.gz
-	${PACKER} init . && ${PACKER} build -only=qemu.flat .
+	${PACKER} init . && ${PACKER} build -only=qemu.flat \
+	                -var ubuntu_series=${SERIES} \
+	                -var ubuntu_iso=${ISO} .
 
 custom-ubuntu-lvm.dd.gz: check-deps clean seeds-lvm.iso OVMF_VARS.fd
-	${PACKER} init . && ${PACKER} build -only=qemu.lvm .
-
+	${PACKER} init . && ${PACKER} build -only=qemu.lvm \
+	                -var ubuntu_series=${SERIES} \
+	                -var ubuntu_lvm_iso=${ISO} .
 clean:
 	${RM} -rf output-* custom-*.gz \
 		seeds-flat.iso seeds-lvm.iso seeds-cloudimg.iso \

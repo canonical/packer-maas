@@ -1,9 +1,3 @@
-variable "flat_filename" {
-  type        = string
-  default     = "custom-ubuntu.tar.gz"
-  description = "The filename of the tarball to produce"
-}
-
 source "qemu" "flat" {
   boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   boot_wait       = "2s"
@@ -12,9 +6,9 @@ source "qemu" "flat" {
   format          = "raw"
   headless        = var.headless
   http_directory  = var.http_directory
-  iso_checksum    = "file:http://releases.ubuntu.com/jammy/SHA256SUMS"
-  iso_target_path = "packer_cache/ubuntu.iso"
-  iso_url         = "https://releases.ubuntu.com/jammy/ubuntu-22.04.3-live-server-amd64.iso"
+  iso_checksum    = "file:http://releases.ubuntu.com/${var.ubuntu_series}/SHA256SUMS"
+  iso_target_path = "packer_cache/${var.ubuntu_series}.iso"
+  iso_url         = "https://releases.ubuntu.com/${var.ubuntu_series}/${var.ubuntu_iso}"
   memory          = 2048
   qemuargs = [
     ["-vga", "qxl"],
@@ -25,7 +19,7 @@ source "qemu" "flat" {
     ["-drive", "if=pflash,format=raw,file=OVMF_VARS.fd"],
     ["-drive", "file=output-flat/packer-flat,if=none,id=drive0,cache=writeback,discard=ignore,format=raw"],
     ["-drive", "file=seeds-flat.iso,format=raw,cache=none,if=none,id=drive1,readonly=on"],
-    ["-drive", "file=packer_cache/ubuntu.iso,if=none,id=cdrom0,media=cdrom"]
+    ["-drive", "file=packer_cache/${var.ubuntu_series}.iso,if=none,id=cdrom0,media=cdrom"]
   ]
   shutdown_command       = "sudo -S shutdown -P now"
   ssh_handshake_attempts = 500
