@@ -129,6 +129,20 @@ Note: ubuntu-lvm.pkr.hcl and ubuntu-flat.pkr.hcl are configured to run Packer in
 
 Installation is non-interactive.  Note that the installation will attempt an SSH connection to the QEMU VM where the newly-built image is being booted.  This is the final provisioning step in the process.  Packer uses SSH to discover that the image has, in fact, booted, so there may be a number of failed tries -- over 3-5 minutes -- until the connection is successful.  This is normal behavior for packer.
 
+### Makefile Parameters
+
+#### PACKER_LOG
+Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
+
+#### SERIES
+Specify the Ubuntu Series to build. The default value is set to Jammy.
+
+#### URL
+The URL prefix for mirror that is hosting the ISO images for a given series. The default value is set to http://releases.ubuntu.com. ISO images are expected to be under URL/SERIES/.
+
+#### SUMS
+The file name for the checksums file. The default value is set to SHA256SUMS.
+
 ### Default Username
 
 The default username is ```ubuntu```
