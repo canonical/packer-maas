@@ -21,11 +21,17 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-dpkg-reconfigure grub-efi-amd64
-update-grub
+# Clean up remnants from packer-maas vm install
+rm /var/cache/debconf/config.dat
+dpkg --configure -a
+
+apt-get -y install linux-image-generic
 
 grub-install \
     --target=x86_64-efi \
     --efi-directory=/boot/efi \
     --bootloader-id=ubuntu \
     --recheck
+
+update-initramfs -uk all
+update-grub
