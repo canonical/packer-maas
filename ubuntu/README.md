@@ -39,6 +39,12 @@ packer build -var customize_script=my-changes.sh -var ubuntu_series=jammy \
 the VM. For example, you can install packages using `apt-get`, call out to
 ansible, or whatever you want.
 
+Building using make:
+
+```shell
+sudo make custom-cloudimg.tar.gz SERIES=jammy
+```
+
 #### Accessing external files from you script
 
 If you want to put or use some files in the image, you can put those in the `http` directory.
