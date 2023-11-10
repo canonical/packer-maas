@@ -4,7 +4,7 @@
 #
 # Author: Alexsander de Souza <alexsander.souza@canonical.com>
 #
-# Copyright (C) 2021 Canonical
+# Copyright (C) 2023 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -25,6 +25,7 @@ export DEBIAN_FRONTEND=noninteractive
 rm /var/cache/debconf/config.dat
 dpkg --configure -a
 
+# Ensure the existence of linux-image-generic for non-cloudimg images.
 apt-get -y install linux-image-generic
 
 grub-install \
