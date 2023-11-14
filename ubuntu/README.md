@@ -42,7 +42,7 @@ ansible, or whatever you want.
 Building using make:
 
 ```shell
-sudo make custom-cloudimg.tar.gz SERIES=jammy
+make custom-cloudimg.tar.gz SERIES=jammy
 ```
 
 #### Accessing external files from you script
