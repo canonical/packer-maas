@@ -57,7 +57,7 @@ ansible, or whatever you want.
 Using make:
 
 ```shell
-sudo make debian SERIES=bullseye
+make debian SERIES=bullseye
 ```
 
 #### Accessing external files from you script

@@ -5,10 +5,6 @@ kernel:
 
 apt:
   preserve_sources_list: true
-  sources_list: | # written by curtin custom template
-    deb http://deb.debian.org/debian stable main contrib non-free
-    deb http://deb.debian.org/debian stable-backports main contrib non-free
-    deb http://deb.debian.org/debian-security stable-security main non-free-firmware
 
 debconf_selections:
  maas: |

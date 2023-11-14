@@ -59,10 +59,6 @@ chmod 755 /usr/local/bin/netplan
 # version after the installation has been completed.
 # TODO: Figure a way to upstream the changes.
 
-#wget http://security.ubuntu.com/ubuntu/pool/main/c/cloud-init/cloud-init_23.3.1-0ubuntu1~20.04.1_all.deb
-#dpkg -i cloud-init_23.3.1-0ubuntu1~20.04.1_all.deb
-#rm cloud-init_23.3.1-0ubuntu1~20.04.1_all.deb
-
 # Bookworm LP#2011454
 if [ ${DEBIAN_VERSION} == '12' ]; then
      wget http://archive.ubuntu.com/ubuntu/pool/main/c/cloud-init/cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
