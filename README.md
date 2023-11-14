@@ -10,25 +10,25 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 
 ## Existing templates
 
-| **OS** | **Maturity Level** |
-|---|:---:|
-| CentOS 6 | EOL |
-| CentOS 7 | Stable |
-| CentOS 8 | EOL |
-| CentOS 8 Stream | Beta |
-| OL8 | Beta |
-| OL9 | Beta |
-| RHEL 7 | EOL |
-| RHEL 8 | Stable |
-| RHEL 9 | Beta |
-| Rocky 8 | Beta |
-| Rocky 9 | Beta |
-| SLES 12 | Beta |
-| SLES 15 | Beta |
-| Ubuntu  | Stable |
-| VMWare ESXi 6 | EOL |
-| VMWare ESXi 7 | Stable |
-| VMWare ESXi 8 | Beta |
+| **OS**          | **Maturity Level** | **MAAS Version** | 
+|-----------------|:------------------:|:-----------------|
+| CentOS 6        | EOL                | >= 1.6           |
+| CentOS 7        | Stable             | >= 2.3           |
+| CentOS 8        | EOL                | >= 2.7           |
+| CentOS 8 Stream | Beta               | >= 3.2           |
+| OL8             | Beta               | >= 3.5           |
+| OL9             | Beta               | >= 3.5           |
+| RHEL 7          | EOL                | >= 2.3           |
+| RHEL 8          | Stable             | >= 2.7           |
+| RHEL 9          | Beta               | >= 3.3           |
+| Rocky 8         | Beta               | >= 3.3           |
+| Rocky 9         | Beta               | >= 3.3           |
+| SLES 12         | Beta               | >= 3.4           |
+| SLES 15         | Beta               | >= 3.4           |
+| Ubuntu          | Stable             | >= 3.0           |
+| VMWare ESXi 6   | EOL                | >= 3.0           |
+| VMWare ESXi 7   | Stable             | >= 3.0           |
+| VMWare ESXi 8   | Beta               | >= 3.0           |
 
 ### Maturity level
 
