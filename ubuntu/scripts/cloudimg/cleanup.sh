@@ -2,7 +2,7 @@
 #
 # cleanup.sh - Clean up what we did to be able to build the image.
 #
-# Copyright (C) 2022 Canonical
+# Copyright (C) 2023 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -32,3 +32,7 @@ sed -i s/^root:[^:]*/root:*/ /etc/shadow
 rm -r /root/.ssh
 rm -r /root/.cache
 rm -r /etc/ssh/ssh_host_*
+
+# Final Clean-up
+apt-get autoremove --purge -yq
+apt-get clean -yq
