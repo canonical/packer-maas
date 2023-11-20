@@ -45,13 +45,23 @@ rm -f /var/log/cloud-init*.log
 rm -rf /var/lib/cloud/instances \
     /var/lib/cloud/instance
 
-# Install a dpkg-query wrapper to mypass MAAS netplan.io check 
-echo "IyEvYmluL3NoClsgIiQxIiA9ICctcycgXSAmJiBbICIkMiIgPSAnbmV0cGxhbi5pbycgXSAmJiBleGl0IDAKL3Vzci9iaW4vZHBrZy1xdWVyeSAiJEAiCg==" | base64 -d > /usr/local/bin/dpkg-query
+# Install a dpkg-query wrapper to bypass MAAS netplan.io check
+cat > /usr/local/bin/dpkg-query <<EOF
+#!/bin/sh
+[ "\$1" = '-s' ] && [ "\$2" = 'netplan.io' ] && exit 0
+/usr/bin/dpkg-query "\$@"
+EOF
 chmod 755 /usr/local/bin/dpkg-query
 
+
 # Debian netplan.io does not have an info parameter, work around it
-echo "IyEvYmluL3NoClsgIiQxIiA9ICdpbmZvJyBdICYmIGV4aXQgMAovdXNyL3NiaW4vbmV0cGxhbiAiJEAiCg==" | base64 -d > /usr/local/bin/netplan
+cat > /usr/local/bin/netplan <<EOF
+#!/bin/sh
+[ "\$1" = 'info' ] && exit 0
+/usr/sbin/netplan "\$@"
+EOF
 chmod 755 /usr/local/bin/netplan
+
 
 # This is a super dirty trick to make this work. Debian's cloud-init is
 # missing MAAS bindings and this causes the installation to fail the 
