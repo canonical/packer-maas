@@ -105,6 +105,10 @@ Please be aware that this could potentially create a conflict with the rest of c
 images present in your setup, hence a through investigation and testing might be
 required prior to deployment.
 
+To work around a conflict, it is possible to name the preseed file something similar to
+curtin_userdata_custom_amd64_generic_debian-10 assuming the architecture was set to
+amd64/generic and the uploaded name was set to custom/debian-10.
+
 ### Makefile Parameters
 
 #### PACKER_LOG
@@ -127,8 +131,8 @@ TGZ image
 
 ```shell
 maas admin boot-resources create \
-    name='custom/debian-tgz' \
-    title='Debian Custom TGZ' \
+    name='custom/debian-12' \
+    title='Debian 12 Custom' \
     architecture='amd64/generic' \
     filetype='tgz' \
     content@=debian-custom-cloudimg.tar.gz
