@@ -79,7 +79,7 @@ build {
 
   provisioner "shell" {
     environment_vars = concat(local.proxy_env, ["DEBIAN_FRONTEND=noninteractive", "DEBIAN_VERSION=${var.debian_version}", "BOOT_MODE=${var.boot_mode}"])
-    scripts          = ["${path.root}/scripts/cloudimg/setup-boot.sh", "${path.root}/scripts/networking.sh"]
+    scripts          = ["${path.root}/scripts/setup-boot.sh", "${path.root}/scripts/networking.sh"]
   }
 
   provisioner "shell" {
@@ -93,22 +93,22 @@ build {
       "CLOUDIMG_CUSTOM_KERNEL=${var.kernel}",
       "DEBIAN_FRONTEND=noninteractive"
     ]
-    scripts = ["${path.root}/scripts/cloudimg/install-custom-kernel.sh"]
+    scripts = ["${path.root}/scripts/install-custom-kernel.sh"]
   }
 
   provisioner "file" {
     destination = "/tmp/"
-    sources     = ["${path.root}/scripts/cloudimg/curtin-hooks"]
+    sources     = ["${path.root}/scripts/curtin-hooks"]
   }
 
   provisioner "shell" {
     environment_vars = ["CLOUDIMG_CUSTOM_KERNEL=${var.kernel}"]
-    scripts          = ["${path.root}/scripts/cloudimg/setup-curtin.sh"]
+    scripts          = ["${path.root}/scripts/setup-curtin.sh"]
   }
 
   provisioner "shell" {
     environment_vars = ["DEBIAN_FRONTEND=noninteractive"]
-    scripts          = ["${path.root}/scripts/cloudimg/cleanup.sh"]
+    scripts          = ["${path.root}/scripts/cleanup.sh"]
   }
 
   post-processor "shell-local" {
