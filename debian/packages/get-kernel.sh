@@ -4,7 +4,7 @@
 #
 # Author: Alexsander de Souza <alexsander.souza@canonical.com>
 #
-# Copyright (C) 2022 Canonical
+# Copyright (C) 2023 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,7 +21,7 @@
 export LANG=C
 
 KERNEL=${KERNEL:-linux-image-generic}
-ARCH=amd64
+ARCH=$(dpkg --print-architecture)
 
 PACKAGES=$(apt-cache depends --recurse --no-recommends --no-suggests \
   --no-conflicts --no-breaks --no-replaces --no-enhances --no-pre-depends \
