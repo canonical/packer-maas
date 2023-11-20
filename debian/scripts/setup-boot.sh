@@ -28,19 +28,21 @@ if  [ ! -z  "${https_proxy}" ]; then
   echo "Acquire::https::Proxy \"${https_proxy}\";" >> ${packer_apt_proxy_config}
 fi
 
+ARCH=$(dpkg --print-architecture)
+
 # Reset cloud-init, so that it can run again when MAAS deploy the image.
 cloud-init clean --logs
 
 apt-get update
 if [ ${BOOT_MODE} == "uefi" ] && [ ${DEBIAN_VERSION} == '12' ]; then
-        apt-get install -y grub-cloud-amd64 grub-efi-amd64
+        apt-get install -y grub-cloud-${ARCH} grub-efi-${ARCH}
 else
-        apt-get install -y grub-cloud-amd64 grub-pc
+        apt-get install -y grub-cloud-${ARCH} grub-pc
 fi
 
 # Bookworm does not include this, but curtin requires this during the installation.
 if [ ${DEBIAN_VERSION} == '12' ]; then
-        wget http://ftp.us.debian.org/debian/pool/main/e/efibootmgr/efibootmgr_15-1_amd64.deb
-        dpkg -i efibootmgr_15-1_amd64.deb
-        rm efibootmgr_15-1_amd64.deb
+        wget http://ftp.us.debian.org/debian/pool/main/e/efibootmgr/efibootmgr_15-1_${ARCH}.deb
+        dpkg -i efibootmgr_15-1_${ARCH}.deb
+        rm efibootmgr_15-1_${ARCH}.deb
 fi
