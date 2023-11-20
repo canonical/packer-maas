@@ -6,7 +6,7 @@ The Packer templates in this directory creates Debian images for use with MAAS.
 
 ## Prerequisites (to create the image)
 
-* A machine running Debian 18.04+ with the ability to run KVM virtual machines.
+* A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils, libnbd-bin, nbdkit and fuse2fs
 * qemu-system
 * ovmf
