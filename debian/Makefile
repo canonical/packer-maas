@@ -39,7 +39,7 @@ debian: check-deps clean
 	${PACKER} init . && ${PACKER} build -only='cloudimg.*' -var debian_series=${SERIES} -var debian_version=${VERSION} -var boot_mode=${BOOT} .
 
 clean:
-	${RM} -rf output-* custom-*.gz \
+	${RM} -rf output-* debian-custom-*.gz \
 		seeds-cloudimg.iso \
 		OVMF_VARS.fd
 
