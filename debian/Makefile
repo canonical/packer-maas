@@ -8,6 +8,7 @@ export PACKER_LOG
 
 SERIES ?= bullseye
 BOOT ?= uefi
+ARCH ?= amd64
 
 ifeq ($(strip $(SERIES)),buster)
 	VERSION = 10
@@ -17,6 +18,11 @@ else ifeq ($(strip $(SERIES)),bookworm)
 	VERSION = 12
 else
 	VERSION = 11
+endif
+
+# Safeguard
+ifeq ($(strip $(ARCH)),arm64)
+	boot = uefi
 endif
 
 .PHONY: all clean
@@ -36,12 +42,17 @@ OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS.fd
 	cp -v $< $@
 
 debian: check-deps clean
-	${PACKER} init . && ${PACKER} build -only='cloudimg.*' -var debian_series=${SERIES} -var debian_version=${VERSION} -var boot_mode=${BOOT} .
+	${PACKER} init . && ${PACKER} build \
+		-var debian_series=${SERIES} \
+		-var debian_version=${VERSION} \
+		-var architecture=${ARCH} \
+		-var boot_mode=${BOOT} .
 
 clean:
 	${RM} -rf output-* debian-custom-*.gz \
 		seeds-cloudimg.iso \
-		OVMF_VARS.fd
+		OVMF_VARS.fd \
+		AAVMF_VARS.fd
 
 CUSTOM_PKGS:=${wildcard packages/*.deb}
 

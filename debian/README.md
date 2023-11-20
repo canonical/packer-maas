@@ -20,6 +20,7 @@ The Packer templates in this directory creates Debian images for use with MAAS.
 * [A Custom Preseed for Debian (Important - See below)]
 
 ## Supported Debian Versions
+
 The builds and deployment has been tested on MAAS 3.3.5 with Jammy ephemeral images,
 in BIOS and UEFI modes. The process currently works with the following Debian series:
 
@@ -27,7 +28,13 @@ in BIOS and UEFI modes. The process currently works with the following Debian se
 * Debian 11 (Bullseye)
 * Debian 12 (Bookworm)
 
+## Supported Architectures
+
+Currently amd64 (x86_64) and arm64 (aarch64) architectures are supported with aemd64
+being the default.
+
 ## Known Issues
+
 * UEFI images fro Debian 10 (Buster) and 11 (Bullseye) are usable on both BIOS and 
 UEFI systems. However for Debian 12 (Bookworm) explicit images are required to
 support BIOS and UEFI modes. See BOOT make parameter for more details.
@@ -47,7 +54,7 @@ customizations:
 ```shell
 packer init .
 packer build -var customize_script=my-changes.sh -var debian_series=bullseye \
-    -var debian_version=11 -only='cloudimg.*' .
+    -var debian_version=11 .
 ```
 
 `my-changes.sh` is a script you write which customizes the image from within
@@ -72,10 +79,6 @@ wget http://${PACKER_HTTP_IP}:${PACKER_HTTP_PORT}:/my-file
 
 ### Installing a kernel
 
-Usually, images used by MAAS don't include a kernel. When a machine is deployed
-in MAAS, the appropriate kernel is chosen for that machine and installed on top
-of the chosen image.
-
 If you do want to force an image to always use a specific kernel, you can
 include it in the image.
 
@@ -83,23 +86,20 @@ The easiest way of doing this is to use the `kernel` parameter:
 
 ```shell
 packer init .
-packer build -var kernel=linux-image-amd64 -var customize_script=my-changes.sh \
-    -only='cloudimg.*' .
+packer build -var kernel=linux-image-amd64 -var customize_script=my-changes.sh .
 ```
 
-You can also install the kernel manually in your `my-changes.sh` script, but in
-that case you also need to write the name of the kernel package to
-`/curtin/CUSTOM_KERNEL`. This is to ensure that MAAS won't install another
-kernel on deploy.
+You can also install the kernel manually in your `my-changes.sh` script.
 
 ### Custom Preseed for Debian
+
 As mentioned above, Debian images require a custom preseed file to be present in the
 preseeds directory of MAAS region controllers. 
 
 When used snaps, the path is /var/snap/maas/current/preseeds/curtin_userdata_custom
 
-An example ready to used preesed file has been included with this repository. Please
-see curtin_userdata_custom.
+Example ready to use preesed files has been included with this repository. Please
+see curtin_userdata_custom_amd64 and curtin_userdata_custom_arm64.
 
 Please be aware that this could potentially create a conflict with the rest of custom
 images present in your setup, hence a through investigation and testing might be
@@ -112,14 +112,22 @@ amd64/generic and the uploaded name was set to custom/debian-10.
 ### Makefile Parameters
 
 #### PACKER_LOG
+
 Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
 
 #### SERIES
+
 Specify the Debian Series to build. The default value is set to bullseye.
 
 #### BOOT
+
 Supported boot mode baked into the image. The default is set to uefi. Please
-see the Known Issues section for more details.
+see the Known Issues section for more details. This parameter is only valid 
+for amd64 architecture.
+
+#### ARCH
+
+Target image architecture. Supported values are amd64 (default) and arm64.
 
 ### Default Username
 

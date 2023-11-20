@@ -34,8 +34,12 @@ ARCH=$(dpkg --print-architecture)
 cloud-init clean --logs
 
 apt-get update
-if [ ${BOOT_MODE} == "uefi" ] && [ ${DEBIAN_VERSION} == '12' ]; then
-        apt-get install -y grub-cloud-${ARCH} grub-efi-${ARCH}
+if [ ${BOOT_MODE} == "uefi" ]; then
+        if [ ${ARCH} == "amd64" ]; then
+                apt-get install -y grub-cloud-${ARCH} grub-efi-${ARCH}
+        else
+                apt-get install -y grub-efi-${ARCH}-signed shim-signed grub-efi-${ARCH}
+        fi
 else
         apt-get install -y grub-cloud-${ARCH} grub-pc
 fi
