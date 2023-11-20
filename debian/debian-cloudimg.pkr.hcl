@@ -79,7 +79,7 @@ build {
 
   provisioner "shell" {
     environment_vars = concat(local.proxy_env, ["DEBIAN_FRONTEND=noninteractive", "DEBIAN_VERSION=${var.debian_version}", "BOOT_MODE=${var.boot_mode}"])
-    scripts          = ["${path.root}/scripts/setup-boot.sh", "${path.root}/scripts/networking.sh"]
+    scripts          = ["${path.root}/scripts/essential-packages.sh", "${path.root}/scripts/setup-boot.sh", "${path.root}/scripts/networking.sh"]
   }
 
   provisioner "shell" {
