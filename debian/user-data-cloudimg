@@ -1,0 +1,19 @@
+#cloud-config
+users:
+  - name: root
+    lock_passwd: false
+    plain_text_passwd: "debian"
+    ssh_redirect_user: false
+ssh_pwauth: True
+disable_root: false
+preserve_hostname: true
+runcmd:
+  - sed -i -e '/^[#]*PermitRootLogin/s/^.*$/PermitRootLogin yes/' /etc/ssh/sshd_config
+  - systemctl restart ssh
+bootcmd:
+  - mkdir /run/packer_backup
+  - mkdir /run/packer_backup/etc
+  - mkdir /run/packer_backup/etc/apt
+  - mkdir /run/packer_backup/etc/ssh
+  - cp --preserve /etc/apt/sources.list /run/packer_backup/etc/apt/
+  - cp --preserve /etc/ssh/sshd_config /run/packer_backup/etc/ssh/
