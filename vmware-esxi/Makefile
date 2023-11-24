@@ -5,7 +5,6 @@ include ../scripts/check.mk
 PACKER ?= packer
 PACKER_LOG ?= 0
 export PACKER_LOG
-SUDO ?= sudo
 ISO ?= ${VMWARE_ESXI_ISO_PATH}
 VENV := .ve
 
@@ -22,10 +21,10 @@ scripts.tar.xz:
 	cp -rv maas $${SCRIPT_DIR}/ ;\
 	python3 -m pip install -r requirements.txt --no-compile --target $${SCRIPT_DIR}/maas ;\
 	find $${SCRIPT_DIR} -name __pycache__ -type d -or -name *.so | xargs rm -rf ;\
-	tar cJf scripts.tar.xz -C $${SCRIPT_DIR} .
+	tar cJf $@ --group=0 --owner=0 -C $${SCRIPT_DIR} .
 
 vmware-esxi.dd.gz: check-deps clean scripts.tar.xz
-	${SUDO} ${PACKER} init vmware-esxi.pkr.hcl && ${SUDO} ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.pkr.hcl
+	${PACKER} init vmware-esxi.pkr.hcl && ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.pkr.hcl
 
 $(VENV): requirements-dev.txt requirements.txt
 	python3 -m venv --system-site-packages --clear $@
@@ -43,6 +42,7 @@ format: $(VENV)
 	$(VENV)/bin/black -q $(py_files)
 
 clean:
-	${SUDO} ${RM} -rf output-esxi vmware-esxi.dd vmware-esxi.dd.gz $(VENV)
+	${RM} -rf output-esxi vmware-esxi.dd vmware-esxi.dd.gz \
+		scripts.tar.xz $(VENV)
 
 .INTERMEDIATE: scripts.tar.xz
