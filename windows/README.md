@@ -54,7 +54,7 @@ You can obtains Microsoft Windows Evaluation ISO images from the following links
 ### Building the image
 
 The build the image you give the template a script which has all the
-customizations:
+customization:
 
 ```shell
 sudo make windows ISO=<path-to-iso> VERSION=<windows-version> windows.json
@@ -62,18 +62,24 @@ sudo make windows ISO=<path-to-iso> VERSION=<windows-version> windows.json
 
 ### Makefile Parameters
 
-#### PACKER_LOG
+#### BOOT
 
-Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
+Currently uefi is the only supported value.
+
+#### EDIT
+
+The edition of a targeted ISO image. It defaults to PRO for Microsoft Windows 10/11
+and SERVERSTANDARD for Microsoft Windows Servers. Many Microsoft Windows Server ISO
+images do contain multiple editions and this prarameter is useful to build a particular
+edition such as Standard or Datacenter etc.
 
 #### ISO
 
 Path to Microsoft Windows ISO used to build the image.
 
-#### VERSION
+#### PACKER_LOG
 
-Specify the Microsoft Windows Version. Example inputs include: 2022, 2019, 2016
-and 10.
+Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
 
 #### PKEY
 
@@ -81,6 +87,16 @@ User supplied Microsoft Windows Product Key. When usimg KMS, you can obtain the
 activation keys from the link below:
 
 * [KMS Client Activation and Product Keys](https://learn.microsoft.com/en-us/windows-server/get-started/kms-client-activation-keys)
+
+Please note that PKEY is an optional parameter but it might be required during
+the build time depending on the type of ISO being used. Evaluation series ISO
+images usually do not require a product key to proceed, however this is not
+true with Enterprise and Retail ISO images.
+
+#### VERSION
+
+Specify the Microsoft Windows Version. Example inputs include: 2022, 2019, 2016
+and 10.
 
 
 ## Uploading images to MAAS
