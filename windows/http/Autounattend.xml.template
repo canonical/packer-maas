@@ -4,7 +4,6 @@
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <DiskConfiguration>
                 <WillShowUI>OnError</WillShowUI>
-                 
                 <Disk wcm:action="add">
  		        	<CreatePartitions>
                         <CreatePartition wcm:action="add">
@@ -40,7 +39,6 @@
                     <DiskID>0</DiskID>
                     <WillWipeDisk>true</WillWipeDisk>
                 </Disk>
-                 
             </DiskConfiguration>
             <ImageInstall>
                 <OSImage>
@@ -55,14 +53,17 @@
                     <InstallFrom>
                         <MetaData wcm:action="add">
                             <Key>/IMAGE/NAME</Key>
-                            <Value>Windows Server 2016 SERVERSTANDARD</Value>
+                            <Value>@VERSION@</Value>
                         </MetaData>
                     </InstallFrom>
                 </OSImage>
             </ImageInstall>
             <UserData>
+                <!--<ProductKey>
+                    <Key>@PKEY@</Key>
+                    <WillShowUI>Never</WillShowUI>
+                </ProductKey>-->
                 <AcceptEula>true</AcceptEula>
-                
             </UserData>
         </component>
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
