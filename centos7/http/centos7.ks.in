@@ -1,4 +1,4 @@
-url --mirrorlist="http://mirrorlist.centos.org/?release=7&arch=x86_64&repo=os" ${KS_PROXY}
+url --mirrorlist="${KS_MIRROR}/?release=7&arch=x86_64&repo=os" ${KS_PROXY}
 poweroff
 firewall --enabled --service=ssh
 firstboot --disable
@@ -12,8 +12,8 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="Updates" --mirrorlist="http://mirrorlist.centos.org/?release=7&arch=x86_64&repo=updates" ${KS_PROXY}
-repo --name="Extras" --mirrorlist="http://mirrorlist.centos.org/?release=7&arch=x86_64&repo=extras" ${KS_PROXY}
+repo --name="Updates" --mirrorlist="${KS_MIRROR}/?release=7&arch=x86_64&repo=updates" ${KS_PROXY}
+repo --name="Extras" --mirrorlist="${KS_MIRROR}/?release=7&arch=x86_64&repo=extras" ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
