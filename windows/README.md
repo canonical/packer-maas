@@ -23,12 +23,13 @@ The Packer templates in this directory creates Windows Server images for use wit
 
 ## Supported Microsoft Windows Versions
 
-This process has been build and deployment tested for the following versions of 
+This process has been build and deployment tested with the following versions of
 Microsoft Windows:
 
 * Windows Server 2022
 * Windows Server 2019
 * Windows Server 2016
+* Windows 10 Pro 22H2
 
 
 ## Known Issues
