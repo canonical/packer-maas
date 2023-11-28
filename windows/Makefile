@@ -37,4 +37,4 @@ endif
 	${PACKER} build -var iso_path=${ISO} windows.json
 
 clean:
-	${RM} -rf output-* windows.dd.gz
+	${RM} -rf output-* windows.dd.gz http/Autounattend.xml
