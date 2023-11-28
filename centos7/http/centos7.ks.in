@@ -1,4 +1,4 @@
-url --mirrorlist="${KS_MIRROR}/?release=7&arch=x86_64&repo=os" ${KS_PROXY}
+url ${KS_OS_REPOS} ${KS_PROXY}
 poweroff
 firewall --enabled --service=ssh
 firstboot --disable
@@ -12,8 +12,8 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="Updates" --mirrorlist="${KS_MIRROR}/?release=7&arch=x86_64&repo=updates" ${KS_PROXY}
-repo --name="Extras" --mirrorlist="${KS_MIRROR}/?release=7&arch=x86_64&repo=extras" ${KS_PROXY}
+repo --name="Updates" ${KS_UPDATES_REPOS} ${KS_PROXY}
+repo --name="Extras" ${KS_EXTRA_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
