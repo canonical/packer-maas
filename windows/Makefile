@@ -34,6 +34,13 @@ ifneq ($(strip $(PKEY)),)
 	sed -i s#@PKEY@#${PKEY}#g http/Autounattend.xml
 	sed -i 's/<!--<ProductKey>/<ProductKey>/;s/<\/ProductKey>-->/<\/ProductKey>/' http/Autounattend.xml
 endif
+
+ifeq ($(strip $(VERSION)),10)
+	sed -i 's/<!--<LocalAccounts>/<LocalAccounts>/;s/<\/LocalAccounts>-->/<\/LocalAccounts>/' http/Autounattend.xml
+else ifeq ($(strip $(VERSION)),11)
+	sed -i 's/<!--<LocalAccounts>/<LocalAccounts>/;s/<\/LocalAccounts>-->/<\/LocalAccounts>/' http/Autounattend.xml
+endif
+
 	${PACKER} build -var iso_path=${ISO} windows.json
 
 clean:
