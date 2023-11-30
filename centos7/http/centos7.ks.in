@@ -1,4 +1,4 @@
-url --mirrorlist="http://mirrorlist.centos.org/?release=7&arch=x86_64&repo=os" ${KS_PROXY}
+url ${KS_OS_REPOS} ${KS_PROXY}
 poweroff
 firewall --enabled --service=ssh
 firstboot --disable
@@ -12,8 +12,8 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="Updates" --mirrorlist="http://mirrorlist.centos.org/?release=7&arch=x86_64&repo=updates" ${KS_PROXY}
-repo --name="Extras" --mirrorlist="http://mirrorlist.centos.org/?release=7&arch=x86_64&repo=extras" ${KS_PROXY}
+repo --name="Updates" ${KS_UPDATES_REPOS} ${KS_PROXY}
+repo --name="Extras" ${KS_EXTRA_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
@@ -40,7 +40,7 @@ rm -f /etc/sysconfig/network-scripts/ifcfg-[^lo]*
 sed -i 's/^GRUB_TERMINAL=.*/GRUB_TERMINAL_OUTPUT="console"/g' /etc/default/grub
 sed -i '/GRUB_SERIAL_COMMAND="serial"/d' /etc/default/grub
 sed -ri 's/(GRUB_CMDLINE_LINUX=".*)\s+console=ttyS0(.*")/\1\2/' /etc/default/grub
-sed -i 's/"GRUB_ENABLE_BLSCFG=.*"/"GRUB_ENABLE_BLSCFG=false"/g' /etc/default/grub 
+sed -i 's/GRUB_ENABLE_BLSCFG=.*/GRUB_ENABLE_BLSCFG=false/g' /etc/default/grub
 
 yum clean all
 %end
