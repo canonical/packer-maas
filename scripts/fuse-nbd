@@ -50,7 +50,7 @@ function mount_part() {
     mkdir -p "${DEV}"
     nbdfuse "${DEV}" \
         --command nbdkit -s nbd \
-        socket="$(pwd)"/qemu-img.sock \
+        socket="${TMP_DIR}"/qemu-img.sock \
         --filter=partition partition="${PART}" &
     retries=0
     until [ -f "${DEV}/nbd" ]; do
@@ -66,7 +66,7 @@ function mount_part() {
     esac
 }
 
-qemu-nbd --socket="$(pwd)"/qemu-img.sock \
+qemu-nbd --socket="${TMP_DIR}"/qemu-img.sock \
     --format="${IMG_FMT}" \
     --shared=10 \
     "${PACKER_OUTPUT}" &
