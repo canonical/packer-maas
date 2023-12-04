@@ -68,6 +68,9 @@ maas $PROFILE boot-resources create \
   architecture='amd64/generic' filetype='ddgz' \
   content@=vmware-esxi.dd.gz
 ```
+## Default Credentials
+
+The default username is ```root``` and the default password is set to ```password123!```
 
 ## Known limitations
 
