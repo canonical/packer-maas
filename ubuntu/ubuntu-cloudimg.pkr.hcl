@@ -94,12 +94,13 @@ build {
       "CLOUDIMG_CUSTOM_KERNEL=${var.kernel}",
       "DEBIAN_FRONTEND=noninteractive"
     ]
-    scripts = ["${path.root}/scripts/cloudimg/install-custom-kernel.sh"]
+    scripts = ["${path.root}/scripts/cloudimg/register-custom-kernel.sh"]
   }
 
   provisioner "file" {
     destination = "/tmp/"
-    sources     = ["${path.root}/scripts/cloudimg/curtin-hooks"]
+    sources     = ["${path.root}/scripts/cloudimg/curtin-hooks",
+                   "${path.root}/scripts/cloudimg/install-custom-kernel.sh"]
   }
 
   provisioner "shell" {

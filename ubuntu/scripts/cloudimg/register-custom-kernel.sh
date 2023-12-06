@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 #
-# install-custom-kernel.sh - Install custom kernel, if specified
+# register-custom-kernel.sh - Register a custom kernel to be installed
 #
 # Copyright (C) 2023 Canonical
 #
@@ -18,9 +18,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 export DEBIAN_FRONTEND=noninteractive
 
-if [ -f /curtin/CUSTOM_KERNEL ]; then
-        KERNEL_PKG=$(cat /curtin/CUSTOM_KERNEL)
-        echo "Installing custom kernel ${KERNEL_PKG}"
-        apt-get install -y ${KERNEL_PKG}
+if  [ -z  "${CLOUDIMG_CUSTOM_KERNEL}" ]; then
+  echo "Not installing custom kernel, since none was specified."
+  exit 0
 fi
 
+# Register the custom kernel version, so that the curtin hook knows about it.
+mkdir -p /curtin
+echo -n "${CLOUDIMG_CUSTOM_KERNEL}" > /curtin/CUSTOM_KERNEL

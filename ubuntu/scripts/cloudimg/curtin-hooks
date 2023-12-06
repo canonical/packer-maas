@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # curtin-hooks - Curtin installation hooks for Ubuntu
 #
-# Copyright (C) 2022 Canonical
+# Copyright (C) 2023 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -21,7 +21,19 @@ import shutil
 
 from curtin.commands.curthooks import builtin_curthooks
 from curtin.config import load_command_config
-from curtin.util import load_command_environment
+from curtin.util import load_command_environment, ChrootableTarget
+from curtin.log import LOG
+from curtin.paths import target_path
+
+def run_hook_in_target(target, hook):
+    """Look for "hook" in "target" and run in a chroot"""
+    target_hook = target_path(target, '/curtin/' + hook)
+    if os.path.isfile(target_hook):
+        LOG.debug("running %s" % target_hook)
+        with ChrootableTarget(target=target) as in_chroot:
+            in_chroot.subp(['/curtin/' + hook])
+        return True
+    return False
 
 
 def configure_custom_kernel(config):
@@ -52,6 +64,7 @@ def main():
 
     config = configure_custom_kernel(config)
     builtin_curthooks(config, target, state)
+    run_hook_in_target(target, 'install-custom-kernel')
     cleanup()
 
 
