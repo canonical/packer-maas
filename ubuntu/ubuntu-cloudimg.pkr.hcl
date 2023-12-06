@@ -117,6 +117,7 @@ build {
       "IMG_FMT=qcow2",
       "SOURCE=cloudimg",
       "ROOT_PARTITION=1",
+      "DETECT_BLS_BOOT=1",
       "OUTPUT=${var.filename}",
       "source ../scripts/fuse-nbd",
       "source ../scripts/fuse-tar-root"

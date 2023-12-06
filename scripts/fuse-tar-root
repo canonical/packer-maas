@@ -21,9 +21,12 @@
 
 ROOT_PARTITION=${ROOT_PARTITION:-1}
 ROOT_MOUNT=${TMP_DIR}/root
+DETECT_BLS_BOOT=${DETECT_BLS_BOOT:0}
+BOOT_MOUNT=${TMP_DIR}/boot
 
 echo 'Mounting root partition...'
 mount_part "${ROOT_PARTITION}" "${ROOT_MOUNT}"
+
 
 if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
     echo 'Adding Curtin hooks...'
@@ -31,7 +34,20 @@ if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
 fi
 
 echo "Creating MAAS image ${OUTPUT}..."
-tar -Sczpf "${OUTPUT}" --acls --selinux --xattrs -C "$ROOT_MOUNT" .
+TARFILE=${OUTPUT%*.gz}
+tar -Scpf "${TARFILE}" --acls --selinux --xattrs -C "$ROOT_MOUNT" .
+
+if [ "${DETECT_BLS_BOOT}" -eq 1 ]; then
+    echo "auto-detecting 'bls_boot' partition"
+    mount_disk "${TMP_DIR}"/disk
+    BOOT_PARTITION=$(parted -ms "${TMP_DIR}"/disk/nbd print | grep bls_boot | cut -d: -f1)
+    if [ -n "$BOOT_PARTITION" ]; then
+        mount_part "${BOOT_PARTITION}" "${BOOT_MOUNT}"
+        tar -Supf "${TARFILE}" --acls --selinux --xattrs -C "$TMP_DIR" boot/
+    fi
+fi
+
+gzip --best "${TARFILE}"
 
 if [ -n "$MANIFEST" ]; then
     echo "Creating manifest..."

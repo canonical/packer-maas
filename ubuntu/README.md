@@ -11,6 +11,7 @@ The Packer templates in this directory creates Ubuntu images for use with MAAS.
 * qemu-system
 * ovmf
 * cloud-image-utils
+* parted
 * [Packer](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
 
 ## Requirements (to deploy the image)
@@ -138,15 +139,19 @@ Installation is non-interactive.  Note that the installation will attempt an SSH
 ### Makefile Parameters
 
 #### PACKER_LOG
+
 Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
 
 #### SERIES
+
 Specify the Ubuntu Series to build. The default value is set to Jammy.
 
 #### URL
+
 The URL prefix for mirror that is hosting the ISO images for a given series. The default value is set to http://releases.ubuntu.com. ISO images are expected to be under URL/SERIES/.
 
 #### SUMS
+
 The file name for the checksums file. The default value is set to SHA256SUMS.
 
 ### Default Username

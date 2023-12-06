@@ -16,7 +16,7 @@ ISO=$(shell wget -O- -q ${URL}/${SERIES}/${SUMS} | grep live-server | cut -d'*' 
 
 all: custom-cloudimg.tar.gz
 
-$(eval $(call check_packages_deps,cloud-image-utils ovmf,cloud-image-utils ovmf))
+$(eval $(call check_packages_deps,cloud-image-utils ovmf parted,cloud-image-utils ovmf parted))
 
 lint:
 	packer validate .
