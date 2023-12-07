@@ -16,6 +16,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | CentOS 7        | Stable             | >= 2.3           |
 | CentOS 8        | EOL                | >= 2.7           |
 | CentOS 8 Stream | Beta               | >= 3.2           |
+| CentOS 9 Stream | Beta               | >= 3.2           |
 | Debian 10       | Beta               | >= 3.3           |
 | Debian 11       | Beta               | >= 3.3           |
 | Debian 12       | Beta               | >= 3.3           |
