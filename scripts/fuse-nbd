@@ -32,14 +32,31 @@ sync -f "${PACKER_OUTPUT}"
 
 TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)
 cleanup() {
-    for dev in "${TMP_DIR}"/p*/; do
+    for dev in "${TMP_DIR}"/p*/ "${TMP_DIR}"/disk/ "${TMP_DIR}"/boot/; do
         dev=${dev%*/}
-        fusermount -u -z "${dev}"
-        grep -qs "${dev} " /proc/mounts && umount -f "${dev}"
+        if [ -d "${dev}" ]; then
+            fusermount -u -z "${dev}"
+            grep -qs "${dev} " /proc/mounts && umount -f "${dev}"
+        fi
     done
     rm -rf "${TMP_DIR}"
 }
 trap cleanup EXIT
+
+function mount_disk() {
+    DEV=$1
+    mkdir -p "${DEV}"
+    nbdfuse "${DEV}" \
+        --command nbdkit -s nbd \
+        socket="${TMP_DIR}"/qemu-img.sock &
+    retries=0
+    until [ -f "${DEV}/nbd" ]; do
+        sleep 1
+        if ((++retries > 10)); then
+            return 1
+        fi
+    done
+}
 
 function mount_part() {
     PART=$1
