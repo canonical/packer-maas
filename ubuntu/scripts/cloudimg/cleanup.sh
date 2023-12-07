@@ -21,6 +21,10 @@
 # cloud-init put networking in place on initial boot. Let's remove that, to
 # allow MAAS to configure the networking on deploy.
 rm /etc/netplan/50-cloud-init.yaml
+: >| /etc/machine-id
+rm -f /var/log/cloud-init*.log
+rm -rf /var/lib/cloud/instances \
+    /var/lib/cloud/instance
 
 # Everything in /run/packer_backup should be restored.
 find /run/packer_backup
