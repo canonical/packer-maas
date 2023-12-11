@@ -27,21 +27,22 @@ all: windows
 
 $(eval $(call check_packages_deps,cloud-image-utils ovmf,cloud-image-utils ovmf))
 
-windows: check-deps clean
-	sed s#@VERSION@#"${TYPE} ${VERSION} ${EDIT}"#g http/Autounattend.xml.${BOOT}.template > http/Autounattend.xml
-
+http/Autounattend.xml: http/Autounattend.xml.${BOOT}.template
+	sed s#@VERSION@#"${TYPE} ${VERSION} ${EDIT}"#g $< > $@
 ifneq ($(strip $(PKEY)),)
-	sed -i s#@PKEY@#${PKEY}#g http/Autounattend.xml
-	sed -i 's/<!--<ProductKey>/<ProductKey>/;s/<\/ProductKey>-->/<\/ProductKey>/' http/Autounattend.xml
+	sed -i s#@PKEY@#${PKEY}#g $@
+	sed -i 's/<!--<ProductKey>/<ProductKey>/;s/<\/ProductKey>-->/<\/ProductKey>/' $@
 endif
-
 ifeq ($(strip $(VERSION)),10)
-	sed -i 's/<!--<LocalAccounts>/<LocalAccounts>/;s/<\/LocalAccounts>-->/<\/LocalAccounts>/' http/Autounattend.xml
+	sed -i 's/<!--<LocalAccounts>/<LocalAccounts>/;s/<\/LocalAccounts>-->/<\/LocalAccounts>/' $@
 else ifeq ($(strip $(VERSION)),11)
-	sed -i 's/<!--<LocalAccounts>/<LocalAccounts>/;s/<\/LocalAccounts>-->/<\/LocalAccounts>/' http/Autounattend.xml
+	sed -i 's/<!--<LocalAccounts>/<LocalAccounts>/;s/<\/LocalAccounts>-->/<\/LocalAccounts>/' $@
 endif
 
-	${PACKER} build -var iso_path=${ISO} windows.json
+.INTERMEDIATE: http/Autounattend.xml
+
+windows: check-deps clean http/Autounattend.xml
+	${PACKER} build -var iso_path=${ISO} windows.pkr.hcl
 
 clean:
 	${RM} -rf output-* windows.dd.gz http/Autounattend.xml
