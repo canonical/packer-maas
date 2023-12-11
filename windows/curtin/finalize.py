@@ -1,163 +1,145 @@
-#!/usr/bin/env python
+#
+# Copyright 2015 Cloudbase Solutions SRL
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-from __future__ import (
-    absolute_import,
-    print_function,
-    unicode_literals,
-    )
-from curtin import util
+
 import os
 import sys
+import tempfile
+import yaml
+import platform
 import json
 
+from curtin.log import LOG
+from curtin import util
+try:
+    from curtin.util import load_command_config
+except ImportError:
+    from curtin.config import load_command_config
 
-CLOUDBASE_INIT_CONFIG = """\
+CLOUDBASE_INIT_TEMPLATE = """
 metadata_services=cloudbaseinit.metadata.services.maasservice.MaaSHttpService
 maas_metadata_url={url}
 maas_oauth_consumer_key={consumer_key}
 maas_oauth_consumer_secret=''
 maas_oauth_token_key={token_key}
 maas_oauth_token_secret={token_secret}
-"""
+""" 
 
-
-LICENSE_KEY_SCRIPT = """\
+CHANGE_LICENSE_TPL = """
 slmgr /ipk {license_key}
-Remove-Item $MyInvocation.InvocationName
 """
 
-
-def load_config(path):
-    """Loads the curtin config."""
-    with open(path, 'r') as stream:
-        return json.load(stream)
-
-
-def get_maas_debconf_selections(config):
-    """Gets the debconf selections from the curtin config."""
-    try:
-        return config['debconf_selections']['maas']
-    except KeyError:
+def get_oauth_data(state):
+    cfg = state.get("debconf_selections")
+    if not cfg:
         return None
+    maas = cfg.get("maas")
+    if not maas:
+        return None
+    data = {i.split(None, 3)[1].split("/")[1]: i.split(None, 3)[-1] for i in maas.split("\n") if len(i) > 0}
+    oauth_data = data.get("maas-metadata-credentials")
+    metadata_url = data.get("maas-metadata-url")
+    if oauth_data is None or metadata_url is None:
+        return None
+    oauth_dict = {k.split("=")[0].split("_",1)[1]: k.split("=")[1] for k in oauth_data.split("&")}
+    oauth_dict["url"] = metadata_url
+    return oauth_dict
 
+def get_cloudbaseinit_dir(target):
+    dirs = [
+        os.path.join(
+            target,
+            "Cloudbase-Init",
+        ),
+        os.path.join(
+            target,
+            "Program Files",
+            "Cloudbase Solutions",
+            "Cloudbase-Init",
+        ),
+        os.path.join(
+            target,
+            "Program Files (x86)",
+            "Cloudbase Solutions",
+            "Cloudbase-Init",
+        ),
+    ]
+    for i in dirs:
+        if os.path.isdir(i):
+            return i
+    raise ValueError("Failed to find cloudbase-init install destination")
 
-def extract_maas_parameters(config):
-    """Extracts the needed values from the debconf
-    entry."""
-    params = {}
-    for line in config.splitlines():
-        cloud, key, type, value = line.split()[:4]
-        if key == "cloud-init/maas-metadata-url":
-            params['url'] = value
-        elif key == "cloud-init/maas-metadata-credentials":
-            values = value.split("&")
-            for oauth in values:
-                key, value = oauth.split('=')
-                if key == 'oauth_token_key':
-                    params['token_key'] = value
-                elif key == 'oauth_token_secret':
-                    params['token_secret'] = value
-                elif key == 'oauth_consumer_key':
-                    params['consumer_key'] = value
-    return params
+def curthooks():
+    state = util.load_command_environment()
+    config = load_command_config({}, state)
+    target = state['target']
+    cloudbaseinit = get_cloudbaseinit_dir(target)
 
+    if target is None:
+        sys.stderr.write("Unable to find target.  "
+                         "Use --target or set TARGET_MOUNT_POINT\n")
+        sys.exit(2)
 
-def get_cloudbase_init_config(params):
-    """Returns the cloudbase-init config file."""
-    config = CLOUDBASE_INIT_CONFIG.format(**params)
-    output = ""
-    for line in config.splitlines():
-        output += "%s\r\n" % line
-    return output
+    context = get_oauth_data(config)
+    local_scripts = os.path.join(
+        cloudbaseinit,
+        "LocalScripts",
+    )
 
+    networking = config.get("network")
+    if networking:
+        curtin_dir = os.path.join(target, "curtin")
+        networking_file = os.path.join(target, "network.json")
+        if os.path.isdir(curtin_dir):
+            networking_file = os.path.join(curtin_dir, "network.json")
+        with open(networking_file, "wb") as fd:
+            fd.write(json.dumps(networking, indent=2).encode('utf-8'))
 
-def write_cloudbase_init(target, params):
-    """Writes the configuration files for cloudbase-init."""
+    license_key = config.get("license_key")
+    if license_key and len(license_key) > 0:
+        try:
+            license_script = CHANGE_LICENSE_TPL.format({"license_key": license_key})
+            os.makedirs(local_scripts)
+            licensekey_path = os.path.join(local_scripts, "ChangeLicenseKey.ps1")
+            with open(licensekey_path, "w") as script:
+                script.write(license_script)
+        except Exception as err:
+            sys.stderr.write("Failed to write LocalScripts: %r", err)
     cloudbase_init_cfg = os.path.join(
-        target,
-        "Program Files",
-        "Cloudbase Solutions",
-        "Cloudbase-Init",
+        cloudbaseinit,
         "conf",
         "cloudbase-init.conf")
     cloudbase_init_unattended_cfg = os.path.join(
-        target,
-        "Program Files",
-        "Cloudbase Solutions",
-        "Cloudbase-Init",
+        cloudbaseinit,
         "conf",
         "cloudbase-init-unattend.conf")
 
-    config = get_cloudbase_init_config(params)
-    with open(cloudbase_init_cfg, 'a') as stream:
-        stream.write(config)
-    with open(cloudbase_init_unattended_cfg, 'a') as stream:
-        stream.write(config)
+    if os.path.isfile(cloudbase_init_cfg) is False:
+        sys.stderr.write("Unable to find cloudbase-init.cfg.\n")
+        sys.exit(2)
+
+    cloudbase_init_values = CLOUDBASE_INIT_TEMPLATE.format(**context) 
+
+    fp = open(cloudbase_init_cfg, 'a')
+    fp_u = open(cloudbase_init_unattended_cfg, 'a')
+    for i in cloudbase_init_values.splitlines():
+        fp.write("%s\r\n" % i)
+        fp_u.write("%s\r\n" % i)
+    fp.close()
+    fp_u.close()
 
 
-def get_license_key(config):
-    """Return license_key from the curtin config."""
-    try:
-        license_key = config['license_key']
-    except KeyError:
-        return None
-    if license_key is None:
-        return None
-    license_key = license_key.strip()
-    if license_key == '':
-        return None
-    return license_key
+curthooks()
 
-
-def write_license_key_script(target, license_key):
-    local_scripts_path = os.path.join(
-        target,
-        "Program Files",
-        "Cloudbase Solutions",
-        "Cloudbase-Init",
-        "LocalScripts")
-    script_path = os.path.join(local_scripts_path, 'set_license_key.ps1')
-    set_key_script = LICENSE_KEY_SCRIPT.format(license_key=license_key)
-    with open(script_path, 'w') as stream:
-        for line in set_key_script.splitlines():
-            stream.write("%s\r\n" % line)
-
-
-def write_network_config(target, config):
-    network_config_path = os.path.join(target, 'network.json')
-    config_json = config.get('network', None)
-    if config_json is not None:
-        config_json = json.dumps(config_json)
-        with open(network_config_path, 'w') as stream:
-            for line in config_json.splitlines():
-                stream.write("%s\r\n" % line)
-
-
-def main():
-    state = util.load_command_environment()
-    target = state['target']
-    if target is None:
-        print("Target was not provided in the environment.")
-        sys.exit(1)
-    config_f = state['config']
-    if config_f is None:
-        print("Config was not provided in the environment.")
-        sys.exit(1)
-    config = load_config(config_f)
-
-    debconf = get_maas_debconf_selections(config)
-    if debconf is None:
-        print("Failed to get the debconf_selections.")
-        sys.exit(1)
-
-    params = extract_maas_parameters(debconf)
-    write_cloudbase_init(target, params)
-    write_network_config(target, config)
-
-    license_key = get_license_key(config)
-    if license_key is not None:
-        write_license_key_script(target, license_key)
-
-
-if __name__ == "__main__":
-    main()

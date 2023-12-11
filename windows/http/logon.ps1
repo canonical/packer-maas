@@ -5,7 +5,7 @@
 #
 # Copyright:
 #
-#     (c) 2014-2017 Canonical Ltd.
+#     (c) 2014-2023 Canonical Ltd.
 #
 # Licence:
 #
@@ -48,7 +48,6 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-
 try
 {
     # Need to have network connection to continue, wait 30
@@ -61,20 +60,17 @@ try
             # To install extra drivers the Windows Driver Kit is needed for dpinst.exe.
             # Sadly you cannot just download dpinst.exe. The whole driver kit must be
             # installed.
-
             # Download the WDK installer.
             $Host.UI.RawUI.WindowTitle = "Downloading Windows Driver Kit..."
-            $webclient = New-Object System.Net.WebClient
-            $wdksetup = [IO.Path]::GetFullPath("$ENV:TEMP\wdksetup.exe")
-            $wdkurl = "http://download.microsoft.com/download/0/8/C/08C7497F-8551-4054-97DE-60C0E510D97A/wdk/wdksetup.exe"
-            $webclient.DownloadFile($wdkurl, $wdksetup)
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            Invoke-WebRequest "http://download.microsoft.com/download/0/8/C/08C7497F-8551-4054-97DE-60C0E510D97A/wdk/wdksetup.exe" -Outfile "c:\wdksetup.exe"
 
             # Run the installer.
             $Host.UI.RawUI.WindowTitle = "Installing Windows Driver Kit..."
-            $p = Start-Process -PassThru -Wait -FilePath "$wdksetup" -ArgumentList "/features OptionId.WindowsDriverKitComplete /q /ceip off /norestart"
+            $p = Start-Process -PassThru -Wait -FilePath "c:\wdksetup.exe" -ArgumentList "/features OptionId.WindowsDriverKitComplete /q /ceip off /norestart"
             if ($p.ExitCode -ne 0)
             {
-                throw "Installing $wdksetup failed."
+                throw "Installing wdksetup.exe failed."
             }
 
             # Run dpinst.exe with the path to the drivers.
@@ -84,52 +80,40 @@ try
 
             # Uninstall the WDK
             $Host.UI.RawUI.WindowTitle = "Uninstalling Windows Driver Kit..."
-            Start-Process -Wait -FilePath "$wdksetup" -ArgumentList "/features + /q /uninstall /norestart"
+            Start-Process -Wait -FilePath "c:\wdksetup.exe" -ArgumentList "/features + /q /uninstall /norestart"
+
+            # Clean-up
+            Remove-Item -Path c:\wdksetup.exe
         }
 
         $Host.UI.RawUI.WindowTitle = "Installing Cloudbase-Init..."
-    	wget "https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi" -outfile "c:\cloudbase.msi"
-        $cloudbaseInitPath = "c:\cloudbase.msi"
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest "https://cloudbase.it/downloads/CloudbaseInitSetup_Stable_x64.msi" -Outfile "c:\cloudbase.msi"
         $cloudbaseInitLog = "$ENV:Temp\cloudbase_init.log"
         $serialPortName = @(Get-WmiObject Win32_SerialPort)[0].DeviceId
-        $p = Start-Process -Wait -PassThru -FilePath msiexec -ArgumentList "/i $cloudbaseInitPath /qn /norestart /l*v $cloudbaseInitLog LOGGINGSERIALPORTNAME=$serialPortName"
+        $p = Start-Process -Wait -PassThru -FilePath msiexec -ArgumentList "/i c:\cloudbase.msi /qn /norestart /l*v $cloudbaseInitLog LOGGINGSERIALPORTNAME=$serialPortName"
         if ($p.ExitCode -ne 0)
         {
             throw "Installing $cloudbaseInitPath failed. Log: $cloudbaseInitLog"
         }
 
-        if (Test-Path -Path "E:\cloudbase\cloudbase_init.zip")
-        {
-            Add-Type -AssemblyName System.IO.Compression.FileSystem
-            New-Item -Path "$ENV:TEMP\cloudbase-init" -Type directory
-            [System.IO.Compression.ZipFile]::ExtractToDirectory("E:\cloudbase\cloudbase_init.zip", "$ENV:TEMP\cloudbase-init")
-
-            Remove-Item -Recurse -Force "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\Python\Lib\site-packages\cloudbaseinit"
-            Copy-Item -Recurse -Path "$ENV:TEMP\cloudbase-init\cloudbaseinit" -Destination "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\Python\Lib\site-packages\"
-        }
-
-    	# install virtio drivers
+        # Install virtio drivers
+        $Host.UI.RawUI.WindowTitle = "Installing Virtio Drivers..."
         certutil -addstore "TrustedPublisher" A:/rh.cer
-    	[Net.ServicePointManager]::SecurityProtocol = "Tls, Tls11, Tls12, Ssl3"
-    	wget "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.185-2/virtio-win-gt-x64.msi" -outfile "c:\virtio.msi"
-    	wget "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio/virtio-win-0.1.185-2/virtio-win-guest-tools.exe" -outfile "c:\virtio.exe"
-    	$virtioPath = "c:\virtio.msi"
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        Invoke-WebRequest "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-gt-x64.msi" -Outfile "c:\virtio.msi"
+        Invoke-WebRequest "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-guest-tools.exe" -Outfile "c:\virtio.exe"
         $virtioLog = "$ENV:Temp\virtio.log"
         $serialPortName = @(Get-WmiObject Win32_SerialPort)[0].DeviceId
-        $p = Start-Process -Wait -PassThru -FilePath msiexec -ArgumentList "/a $virtioPath /qn /quiet /norestart /l*v $virtioLog LOGGINGSERIALPORTNAME=$serialPortName"
-	    Start-Process -Wait -FilePath C:\virtio.exe -Argument "/silent" -PassThru
-
+        $p = Start-Process -Wait -PassThru -FilePath msiexec -ArgumentList "/a c:\virtio.msi /qn /norestart /l*v $virtioLog LOGGINGSERIALPORTNAME=$serialPortName"
+        $p = Start-Process -Wait -PassThru -FilePath c:\virtio.exe -Argument "/silent"
 
         # We're done, remove LogonScript, disable AutoLogon
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Unattend*
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoLogonCount
 
-
         $Host.UI.RawUI.WindowTitle = "Running SetSetupComplete..."
         & "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\bin\SetSetupComplete.cmd"
-
-        # Write success, this is used to check that this process made it this far
-        New-Item -Path C:\success.tch -Type file -Force
 
         if ($RunPowershell) {
             $Host.UI.RawUI.WindowTitle = "Paused, waiting for user to finish work in other terminal"
@@ -137,13 +121,19 @@ try
             Start-Process -Wait -PassThru -FilePath powershell
         }
 
+        # Clean-up
+        Remove-Item -Path c:\cloudbase.msi
+        Remove-Item -Path c:\virtio.msi
+        Remove-Item -Path c:\virtio.exe
+
+        # Write success, this is used to check that this process made it this far
+        New-Item -Path c:\success.tch -Type file -Force
+
         $Host.UI.RawUI.WindowTitle = "Running Sysprep..."
         $unattendedXmlPath = "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\conf\Unattend.xml"
         & "$ENV:SystemRoot\System32\Sysprep\Sysprep.exe" `/generalize `/oobe `/shutdown `/unattend:"$unattendedXmlPath"
-        stop-computer
-    
 }
 catch
 {
-    $_ | Out-File C:\error_log.txt
+    $_ | Out-File c:\error_log.txt
 }

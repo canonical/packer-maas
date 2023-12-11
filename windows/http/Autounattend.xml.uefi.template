@@ -4,7 +4,6 @@
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <DiskConfiguration>
                 <WillShowUI>OnError</WillShowUI>
-                 
                 <Disk wcm:action="add">
  		        	<CreatePartitions>
                         <CreatePartition wcm:action="add">
@@ -40,7 +39,6 @@
                     <DiskID>0</DiskID>
                     <WillWipeDisk>true</WillWipeDisk>
                 </Disk>
-                 
             </DiskConfiguration>
             <ImageInstall>
                 <OSImage>
@@ -55,14 +53,17 @@
                     <InstallFrom>
                         <MetaData wcm:action="add">
                             <Key>/IMAGE/NAME</Key>
-                            <Value>Windows Server 2016 SERVERSTANDARD</Value>
+                            <Value>@VERSION@</Value>
                         </MetaData>
                     </InstallFrom>
                 </OSImage>
             </ImageInstall>
             <UserData>
+                <!--<ProductKey>
+                    <Key>@PKEY@</Key>
+                    <WillShowUI>Never</WillShowUI>
+                </ProductKey>-->
                 <AcceptEula>true</AcceptEula>
-                
             </UserData>
         </component>
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -76,6 +77,12 @@
         </component>
     </settings>
     <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <InputLocale>en-US</InputLocale>
+            <SystemLocale>en-US</SystemLocale>
+            <UILanguage>en-US</UILanguage>
+            <UserLocale>en-US</UserLocale>
+        </component>
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <VisualEffects>
                 <FontSmoothing>ClearType</FontSmoothing>
@@ -91,19 +98,29 @@
                 <HideLocalAccountScreen>true</HideLocalAccountScreen>
                 -->
             </OOBE>
-            
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell -NoLogo -NonInteractive -ExecutionPolicy RemoteSigned -Command A:\logon.ps1 </CommandLine>
                     <Order>1</Order>
                 </SynchronousCommand>
             </FirstLogonCommands>
-            
             <UserAccounts>
                 <AdministratorPassword>
                     <Value>Passw0rd</Value>
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
+                <!--<LocalAccounts>
+                    <LocalAccount wcm:action="add">
+                        <Password>
+                            <Value>Passw0rd</Value>
+                            <PlainText>true</PlainText>
+                        </Password>
+                        <Description>Packer Administrator</Description>
+                        <DisplayName>defaultuser</DisplayName>
+                        <Group>Administrators</Group>
+                        <Name>defaultuser</Name>
+                    </LocalAccount>
+                </LocalAccounts>-->
             </UserAccounts>
             <AutoLogon>
                 <Password>

@@ -1,0 +1,60 @@
+#!/bin/bash -e
+#
+# setup-nbd - Bind Packer qemu output to a free /dev/nbd device.
+#
+# Author: Lee Trager <lee.trager@canonical.com>
+#
+# Copyright (C) 2020 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+if [ $UID -ne 0 ]; then
+    echo "ERROR: Must be run as root!" >&2
+    exit 1
+fi
+
+if [ ! -f output-windows_builder/packer-windows_builder ]; then
+    echo "ERROR: Not in the same path as template!" >&2
+    exit
+fi
+
+echo 'Loading nbd...'
+shopt -s extglob
+modprobe nbd
+for nbd in /sys/class/block/nbd+([0-9]); do
+    if [ "$(cat ${nbd}/size)" -eq 0 ]; then
+	nbd="/dev/$(basename $nbd)"
+	echo "Using $nbd"
+	break
+    fi
+done
+
+if [ -z "${nbd}" ] || ! echo $nbd | grep -q "/dev"; then
+    echo "ERROR: Unable to find nbd device to mount image!" >&2
+    exit 1
+fi
+
+echo "Binding image to $nbd..."
+qemu-nbd -d $nbd
+if [ -n "$IMG_FMT" ]; then
+    qemu-nbd -c $nbd -f "$IMG_FMT" -n output-windows_builder/packer-windows_builder
+else
+    qemu-nbd -c $nbd -n output-windows_builder/packer-windows_builder
+fi
+echo 'Waiting for partitions to be created...'
+tries=0
+while [ ! -e "${nbd}p1" -a $tries -lt 60 ]; do
+    sleep 1
+    tries=$((tries+1))
+done
