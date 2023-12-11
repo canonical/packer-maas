@@ -9,6 +9,7 @@ export PACKER_LOG
 ISO ?= 
 VERSION ?= 2022
 BOOT ?= uefi
+HEADLESS ?= false
 
 ifeq ($(strip $(VERSION)),10)
 	TYPE = Windows
@@ -42,7 +43,7 @@ endif
 .INTERMEDIATE: http/Autounattend.xml
 
 windows: check-deps clean http/Autounattend.xml
-	${PACKER} build -var iso_path=${ISO} windows.pkr.hcl
+	${PACKER} init . && ${PACKER} build -var iso_path=${ISO} -var headless=${HEADLESS} windows.pkr.hcl
 
 clean:
 	${RM} -rf output-* windows.dd.gz http/Autounattend.xml

@@ -74,6 +74,10 @@ and SERVERSTANDARD for Microsoft Windows Servers. Many Microsoft Windows Server 
 images do contain multiple editions and this prarameter is useful to build a particular
 edition such as Standard or Datacenter etc.
 
+#### HEADLESS
+
+Whether VNC viewer should not be launched. Default is set to false.
+
 #### ISO
 
 Path to Microsoft Windows ISO used to build the image.
