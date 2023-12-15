@@ -11,8 +11,7 @@ export PACKER_LOG KS_PROXY
 
 all: ol8.tar.gz
 
-check-deps:
-	$(call check_packages_deps)
+$(eval $(call check_packages_deps))
 
 ol8.tar.gz: check-deps clean http/ol8.ks
 	${PACKER} init ol8.pkr.hcl && ${PACKER} build ol8.pkr.hcl
