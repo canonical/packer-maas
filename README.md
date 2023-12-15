@@ -10,7 +10,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 
 ## Existing templates
 
-| **OS**          | **Maturity Level** | **MAAS Version** | 
+| **OS**          | **Maturity Level** | **MAAS Version** |
 |-----------------|:------------------:|:-----------------|
 | CentOS 6        | EOL                | >= 1.6           |
 | CentOS 7        | Stable             | >= 2.3           |
@@ -20,8 +20,8 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | Debian 10       | Beta               | >= 3.3           |
 | Debian 11       | Beta               | >= 3.3           |
 | Debian 12       | Beta               | >= 3.3           |
-| OL8             | Beta               | >= 3.5           |
-| OL9             | Beta               | >= 3.5           |
+| OL8             | Alpha              | >= 3.5           |
+| OL9             | Alpha              | >= 3.5           |
 | RHEL 7          | EOL                | >= 2.3           |
 | RHEL 8          | Stable             | >= 2.7           |
 | RHEL 9          | Beta               | >= 3.3           |
@@ -37,6 +37,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 ### Maturity level
 
 * Templates marked as *EOL* are OSes that are no longer supported by the upstream maintainer, and **are not recommended for new deployments**. These systems don't receive security updates and mirrors can become permanently offline at any moment.
+* *Alpha* templates require packages that are not yet generally available, e.g. an unreleased MAAS or Curtin version. These should not be used in production environments.
 * *Beta* templates should work but we still don't have enough successful deployment reports to regard it as *Stable*.
 
 ### Output

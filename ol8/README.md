@@ -46,7 +46,8 @@ be in packer-maas/ol8, where this file is located. Once in packer-maas/ol8
 you can generate an image with:
 
 ```shell
-packer init
+envsubst '$${KS_PROXY}' < http/ol8.ks.in | tee http/ol8.ks
+packer init .
 PACKER_LOG=1 packer build .
 ```
 
