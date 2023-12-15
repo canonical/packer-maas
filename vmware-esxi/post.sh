@@ -1,15 +1,12 @@
 #!/bin/sh -x
 
+BOOT_DIR="${TMP_DIR:?}"/boot
+
 echo 'Adding curtin-hooks to image...'
-mount_part 1 "$TMP_DIR"/boot fusefat
-cp -rv curtin "$TMP_DIR"/boot/
+mount_part 1 "$BOOT_DIR" fusefat
+cp -rv curtin "$BOOT_DIR"
 
 echo 'Adding post-install scripts to image...'
-cp -v scripts.tar.xz "$TMP_DIR"/boot/curtin/
-
-echo 'Unmounting image...'
-sync -f "$TMP_DIR"/boot
-fusermount -z -u "$TMP_DIR"/boot
-grep -qs "$TMP_DIR/boot " /proc/mounts && umount -f "$TMP_DIR"/boot
+cp -v scripts.tar.xz "$BOOT_DIR"/curtin/
 
 echo 'Done'
