@@ -27,6 +27,17 @@ BOOT_MOUNT=${TMP_DIR}/boot
 echo 'Mounting root partition...'
 mount_part "${ROOT_PARTITION}" "${ROOT_MOUNT}"
 
+if [ -f "$ROOT_MOUNT/etc/machine-id" ]; then
+    echo 'reseting machine-id...'
+    : >| "$ROOT_MOUNT/etc/machine-id"
+fi
+
+if [ -f "$ROOT_MOUNT/var/lib/cloud/instance" ]; then
+    echo 'cleaning cloud-init state...'
+    rm -f "$ROOT_MOUNT/var/log/cloud-init*.log" \
+        "$ROOT_MOUNT/var/lib/cloud/instance"
+    rm -rf "$ROOT_MOUNT/var/lib/cloud/instances"
+fi
 
 if [ -d curtin ] || [ -d "$CURTIN_HOOKS" ]; then
     echo 'Adding Curtin hooks...'
@@ -35,7 +46,10 @@ fi
 
 echo "Creating MAAS image ${OUTPUT}..."
 TARFILE=${OUTPUT%*.gz}
-tar -Scpf "${TARFILE}" --acls --selinux --xattrs -C "$ROOT_MOUNT" .
+tar -Scpf "${TARFILE}" --acls --selinux --xattrs \
+    --one-file-system \
+    --exclude-backups \
+    -C "$ROOT_MOUNT" .
 
 if [ "${DETECT_BLS_BOOT}" -eq 1 ]; then
     echo "auto-detecting 'bls_boot' partition"
