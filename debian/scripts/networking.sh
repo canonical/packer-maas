@@ -41,10 +41,6 @@ rm -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg
 rm -f /etc/cloud/cloud.cfg.d/99-installer.cfg
 rm -f /etc/cloud/ds-identify.cfg
 
-rm -f /var/log/cloud-init*.log
-rm -rf /var/lib/cloud/instances \
-    /var/lib/cloud/instance
-
 # Install a dpkg-query wrapper to bypass MAAS netplan.io check
 cat > /usr/local/bin/dpkg-query <<EOF
 #!/bin/sh
