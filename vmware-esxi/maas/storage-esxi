@@ -69,6 +69,39 @@ def has_esx_os_data():
     """Return true if running on VMware ESXi 7.X.Y. or newer"""
     return get_esxi_version()[0] >= 7
 
+def get_nvme_serial_numbers():
+    """Parse all NVME disks on the system to
+       generate a map of Serial Number to EUI64
+    """
+    nvmes = []
+
+    output = check_output(
+        ["esxcli", "nvme", "device", "list"]
+    ).decode()
+    for deviceline in output.splitlines():
+        nvme = None
+        if deviceline.startswith("vmh"):
+           if deviceline.split()[0]:
+              nvme = {}
+              nvmehba = deviceline.split()[0]
+              hbaout = check_output(
+                  ["esxcli", "nvme", "device", "get", "-A", nvmehba]
+              ).decode()
+              for hbaline in hbaout.splitlines():
+                  if hbaline.strip().startswith("Serial Number:"):
+                        nvme["serial"] = hbaline.strip().split(":")[1].strip()
+                  if hbaline.strip().startswith("NVM Subsystem NVMe Qualified Name:"):
+                        nvme["eui64"] = hbaline.strip().split("-")[-1].strip()
+
+              if nvme:
+                  nvmes.append(nvme)
+    return nvmes
+
+def disk_has_matching_eui64(id1, id2):
+    """ Compare EUI64 from nvme device get with the
+        scrambled one from esxcfg-scsidevs
+    """
+    return sorted(id1.strip().lower()) == sorted(id2.strip().lower())
 
 def get_disks():
     """Parse all disks on the system."""
@@ -124,6 +157,10 @@ def get_disks():
             elif line.startswith("Devfs Path"):
                 _, path = line.split(":", 1)
                 disk["path"] = path.strip()
+                # For NVME Disks we need the EUI64 which is printed
+                # at the end of paths and is 16 bytes
+                if len(disk["path"]) >= 16:
+                   disk["eui64"] = disk["path"][-16:]
             elif line.startswith("Vendor"):
                 # Vendor isn't actually the vendor, normally its ATA
                 # Stored on the same line is the model which is needed.
@@ -139,7 +176,7 @@ def get_disks():
     return disks
 
 
-def get_disk(disks, model, serial):
+def get_disk(disks, model, serial, nvmes):
     """Return the disk matching the model and serial from the list of disk."""
     for disk in disks:
         # udev will sometimes replace a space in the model name with an
@@ -152,6 +189,9 @@ def get_disk(disks, model, serial):
                 # a list of other names, one of which contains the serial
                 if serial in other_name:
                     return disk
+            for nvme in nvmes:
+                if disk_has_matching_eui64(disk["eui64"], nvme["eui64"]):
+                    return disk
     return None
 
 
@@ -162,6 +202,7 @@ def parse_config(config):
     vmfs_datastores = {}
 
     detected_disks = get_disks()
+    nvmes = get_nvme_serial_numbers()
 
     for i in config:
         if i.get("type") == "disk":
@@ -169,7 +210,7 @@ def parse_config(config):
                 i["partitioned"] = True
             model = i["model"].replace(" ", "_")
             serial = i["serial"].replace(" ", "_")
-            disk = get_disk(detected_disks, model, serial)
+            disk = get_disk(detected_disks, model, serial, nvmes)
             if disk:
                 i["path"] = disk["path"]
                 i["blocksize"] = disk["blocksize"]
