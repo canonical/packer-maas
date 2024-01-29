@@ -13,7 +13,7 @@ bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
 repo --name="Updates" ${KS_UPDATES_REPOS} ${KS_PROXY}
-repo --name="Extras" ${KS_EXTRA_REPOS} ${KS_PROXY}
+repo --name="Extras" ${KS_EXTRAS_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
