@@ -1,7 +1,6 @@
-url --url="https://download.rockylinux.org/pub/rocky/8/BaseOS/x86_64/os/" ${KS_PROXY}
-url --mirrorlist="http://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=BaseOS-8" ${KS_PROXY}
-repo --name="AppStream" --mirrorlist="https://mirrors.rockylinux.org/mirrorlist?release=8&arch=x86_64&repo=AppStream-8" ${KS_PROXY}
-repo --name="Extras" --mirrorlist="https://mirrors.rockylinux.org/mirrorlist?arch=x86_64&repo=extras-8" ${KS_PROXY}
+url ${KS_OS_REPOS} ${KS_PROXY}
+repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
+repo --name="Extras" ${KS_EXTRAS_REPOS} ${KS_PROXY}
 
 eula --agreed
 
