@@ -26,7 +26,16 @@ The Packer template downloads the Rocky ISO image from the Internet. You can tel
 To use a proxy during the installation define the `KS_PROXY` variable in the environment, as bellow:
 
 ```shell
-export KS_PROXY="--proxy=\"${HTTP_PROXY}\""
+export KS_PROXY="\"${HTTP_PROXY}\""
+```
+
+# Building the image using a kickstart mirror
+
+To tell Packer to use a specific mirror set the `KS_MIRROR` environment variable
+poiniting to the mirror URL.
+
+```shell
+export KS_MIRROR="https://dl.rockylinux.org/pub/rocky/8"
 ```
 
 ## Building an image

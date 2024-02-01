@@ -61,7 +61,7 @@ if [ "${DETECT_BLS_BOOT}" -eq 1 ]; then
     fi
 fi
 
-gzip --best "${TARFILE}"
+gzip --best --force "${TARFILE}"
 
 if [ -n "$MANIFEST" ]; then
     echo "Creating manifest..."
