@@ -17,3 +17,6 @@ ubuntu/packages/*.bin
 ubuntu/packages/*.tar.gz
 .vscode
 */http/*.ks
+.python-version
+.env
+.envrc
