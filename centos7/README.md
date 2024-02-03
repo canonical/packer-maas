@@ -15,9 +15,38 @@ The Packer template in this directory creates a CentOS 7 AMD64 image for use wit
 * [MAAS](https://maas.io) 2.3+
 * [Curtin](https://launchpad.net/curtin) 18.1-59+
 
-## Customizing the Image
+## Customizing the Image with Kickstart
 
-The deployment image may be customized by modifying http/centos7.ks. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.
+The deployment image may be customized by modifying http/centos7.ks.pkrtpl.hcl. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.
+
+## Customizing the Image with Ansible (Optional)
+
+Using Ansible as a provisioner in Packer, alongside modifications to the kickstart file, significantly simplifies the image-building process.
+Writing complex configurations directly in the kickstart file, especially within the `%post` section, often leads to issues with escaping sequences and readability.
+Inline scripts require careful handling of shell syntax, escape characters, and quotations, which can become cumbersome and error-prone for intricate configurations.
+Ansible abstracts these complexities, allowing you to define configurations in a more readable and manageable YAML format.
+This approach not only enhances maintainability but also reduces the risk of errors that can occur due to improper escaping or syntax issues in shell scripts.
+Additionally, using Ansible as a provisioner allows for the maintenance of a single code base for provisioning across multiple operating systems.
+This cross-platform capability simplifies management, reduces duplication of effort,
+and ensures consistency in deployments, regardless of the operating system being provisioned.
+
+To run Ansible provisioner following kickstart installation, perform the follwoing steps:
+
+1. Make sure ansible is installed on the machine running packer
+2. Add your ansible code to `ansible/playbook.yml`
+3. Enable both ansible and ssh provisioners:
+
+```hcl
+variable enable_ssh_provisioning {
+  type    = bool
+  default = true
+}
+
+variable enable_ansible_provisioning {
+  type    = bool
+  default = true
+}
+```
 
 ## Building the image using a proxy
 

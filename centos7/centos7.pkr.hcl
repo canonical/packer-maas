@@ -5,6 +5,10 @@ packer {
       version = "~> 1.0"
       source  = "github.com/hashicorp/qemu"
     }
+    ansible = {
+      version = ">= 1.1.1"
+      source  = "github.com/hashicorp/ansible"
+    }
   }
 }
 
@@ -55,17 +59,43 @@ variable ks_mirror {
   default = "${env("KS_MIRROR")}"
 }
 
+variable enable_ssh_provisioning {
+  type    = bool
+  default = false
+}
+
+variable enable_ansible_provisioning {
+  type    = bool
+  default = false
+}
+
+variable ssh_username {
+  type    = string
+  default = "packer"
+}
+
+variable ssh_password {
+  type    = string
+  default = "packer"
+}
+
+variable ssh_user_cleanup {
+  type    = bool
+  default = true
+}
+
 locals {
   ks_proxy         = var.ks_proxy != "" ? "--proxy=${var.ks_proxy}" : ""
   ks_os_repos      = var.ks_mirror != "" ? "--url=${var.ks_mirror}/os/x86_64" : var.ks_os_repos
   ks_updates_repos = var.ks_mirror != "" ? "--baseurl=${var.ks_mirror}/updates/x86_64" : var.ks_updates_repos
   ks_extras_repos  = var.ks_mirror != "" ? "--baseurl=${var.ks_mirror}/extras/x86_64" : var.ks_extras_repos
+  communicator     = var.enable_ssh_provisioning == true ? "ssh" : "none"
 }
 
 source "qemu" "centos7" {
   boot_command     = ["<up><tab> ", "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos7.ks ", "console=ttyS0 inst.cmdline", "<enter>"]
   boot_wait        = "3s"
-  communicator     = "none"
+  communicator     = local.communicator
   disk_size        = "4G"
   headless         = true
   iso_checksum     = "file:${var.centos7_sha256sum_url}"
@@ -73,6 +103,9 @@ source "qemu" "centos7" {
   memory           = 2048
   qemuargs         = [["-serial", "stdio"]]
   shutdown_timeout = "1h"
+  ssh_username     = var.enable_ssh_provisioning == true ? var.ssh_username : null
+  ssh_password     = var.enable_ssh_provisioning == true ? var.ssh_password : null
+  ssh_timeout      = "30m"
   http_content = {
     "/centos7.ks" = templatefile("${path.root}/http/centos7.ks.pkrtpl.hcl",
       {
@@ -80,14 +113,31 @@ source "qemu" "centos7" {
         KS_OS_REPOS      = local.ks_os_repos,
         KS_UPDATES_REPOS = local.ks_updates_repos,
         KS_EXTRAS_REPOS  = local.ks_extras_repos
+        SSH_USERNAME     = var.ssh_username
+        SSH_PASSWORD     = var.ssh_password
+        communicator     = local.communicator
       }
     )
   }
-
 }
 
 build {
   sources = ["source.qemu.centos7"]
+
+  provisioner "ansible" {
+    playbook_file      = "../ansible/playbook.yml"
+    skip_version_check = true
+    only               = var.enable_ansible_provisioning == true ? ["qemu.centos7"] : [""]
+  }
+
+  provisioner "shell" {
+    script = "../scripts/ssh_provisioning_cleanup.sh"
+    environment_vars = [
+      "SSH_USERNAME=${var.ssh_username}",
+      "SSH_USER_CLEANUP=${var.ssh_user_cleanup}",
+    ]
+    only = var.enable_ssh_provisioning == true ? ["qemu.centos7"] : [""]
+  }
 
   post-processor "shell-local" {
     inline = [
