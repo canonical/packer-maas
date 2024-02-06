@@ -98,6 +98,8 @@ preseeds directory of MAAS region controllers.
 
 When used snaps, the path is /var/snap/maas/current/preseeds/curtin_userdata_custom
 
+With MAAS installed via packages `curtin_userdata_custom_amd64` and `curtin_userdata_custom_arm64` are to be stored in `/etc/maas/preseeds/`.
+
 Example ready to use preesed files has been included with this repository. Please
 see curtin_userdata_custom_amd64 and curtin_userdata_custom_arm64.
 
