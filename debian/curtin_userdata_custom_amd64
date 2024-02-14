@@ -16,8 +16,7 @@ late_commands:
   maas: [wget, '--no-proxy', '{{node_disable_pxe_url}}', '--post-data', '{{node_disable_pxe_data}}', '-O', '/dev/null']
   late_1: mount --bind $TARGET_MOUNT_POINT /mnt
   late_2: grep -A2 datasource /etc/cloud/cloud.cfg.d/91_kernel_cmdline_url.cfg | sed 's/curtin//' | tee /mnt/etc/cloud/cloud.cfg.d/debian.cfg
-  late_3: sed -i 's@ubuntu.com/ubuntu@debian.org/debian@g;s@archive@deb@g;s@ubuntu@debian@g;s@Ubuntu@Debian@g;' /mnt/etc/cloud/cloud.cfg
-  late 4: sed -i 's/security.debian.org\/debian/security.debian.org/g' /mnt/etc/cloud/cloud.cfg
+  late_3: sed -i 's@ubuntu.com/ubuntu@debian.org/debian@g;s@archive@deb@g;s@ubuntu@debian@g;s@Ubuntu@Debian@g;s@security.debian.org/debian@security.debian.org@g' /mnt/etc/cloud/cloud.cfg
   late_5: debver=$(cat /mnt/etc/debian_version | awk -F. '{print $1}'); if [ ${debver} -eq 10 ]; then rel="buster"; elif [ ${debver} -eq 11 ]; then rel="bullseye"; elif [ ${debver} -eq 12 ]; then rel="bookworm"; fi; sed -i s/stable/${rel}/g /mnt/etc/apt/sources.list;
   late_6: sed -i '/^set -e/{n;N;d}' /mnt/etc/kernel/postinst.d/zz-update-grub
   late_7: rm -f /usr/local/bin/dpkg-query
