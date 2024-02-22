@@ -1,4 +1,4 @@
-url --mirrorlist=https://mirrors.centos.org/metalink?repo=centos-baseos-9-stream&arch=x86_64&protocol=https,http ${KS_PROXY}
+url ${KS_OS_REPOS} ${KS_PROXY}
 poweroff
 firewall --enabled --service=ssh
 firstboot --disable
@@ -12,9 +12,9 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name=baseos --metalink=https://mirrors.centos.org/metalink?repo=centos-baseos-9-stream&arch=x86_64&protocol=https,http ${KS_PROXY}
-repo --name=appstream --metalink=https://mirrors.centos.org/metalink?repo=centos-appstream-9-stream&arch=x86_64&protocol=https,http ${KS_PROXY}
-repo --name=centos --metalink=https://mirrors.centos.org/metalink?repo=centos-crb-9-stream&arch=x86_64&protocol=https,http ${KS_PROXY}
+repo --name=baseos ${KS_BASEOS_REPOS} ${KS_PROXY}
+repo --name=appstream ${KS_APPSTREAM_REPOS} ${KS_PROXY}
+repo --name=centos ${KS_CENTOS_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
