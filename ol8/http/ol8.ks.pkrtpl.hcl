@@ -1,4 +1,4 @@
-url --url="https://yum.oracle.com/repo/OracleLinux/OL9/baseos/latest/x86_64" ${KS_PROXY}
+url ${KS_OS_REPOS} ${KS_PROXY}
 poweroff
 firstboot --disable
 ignoredisk --only-use=vda
@@ -11,7 +11,7 @@ timezone UTC --utc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="ol9_AppStream" --baseurl="https://yum.oracle.com/repo/OracleLinux/OL9/appstream/x86_64/" ${KS_PROXY}
+repo --name="ol8_AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
