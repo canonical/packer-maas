@@ -1,4 +1,4 @@
-url --url="http://mirror.centos.org/centos/6/os/x86_64" ${KS_PROXY}
+url ${KS_OS_REPOS} ${KS_PROXY}
 poweroff
 firewall --enabled --service=ssh
 firstboot --disable
@@ -12,17 +12,17 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="Updates" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=updates" ${KS_PROXY}
-repo --name="Extras" --mirrorlist="http://mirrorlist.centos.org/?release=6&arch=x86_64&repo=extras" ${KS_PROXY}
-repo --name="EPEL6" --mirrorlist="https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=x86_64" ${KS_PROXY}
+repo --name="Updates" ${KS_UPDATES_REPOS} ${KS_PROXY}
+repo --name="Extras" ${KS_EXTRAS_REPOS} ${KS_PROXY}
+repo --name="EPEL6" ${KS_EPEL6_REPOS} ${KS_PROXY}
 # CentOS 6 requires a newer version of cloud-init to use advanced features with MAAS.
-repo --name="cloud-init" --baseurl="http://copr-be.cloud.fedoraproject.org/results/@cloud-init/el-stable/epel-6-x86_64" ${KS_PROXY}
+repo --name="cloud-init" ${KS_CLOUDINIT_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
 part / --size=1 --grow --asprimary --fstype=ext4
 
-%post --erroronfai
+%post --erroronfail
 # workaround anaconda requirements and clear root password
 passwd -d root
 passwd -l root

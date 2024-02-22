@@ -5,7 +5,7 @@ include ../scripts/check.mk
 PACKER ?= packer
 PACKER_LOG ?= 0
 
-export PACKER_LOG KS_PROXY
+export PACKER_LOG
 
 .PHONY: all clean
 
@@ -13,13 +13,8 @@ all: centos6.tar.gz
 
 $(eval $(call check_packages_deps))
 
-centos6.tar.gz: check-deps clean http/centos6.ks
+centos6.tar.gz: check-deps clean
 	${PACKER} init centos6.pkr.hcl && ${PACKER} build centos6.pkr.hcl
 
-http/centos6.ks: http/centos6.ks.in
-	envsubst '$${KS_PROXY}' < $< | tee $@
-
 clean:
-	${RM} -rf output-centos6 centos6.tar.gz http/centos6.ks
-
-.INTERMEDIATE: http/centos6.ks
+	${RM} -rf output-centos6 centos6.tar.gz
