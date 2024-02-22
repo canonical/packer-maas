@@ -21,14 +21,6 @@ The Packer template in this directory creates a SLES 12 AMD64 image for use with
 
 The deployment image may be customized using `cloud-init` configuration. Check the `user-data` file.
 
-## Building the image using a proxy
-
-The Packer template pulls all packages from the upstream image. To use a proxy during the installation define the `KS_PROXY` variable in the environment, as bellow:
-
-```shell
-export KS_PROXY="--proxy=\"${HTTP_PROXY}\""
-```
-
 ## Building an image
 
 You can easily build the image using the Makefile:
