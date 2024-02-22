@@ -6,7 +6,7 @@ PACKER ?= packer
 PACKER_LOG ?= 0
 ISO ?= ${RHEL8_ISO_PATH}
 
-export PACKER_LOG KS_PROXY
+export PACKER_LOG
 
 .PHONY: all clean
 
@@ -14,13 +14,8 @@ all: rhel8.tar.gz
 
 $(eval $(call check_packages_deps))
 
-rhel8.tar.gz: check-deps clean http/rhel8.ks
+rhel8.tar.gz: check-deps clean
 	${PACKER} init rhel8.pkr.hcl && ${PACKER} build -var "rhel8_iso_path=${ISO}" rhel8.pkr.hcl
 
-http/rhel8.ks: http/rhel8.ks.in
-	envsubst '$${KS_PROXY}' < $< | tee $@
-
 clean:
-	${RM} -rf output-rhel8 rhel8.tar.gz http/rhel8.ks
-
-.INTERMEDIATE: http/rhel8.ks
+	${RM} -rf output-rhel8 rhel8.tar.gz

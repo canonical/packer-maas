@@ -12,7 +12,7 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="AppStream" --baseurl="file:///run/install/repo/AppStream"
+repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
