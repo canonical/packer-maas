@@ -1,4 +1,4 @@
-url --mirrorlist="http://mirrorlist.centos.org/?release=8-stream&arch=x86_64&repo=BaseOS" ${KS_PROXY}
+cdrom
 poweroff
 firewall --enabled --service=ssh
 firstboot --disable
@@ -12,8 +12,7 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="AppStream" --mirrorlist="http://mirrorlist.centos.org/?release=8-stream&arch=x86_64&repo=AppStream" ${KS_PROXY}
-repo --name="Extras" --mirrorlist="http://mirrorlist.centos.org/?release=8-stream&arch=x86_64&repo=extras" ${KS_PROXY}
+repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel

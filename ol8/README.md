@@ -30,7 +30,7 @@ To use a proxy during the installation define the `KS_PROXY` variable in the
 environment, as bellow:
 
 ```shell
-export KS_PROXY="--proxy=\"${HTTP_PROXY}\""
+export KS_PROXY=$HTTP_PROXY
 ```
 
 ## Building an image
@@ -46,7 +46,6 @@ be in packer-maas/ol8, where this file is located. Once in packer-maas/ol8
 you can generate an image with:
 
 ```shell
-envsubst '$${KS_PROXY}' < http/ol8.ks.in | tee http/ol8.ks
 packer init .
 PACKER_LOG=1 packer build .
 ```

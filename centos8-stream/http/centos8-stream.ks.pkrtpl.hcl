@@ -1,4 +1,4 @@
-cdrom
+url ${KS_OS_REPOS} ${KS_PROXY}
 poweroff
 firewall --enabled --service=ssh
 firstboot --disable
@@ -12,7 +12,8 @@ timezone UTC --isUtc
 bootloader --location=mbr --driveorder="vda" --timeout=1
 rootpw --plaintext password
 
-repo --name="AppStream" --baseurl="file:///run/install/repo/AppStream"
+repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
+repo --name="Extras" ${KS_EXTRAS_REPOS} ${KS_PROXY}
 
 zerombr
 clearpart --all --initlabel
