@@ -1,7 +1,6 @@
-url --url="https://repo.almalinux.org/almalinux/9/BaseOS/x86_64/os/" ${KS_PROXY}
-url --mirrorlist="https://mirrors.almalinux.org/mirrorlist/9/baseos" ${KS_PROXY}
-repo --name="AppStream" --mirrorlist="https://mirrors.almalinux.org/mirrorlist/9/appstream" ${KS_PROXY}
-repo --name="Extras" --mirrorlist="https://mirrors.almalinux.org/mirrorlist/9/extras" ${KS_PROXY}
+url ${KS_OS_REPOS} ${KS_PROXY}
+repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
+repo --name="Extras" ${KS_EXTRAS_REPOS} ${KS_PROXY}
 
 eula --agreed
 

@@ -26,9 +26,17 @@ The Packer template downloads the Alma ISO image from the Internet. You can tell
 To use a proxy during the installation define the `KS_PROXY` variable in the environment, as bellow:
 
 ```shell
-export KS_PROXY="--proxy=\"${HTTP_PROXY}\""
+export KS_PROXY="\"${HTTP_PROXY}\""
 ```
 
+# Building the image using a kickstart mirror
+
+To tell Packer to use a specific mirror set the `KS_MIRROR` environment variable
+poiniting to the mirror URL.
+
+```shell
+export KS_MIRROR="https://repo.almalinux.org/almalinux/9"
+```
 
 ## Building an image
 
@@ -41,6 +49,7 @@ make
 You can also manually run packer. Set your current working directory to packer-maas/alma9, where this file resides, and generate an image with:
 
 ```shell
+packer init
 PACKER_LOG=1 packer build .
 ```
 
