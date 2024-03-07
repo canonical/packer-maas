@@ -57,8 +57,10 @@ source "qemu" "cloudimg" {
     ["-device", "virtio-gpu-pci"],
     ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=/usr/share/${lookup(local.uefi_dir, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_CODE${var.ovmf_suffix}.fd"],
     ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd"],
-    ["-drive", "file=output-cloudimg/packer-cloudimg,format=qcow2"],
-    ["-drive", "file=seeds-cloudimg.iso,format=raw"]
+    ["-drive", "file=output-cloudimg/packer-cloudimg,format=qcow2,if=none,id=disk1"],
+    ["-device", "virtio-blk-pci,drive=disk1,bootindex=1"],
+    ["-drive", "file=seeds-cloudimg.iso,format=raw,if=none,id=disk2"],
+    ["-device", "virtio-blk-pci,drive=disk2"]
   ]
   shutdown_command       = "sudo -S shutdown -P now"
   ssh_handshake_attempts = 500
