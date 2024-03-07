@@ -91,7 +91,14 @@ def get_nvme_serial_numbers():
                   if hbaline.strip().startswith("Serial Number:"):
                         nvme["serial"] = hbaline.strip().split(":")[1].strip()
                   if hbaline.strip().startswith("NVM Subsystem NVMe Qualified Name:"):
-                        nvme["eui64"] = hbaline.strip().split("-")[-1].strip()
+                        # Detect empty eui64 field from esxcli command
+                        if hbaline.strip().split(":")[1].strip():
+                            nvme["eui64"] = hbaline.strip().split("-")[-1].strip()
+                        else:
+                            nvme["eui64"] = None
+              # Fall back to S/N if eui64 field is empty from esxcli command
+              if not nvme["eui64"] and nvme["serial"]:
+                  nvme["eui64"] = nvme["serial"]
 
               if nvme:
                   nvmes.append(nvme)
@@ -190,7 +197,8 @@ def get_disk(disks, model, serial, nvmes):
                 if serial in other_name:
                     return disk
             for nvme in nvmes:
-                if disk_has_matching_eui64(disk["eui64"], nvme["eui64"]):
+                # If NVME eui64 is matching the serial number or has a matching eui64 return the disk
+                if nvme["eui64"] == serial or disk_has_matching_eui64(disk["eui64"], nvme["eui64"]):
                     return disk
     return None
 
