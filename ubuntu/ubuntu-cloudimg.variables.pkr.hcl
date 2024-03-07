@@ -25,7 +25,7 @@ variable "customize_script" {
 variable "architecture" {
   type        = string
   default     = "amd64"
-  description = "The architecture to build the image for (amd64 or arm64)"
+  description = "The architecture to build the image for (amd64, arm64, or riscv64)"
 }
 
 variable "ovmf_suffix" {
