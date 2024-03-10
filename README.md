@@ -13,7 +13,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | **OS**          | **Maturity Level** | **MAAS Version** |
 |-----------------|:------------------:|:-----------------|
 | AlmaLinux 8     | Beta               | >= 3.3           |
-| AlmaLinux 9     | Beat               | >= 3.3           |
+| AlmaLinux 9     | Beta               | >= 3.3           |
 | CentOS 6        | EOL                | >= 1.6           |
 | CentOS 7        | Stable             | >= 2.3           |
 | CentOS 8        | EOL                | >= 2.7           |
