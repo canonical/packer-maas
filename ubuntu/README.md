@@ -146,6 +146,10 @@ Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
 
 Specify the Ubuntu Series to build. The default value is set to Jammy.
 
+#### ARCH
+
+Target image architecture. Supported values are amd64 (default) and arm64.
+
 #### URL
 
 The URL prefix for mirror that is hosting the ISO images for a given series. The default value is set to http://releases.ubuntu.com. ISO images are expected to be under URL/SERIES/.
