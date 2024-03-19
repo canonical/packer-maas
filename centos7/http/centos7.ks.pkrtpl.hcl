@@ -1,5 +1,4 @@
 url ${KS_OS_REPOS} ${KS_PROXY}
-poweroff
 firewall --enabled --service=ssh
 firstboot --disable
 ignoredisk --only-use=vda
@@ -19,11 +18,22 @@ zerombr
 clearpart --all --initlabel
 part / --size=1 --grow --asprimary --fstype=ext4
 
+%{ if communicator == "none" }
+poweroff
+%{ else }
+# Add a provisioner user
+user --name='${SSH_USERNAME}' --groups=wheel --password='${SSH_PASSWORD}' --plaintext
+
+# Reboot the system for provisioning
+reboot
+%{ endif }
+
 %post --erroronfail
 # workaround anaconda requirements and clear root password
 passwd -d root
 passwd -l root
 
+%{ if communicator == "none" }
 # Clean up install config not applicable to deployed environments.
 for f in resolv.conf fstab; do
     rm -f /etc/$f
@@ -31,8 +41,13 @@ for f in resolv.conf fstab; do
     chown root:root /etc/$f
     chmod 644 /etc/$f
 done
-
 rm -f /etc/sysconfig/network-scripts/ifcfg-[^lo]*
+%{ else }
+# Passwordless sudo for provisioner user
+echo "${SSH_USERNAME} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/${SSH_PASSWORD}
+chmod 440 /etc/sudoers.d/${SSH_USERNAME}
+
+%{ endif }
 
 # Kickstart copies install boot options. Serial is turned on for logging with
 # Packer which disables console output. Disable it so console output is shown

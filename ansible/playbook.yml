@@ -1,0 +1,8 @@
+---
+- name: Customize Machine Image
+  hosts: all
+
+  tasks:
+    - name: Debug
+      ansible.builtin.debug:
+        msg: "Ansible provisiong is enabled!"
