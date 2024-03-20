@@ -54,9 +54,9 @@ source "qemu" "cloudimg" {
   shutdown_command       = "sudo -S shutdown -P now"
   ssh_handshake_attempts = 500
   ssh_password           = var.ssh_password
-  ssh_timeout            = "45m"
+  ssh_timeout            = var.timeout
   ssh_username           = var.ssh_username
-  ssh_wait_timeout       = "45m"
+  ssh_wait_timeout       = var.timeout
   use_backing_file       = true
 }
 

@@ -158,6 +158,10 @@ The URL prefix for mirror that is hosting the ISO images for a given series. The
 
 The file name for the checksums file. The default value is set to SHA256SUMS.
 
+#### TIMEOUT
+
+The timeout to apply when building the image. The default value is set to 1h.
+
 ### Default Username
 
 The default username is ```ubuntu```
