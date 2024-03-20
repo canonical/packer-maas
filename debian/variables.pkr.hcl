@@ -48,3 +48,9 @@ variable "ssh_debian_password" {
   type    = string
   default = "debian"
 }
+
+variable "timeout" {
+  type        = string
+  default     = "1h"
+  description = "Timeout for building the image"
+}

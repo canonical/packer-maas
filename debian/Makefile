@@ -9,6 +9,7 @@ export PACKER_LOG
 SERIES ?= bullseye
 BOOT ?= uefi
 ARCH ?= amd64
+TIMEOUT ?= 1h
 
 ifeq ($(strip $(SERIES)),buster)
 	VERSION = 10
@@ -46,7 +47,8 @@ debian: check-deps clean
 		-var debian_series=${SERIES} \
 		-var debian_version=${VERSION} \
 		-var architecture=${ARCH} \
-		-var boot_mode=${BOOT} .
+		-var boot_mode=${BOOT} \
+		-var timeout=${TIMEOUT} .
 
 clean:
 	${RM} -rf output-* debian-custom-*.gz \
