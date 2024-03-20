@@ -7,6 +7,7 @@ PACKER_LOG ?= 0
 export PACKER_LOG
 ISO ?= ${VMWARE_ESXI_ISO_PATH}
 VENV := .ve
+TIMEOUT ?= 1h
 
 .PHONY: all lint format clean
 
@@ -24,7 +25,7 @@ scripts.tar.xz:
 	tar cJf $@ --group=0 --owner=0 -C $${SCRIPT_DIR} .
 
 vmware-esxi.dd.gz: check-deps clean scripts.tar.xz
-	${PACKER} init vmware-esxi.pkr.hcl && ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" vmware-esxi.pkr.hcl
+	${PACKER} init vmware-esxi.pkr.hcl && ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" -var timeout=${TIMEOUT} vmware-esxi.pkr.hcl
 
 $(VENV): requirements-dev.txt requirements.txt
 	python3 -m venv --system-site-packages --clear $@
