@@ -46,6 +46,12 @@ variable ks_mirror {
   default = "${env("KS_MIRROR")}"
 }
 
+variable "timeout" {
+  type        = string
+  default     = "1h"
+  description = "Timeout for building the image"
+}
+
 locals {
   ks_proxy           = var.ks_proxy != "" ? "--proxy=${var.ks_proxy}" : ""
   ks_os_repos        = var.ks_mirror != "" ? "--url=${var.ks_mirror}/baseos/latest/x86_64" : var.ks_os_repos
@@ -62,7 +68,7 @@ source "qemu" "ol9" {
   iso_url          = var.ol9_iso_url
   memory           = 2048
   qemuargs         = [["-serial", "stdio"], ["-cpu", "host"]]
-  shutdown_timeout = "1h"
+  shutdown_timeout = var.timeout
   http_content = {
     "/ol9.ks" = templatefile("${path.root}/http/ol9.ks.pkrtpl.hcl",
       {
