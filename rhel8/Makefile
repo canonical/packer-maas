@@ -5,6 +5,7 @@ include ../scripts/check.mk
 PACKER ?= packer
 PACKER_LOG ?= 0
 ISO ?= ${RHEL8_ISO_PATH}
+TIMEOUT ?= 1h
 
 export PACKER_LOG
 
@@ -15,7 +16,7 @@ all: rhel8.tar.gz
 $(eval $(call check_packages_deps))
 
 rhel8.tar.gz: check-deps clean
-	${PACKER} init rhel8.pkr.hcl && ${PACKER} build -var "rhel8_iso_path=${ISO}" rhel8.pkr.hcl
+	${PACKER} init rhel8.pkr.hcl && ${PACKER} build -var "rhel8_iso_path=${ISO}" -var timeout=${TIMEOUT} rhel8.pkr.hcl
 
 clean:
 	${RM} -rf output-rhel8 rhel8.tar.gz
