@@ -48,3 +48,9 @@ variable "ssh_ubuntu_password" {
   type    = string
   default = "ubuntu"
 }
+
+variable "timeout" {
+  type        = string
+  default     = "1h"
+  description = "Timeout for building the image"
+}

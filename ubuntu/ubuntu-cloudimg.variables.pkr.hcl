@@ -27,9 +27,3 @@ variable "architecture" {
   default     = "amd64"
   description = "The architecture to build the image for (amd64 or arm64)"
 }
-
-variable "timeout" {
-  type        = string
-  default     = "1h"
-  description = "The timeout for building an image"
-}

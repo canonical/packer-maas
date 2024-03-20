@@ -24,9 +24,9 @@ source "qemu" "lvm" {
   shutdown_command       = "sudo -S shutdown -P now"
   ssh_handshake_attempts = 500
   ssh_password           = var.ssh_ubuntu_password
-  ssh_timeout            = "45m"
+  ssh_timeout            = var.timeout
   ssh_username           = "ubuntu"
-  ssh_wait_timeout       = "45m"
+  ssh_wait_timeout       = var.timeout
 }
 
 build {
