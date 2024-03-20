@@ -129,6 +129,10 @@ for amd64 architecture.
 
 Target image architecture. Supported values are amd64 (default) and arm64.
 
+#### TIMEOUT
+
+The timeout to apply when building the image. The default value is set to 1h.
+
 ### Default Username
 
 The default username is ```debian```

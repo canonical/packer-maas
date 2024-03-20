@@ -61,6 +61,12 @@ centos9-stream.pkr.hcl.
 
 Installation is non-interactive.
 
+### Makefile Parameters
+
+#### TIMEOUT
+
+The timeout to apply when building the image. The default value is set to 1h.
+
 ## Uploading an image to MAAS
 
 ```shell

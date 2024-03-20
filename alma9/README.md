@@ -57,6 +57,12 @@ The installation runs in a non-interactive mode.
 
 Note: alma9.pkr.hcl runs Packer in headless mode, with the serial port output from qemu redirected to stdio to give feedback on image creation process. If you wish to see more, change the value of `headless` to `false` in alma9.pkr.hcl, remove `[ "-serial", "stdio" ]` from `qemuargs` section and select `View`, then `serial0` in the qemu window that appears during build. This lets you watch progress of the image build script. Press `ctrl-b 2` to switch to shell to explore more, and `ctrl-b 1` to go back to log view.
 
+### Makefile Parameters
+
+#### TIMEOUT
+
+The timeout to apply when building the image. The default value is set to 1h.
+
 ## Uploading an image to MAAS
 
 ```shell

@@ -58,6 +58,12 @@ Note: vmware-esxi.pkr.hcl is configured to run Packer in headless mode. Only Pac
 
 Installation is non-interactive.
 
+### Makefile Parameters
+
+#### TIMEOUT
+
+The timeout to apply when building the image. The default value is set to 1h.
+
 ## Uploading an image to MAAS
 
 _Note: If using snap-based MAAS, the image to be uploaded needs reside under your home directory._
