@@ -13,6 +13,12 @@ variable "vmware_esxi_iso_path" {
   default = "${env("VMWARE_ESXI_ISO_PATH")}"
 }
 
+variable "timeout" {
+  type        = string
+  default     = "1h"
+  description = "Timeout for building the image"
+}
+
 source "qemu" "esxi" {
   boot_command     = ["<enter><wait>", "<leftShift>O", " ks=cdrom:/KS.CFG", " cpuUniformityHardCheckPanic=FALSE", "systemMediaSize=min", " com1_Port=0x3f8 tty2Port=com1", "<enter>"]
   boot_wait        = "3s"
@@ -28,7 +34,7 @@ source "qemu" "esxi" {
   memory           = 4096
   net_device       = "vmxnet3"
   qemuargs         = [["-cpu", "host"], ["-smp", "2,sockets=2,cores=1,threads=1"], ["-serial", "stdio"]]
-  shutdown_timeout = "1h"
+  shutdown_timeout = var.timeout
 }
 
 build {

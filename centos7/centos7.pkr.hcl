@@ -55,6 +55,12 @@ variable ks_mirror {
   default = "${env("KS_MIRROR")}"
 }
 
+variable "timeout" {
+  type        = string
+  default     = "1h"
+  description = "Timeout for building the image"
+}
+
 locals {
   ks_proxy         = var.ks_proxy != "" ? "--proxy=${var.ks_proxy}" : ""
   ks_os_repos      = var.ks_mirror != "" ? "--url=${var.ks_mirror}/os/x86_64" : var.ks_os_repos
@@ -72,7 +78,7 @@ source "qemu" "centos7" {
   iso_url          = var.centos7_iso_url
   memory           = 2048
   qemuargs         = [["-serial", "stdio"]]
-  shutdown_timeout = "1h"
+  shutdown_timeout = var.timeout
   http_content = {
     "/centos7.ks" = templatefile("${path.root}/http/centos7.ks.pkrtpl.hcl",
       {

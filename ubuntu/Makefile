@@ -10,6 +10,7 @@ SERIES ?= jammy
 ARCH ?= amd64
 URL ?= http://releases.ubuntu.com
 SUMS ?= SHA256SUMS
+TIMEOUT ?= 1h
 
 ISO=$(shell wget -O- -q ${URL}/${SERIES}/${SUMS} | grep live-server | cut -d'*' -f2)
 
@@ -39,20 +40,23 @@ custom-cloudimg.tar.gz: check-deps clean
 	${PACKER} init . && ${PACKER} build \
 		-only='cloudimg.*' \
 		-var ubuntu_series=${SERIES} \
-		-var architecture=${ARCH} .
+		-var architecture=${ARCH} \
+		-var timeout=${TIMEOUT} .
 
 custom-ubuntu.tar.gz: check-deps clean seeds-flat.iso OVMF_VARS.fd \
 			packages/custom-packages.tar.gz
 	${PACKER} init . && ${PACKER} build -only=qemu.flat \
-	                -var ubuntu_series=${SERIES} \
-	                -var ubuntu_iso=${ISO} \
-			-var architecture=${ARCH} .
+	    -var ubuntu_series=${SERIES} \
+	    -var ubuntu_iso=${ISO} \
+	    -var architecture=${ARCH} \
+		-var timeout=${TIMEOUT} .
 
 custom-ubuntu-lvm.dd.gz: check-deps clean seeds-lvm.iso OVMF_VARS.fd
 	${PACKER} init . && ${PACKER} build -only=qemu.lvm \
-	                -var ubuntu_series=${SERIES} \
-	                -var ubuntu_lvm_iso=${ISO} \
-			-var architecture=${ARCH} .
+	    -var ubuntu_series=${SERIES} \
+	    -var ubuntu_lvm_iso=${ISO} \
+	    -var architecture=${ARCH} \
+		-var timeout=${TIMEOUT} .
 clean:
 	${RM} -rf output-* custom-*.gz \
 		seeds-flat.iso seeds-lvm.iso seeds-cloudimg.iso \

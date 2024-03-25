@@ -48,6 +48,12 @@ VNC port given in the Packer output or change the value of `headless` to false i
 
 Installation is non-interactive.
 
+### Makefile Parameters
+
+#### TIMEOUT
+
+The timeout to apply when building the image. The default value is set to 1h.
+
 ## Uploading an image to MAAS
 
 ```shell

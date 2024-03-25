@@ -55,6 +55,12 @@ variable ks_mirror {
   default = "${env("KS_MIRROR")}"
 }
 
+variable "timeout" {
+  type        = string
+  default     = "1h"
+  description = "Timeout for building the image"
+}
+
 locals {
   ks_proxy           = var.ks_proxy != "" ? "--proxy=${var.ks_proxy}" : ""
   ks_os_repos        = var.ks_mirror != "" ? "--url=${var.ks_mirror}/BaseOS/x86_64/os" : var.ks_os_repos
@@ -72,7 +78,7 @@ source "qemu" "alma8" {
   iso_url          = var.alma_iso_url
   memory           = 2048
   qemuargs         = [["-serial", "stdio"]]
-  shutdown_timeout = "1h"
+  shutdown_timeout = var.timeout
   http_content = {
     "/alma8.ks" = templatefile("${path.root}/http/alma8.ks.pkrtpl.hcl",
       {

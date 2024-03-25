@@ -40,6 +40,12 @@ Note: `sles.pkr.hcl` is configured to run Packer in headless mode. Only Packer o
 
 Installation is non-interactive.
 
+### Makefile Parameters
+
+#### TIMEOUT
+
+The timeout to apply when building the image. The default value is set to 1h.
+
 ## Uploading an image to MAAS
 
 ```shell

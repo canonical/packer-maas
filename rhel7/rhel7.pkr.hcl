@@ -36,6 +36,12 @@ variable ks_proxy {
   default = "${env("KS_PROXY")}"
 }
 
+variable "timeout" {
+  type        = string
+  default     = "1h"
+  description = "Timeout for building the image"
+}
+
 locals {
   ks_proxy = var.ks_proxy != "" ? "--proxy=${var.ks_proxy}" : ""
 }
@@ -50,7 +56,7 @@ source "qemu" "rhel7" {
   iso_url          = var.rhel7_iso_path
   memory           = 2048
   qemuargs         = [["-serial", "stdio"]]
-  shutdown_timeout = "1h"
+  shutdown_timeout = var.timeout
   http_content = {
     "/rhel7.ks" = templatefile("${path.root}/http/rhel7.ks.pkrtpl.hcl",
       {
