@@ -76,7 +76,7 @@ source "qemu" "centos8" {
   qemuargs         = [["-serial", "stdio"]]
   shutdown_timeout = var.timeout
   http_content = {
-    "/centos8.ks" = templatefile("${path.root}/http/centos7.ks.pkrtpl.hcl",
+    "/centos8.ks" = templatefile("${path.root}/http/centos8.ks.pkrtpl.hcl",
       {
         KS_PROXY           = local.ks_proxy,
         KS_OS_REPOS        = local.ks_os_repos,
