@@ -9,6 +9,7 @@ The Packer templates in this directory creates Ubuntu images for use with MAAS.
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
 * qemu-utils, libnbd-bin, nbdkit and fuse2fs
 * qemu-system
+* qemu-system-modules-spice (If building on Ubuntu 24.04 LTS "Noble")
 * ovmf
 * cloud-image-utils
 * parted
