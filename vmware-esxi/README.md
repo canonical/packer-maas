@@ -26,7 +26,7 @@
 * qemu-block-extra
 * qemu-system-x86
 * qemu-utils
-* Packer - from upstream repository, v1.9.0 or newer
+* Packer - Install from [upstream repository](https://developer.hashicorp.com/packer/install), v1.9.0 or newer
 * The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
 
 ## Requirements (to deploy the image)

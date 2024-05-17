@@ -33,7 +33,7 @@ source "qemu" "esxi" {
   iso_url          = var.vmware_esxi_iso_path
   memory           = 4096
   net_device       = "vmxnet3"
-  qemuargs         = [["-cpu", "host"], ["-smp", "2,sockets=2,cores=1,threads=1"], ["-serial", "stdio"]]
+  qemuargs         = [["-cpu", "host"], ["-smp", "2,sockets=2,cores=1,threads=1"], ["-serial", "stdio"], ["-enable-kvm"]]
   shutdown_timeout = var.timeout
 }
 
