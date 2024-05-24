@@ -1,0 +1,3 @@
+#!/bin/bash
+yum install --assumeyes --quiet bash-completion vim
+exit 0
