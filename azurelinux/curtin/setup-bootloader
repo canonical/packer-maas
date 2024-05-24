@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Update initrd
+for k in $(ls -l /boot/vmlinuz-* | awk -F 'vmlinuz-' '{print $2}'); do dracut -f /boot/initrd.img-${k} ${k}; done
+
+# Restore the Correct os-release file
+mv /etc/os-release.orig /etc/os-release
+
+# Generate the GRUB config file
+grub2-mkconfig -o /boot/grub2/grub.cfg
+
+# Install GRUB and update the configuration
+if [ -d /sys/firmware/efi/efivars/ ]; then
+        # Sorry, we have to go through this process due to:
+        # grub2-install: error: this utility cannot be used for EFI platforms because it does not support UEFI Secure Boot.
+        mkdir -p /boot/efi/EFI/BOOT
+        mkdir -p /boot/efi/boot/grub2
+
+        yum install --assumeyes --quiet shim grub2-efi-binary
+
+        cat /boot/grub2/grub.cfg | grep search | sort -u | sed 's/^[ \t]*//' > /boot/efi/boot/grub2/grub.cfg
+        echo 'set prefix=($root)"/grub2"' >> /boot/efi/boot/grub2/grub.cfg
+        echo 'configfile $prefix/grub.cfg' >> /boot/efi/boot/grub2/grub.cfg
+else
+        yum install --assumeyes --quiet grub2-pc
+
+        grub_dev="/dev/$(lsblk -r | grep 'part /$' | awk '{print $1}' | sed s/[0-9]//g)"
+
+        grub2-install \
+            --target=i386-pc \
+            --recheck ${grub_dev}
+fi
+exit 0
