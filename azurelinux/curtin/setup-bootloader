@@ -18,8 +18,13 @@ if [ -d /sys/firmware/efi/efivars/ ]; then
 
         yum install --assumeyes --quiet shim grub2-efi-binary
 
-        cat /boot/grub2/grub.cfg | grep search | sort -u | sed 's/^[ \t]*//' > /boot/efi/boot/grub2/grub.cfg
-        echo 'set prefix=($root)"/grub2"' >> /boot/efi/boot/grub2/grub.cfg
+        cat /boot/grub2/grub.cfg | grep search | sort -u | sed 's/^[ \t]*//' | head -n1 > /boot/efi/boot/grub2/grub.cfg
+        # Properly handle separate /boot partition scenarios
+        if [ $(cat /etc/fstab | grep -cw '/boot/') -gt 0 ]; then
+                echo 'set prefix=($root)"/grub2"' >> /boot/efi/boot/grub2/grub.cfg
+        else
+                echo 'set prefix=($root)"/boot/grub2"' >> /boot/efi/boot/grub2/grub.cfg
+        fi
         echo 'configfile $prefix/grub.cfg' >> /boot/efi/boot/grub2/grub.cfg
 else
         yum install --assumeyes --quiet grub2-pc
