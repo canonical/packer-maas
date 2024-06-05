@@ -1,8 +1,3 @@
-variable "iso_path" {
-  type    = string
-  default = ""
-}
-
 packer {
   required_version = ">= 1.7.0"
   required_plugins {
@@ -17,6 +12,22 @@ variable "headless" {
   type        = bool
   default     = false
   description = "Whether VNC viewer should not be launched."
+}
+
+variable "iso_path" {
+  type    = string
+  default = ""
+}
+
+variable "ovmf_suffix" {
+  type    = string
+  default = "_4M"
+}
+
+variable "filename" {
+  type        = string
+  default     = "windows.dd.gz"
+  description = "The filename of the tarball to produce"
 }
 
 source "qemu" "windows_builder" {
@@ -38,7 +49,13 @@ source "qemu" "windows_builder" {
   cpus             = "2"
   net_device       = "e1000"
   qemuargs         = [
-    ["-serial", "stdio"], ["-bios", "/usr/share/OVMF/OVMF_CODE.fd"]
+    ["-serial", "stdio"],
+    ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=/usr/share/OVMF/OVMF_CODE${var.ovmf_suffix}.fd"],
+    ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=OVMF_VARS.fd"],
+    ["-drive", "file=output-windows_builder/packer-windows_builder,format=raw"],
+    ["-cdrom", "${var.iso_path}"],
+    ["-drive", "file=drivers.iso,media=cdrom,index=3"],
+    ["-boot", "d"]
   ]
   shutdown_timeout = "45m"
   vnc_bind_address = "0.0.0.0"
@@ -66,6 +83,6 @@ build {
     inline_shebang = "/bin/bash -e"
   }
   post-processor "compress" {
-    output = "windows.dd.gz"
+    output = "${var.filename}"
   }
 }
