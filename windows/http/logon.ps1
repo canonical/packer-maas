@@ -63,7 +63,7 @@ try
             # Download the WDK installer.
             $Host.UI.RawUI.WindowTitle = "Downloading Windows Driver Kit..."
             [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-            Invoke-WebRequest "http://download.microsoft.com/download/0/8/C/08C7497F-8551-4054-97DE-60C0E510D97A/wdk/wdksetup.exe" -Outfile "c:\wdksetup.exe"
+            Invoke-WebRequest "https://download.microsoft.com/download/8/6/9/86925F0F-D57A-4BA4-8278-861B6876D78E/wdk/wdksetup.exe" -Outfile "c:\wdksetup.exe"
 
             # Run the installer.
             $Host.UI.RawUI.WindowTitle = "Installing Windows Driver Kit..."
@@ -75,7 +75,7 @@ try
 
             # Run dpinst.exe with the path to the drivers.
             $Host.UI.RawUI.WindowTitle = "Injecting Windows drivers..."
-            $dpinst = "$programFilesDir\Windows Kits\8.1\redist\DIFx\dpinst\EngMui\$archDir\dpinst.exe"
+            $dpinst = "$ENV:ProgramFiles (x86)\Windows Kits\8.1\redist\DIFx\dpinst\EngMui\x64\dpinst.exe"
             Start-Process -Wait -FilePath "$dpinst" -ArgumentList "/S /C /F /SA /Path E:\infs"
 
             # Uninstall the WDK
