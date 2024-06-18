@@ -36,6 +36,10 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | VMWare ESXi 6   | EOL                | >= 3.0           |
 | VMWare ESXi 7   | Stable             | >= 3.0           |
 | VMWare ESXi 8   | Beta               | >= 3.0           |
+| Windows 2016    | Beta               | >= 3.3           |
+| Windows 2019    | Beta               | >= 3.3           |
+| Windows 2022    | Beta               | >= 3.3           |
+| Windows 10      | Beta               | >= 3.3           |
 
 ### Maturity level
 
