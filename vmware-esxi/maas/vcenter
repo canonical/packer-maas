@@ -37,7 +37,7 @@ def get_datacenter(session, vc_server, vc_datacenter):
     """Make sure the given datacenter is valid."""
     try:
         response = session.get(
-            "https://%s/rest/vcenter/datacenter" % vc_server
+            'https://%s/api/vcenter/datacenter' % vc_server
         )
         response.raise_for_status()
     except (ConnectionError, HTTPError) as e:
@@ -46,7 +46,7 @@ def get_datacenter(session, vc_server, vc_datacenter):
             % (vc_server, e)
         )
     try:
-        parsed_response = json.loads(response.text)["value"]
+        parsed_response = json.loads(response.text)
     except (json.JSONDecodeError, KeyError):
         raise VCenterException(
             "vCenter(%s) returned invalid datacenter data." % vc_server
@@ -63,14 +63,9 @@ def get_datacenter(session, vc_server, vc_datacenter):
 def get_folder(session, vc_server, datacenter):
     """Get the folder for datacenter hosts."""
     try:
+        filters = {'datacenters':datacenter,'names':'host'}
         response = session.get(
-            "https://%s/rest/vcenter/folder" % vc_server,
-            json={
-                "filter": {
-                    "datacenters": [datacenter],
-                    "type": "HOST",
-                },
-            },
+            'https://%s/api/vcenter/folder' % vc_server, params=filters
         )
         response.raise_for_status()
     except (ConnectionError, HTTPError) as e:
@@ -84,12 +79,10 @@ def get_folder(session, vc_server, datacenter):
         raise VCenterException(
             "vCenter(%s) returned invalid folder data." % vc_server
         )
-    if (
-        "value" in parsed_response
-        and len(parsed_response["value"]) > 0
-        and "folder" in parsed_response["value"][0]
-    ):
-        return parsed_response["value"][0]["folder"]
+    if (parsed_response and
+            len(parsed_response) > 0 and
+            'folder' in parsed_response[0]):
+        return parsed_response[0]["folder"]
     else:
         raise VCenterException(
             "Unable to find HOST folder for datacenter(%s) on vCenter(%s)"
@@ -103,7 +96,7 @@ def add_esxi_host_to_vcenter(
     """Add the ESXi host to the specified vCenter."""
     try:
         response = session.post(
-            "https://%s/rest/vcenter/host" % vc_server,
+            'https://%s/api/vcenter/host' % vc_server,
             json={
                 "spec": {
                     "hostname": esxi_host,
@@ -123,7 +116,7 @@ def add_esxi_host_to_vcenter(
             % (esxi_host, vc_server, e)
         )
     try:
-        return json.loads(response.text)["value"]
+        return json.loads(response.text)
     except (json.JSONDecodeError, KeyError):
         raise VCenterException(
             "vCenter(%s) returned invalid data when adding ESXi host(%s)"
@@ -154,9 +147,10 @@ def register_esxi_host_with_vcenter(
         # Login and get session cookie
         try:
             response = session.post(
-                "https://%s/rest/com/vmware/cis/session" % vc_server
+                'https://%s/api/session' % vc_server
             )
             response.raise_for_status()
+            session.headers['vmware-api-session-id'] = json.loads(response.text)
         except (ConnectionError, HTTPError) as e:
             raise VCenterException(
                 "Unable to login to vCenter(%s): %s" % (vc_server, e)
@@ -169,7 +163,7 @@ def register_esxi_host_with_vcenter(
         # Logout and invalidate session cookie.
         try:
             session.delete(
-                "https://%s/rest/com/vmware/cis/session" % vc_server
+                'https://%s/api/session' % vc_server
             )
         except (ConnectionError, HTTPError):
             # If logout fails ignore it as the host has been added and it
