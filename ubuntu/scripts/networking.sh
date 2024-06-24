@@ -22,7 +22,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt-get install -qy netplan.io cloud-init
 
-cat > /etc/sysctl.d/99-cloudimg-ipv6.conf <<EOF
+cat >/etc/sysctl.d/99-cloudimg-ipv6.conf <<EOF
 net.ipv6.conf.all.use_tempaddr = 0
 net.ipv6.conf.default.use_tempaddr = 0
 EOF
