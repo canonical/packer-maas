@@ -27,7 +27,7 @@ import sys
 from curtin import distro, util
 from curtin.commands import apt_config, curthooks
 from curtin.config import load_command_config
-from curtin.log import LOG
+from curtin.log import DEBUG, LOG, basicConfig
 from curtin.paths import target_path
 from curtin.util import ChrootableTarget, load_command_environment
 
@@ -107,6 +107,8 @@ def main():
     state = load_command_environment()
     config = load_command_config(None, state)
     target = state["target"]
+
+    basicConfig(stream=sys.stderr, verbosity=DEBUG)
 
     curthook(config, target, state)
     cleanup()
