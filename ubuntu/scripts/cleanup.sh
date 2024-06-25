@@ -20,5 +20,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 export DEBIAN_FRONTEND=noninteractive
 
+# Reset cloud-init, so that it can run again when MAAS deploy the image.
+cloud-init clean --logs
+
 apt-get autoremove --purge -yq
 apt-get clean -yq
