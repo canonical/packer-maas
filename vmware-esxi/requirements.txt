@@ -1,4 +1,4 @@
 ipaddr==2.2.0
 oauthlib==3.2.2
 PyYAML==6.0.1
-requests==2.31.0
+requests==2.32.2
