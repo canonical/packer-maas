@@ -20,7 +20,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 export DEBIAN_FRONTEND=noninteractive
 
-PKG_TGZ="/curtin/custom-packages.tar.gz"
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+PKG_TGZ="${SCRIPT_DIR}/custom-packages.tar.gz"
 
 if [ ! -f "${PKG_TGZ}" ]; then
     exit 0
