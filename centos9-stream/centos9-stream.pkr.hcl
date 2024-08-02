@@ -21,7 +21,7 @@ variable "centos9_stream_iso_url" {
 
 variable "centos9_stream_sha256sum_url" {
   type    = string
-  default = "none"
+  default = "https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/iso/CentOS-Stream-9-latest-x86_64-boot.iso.SHA256SUM"
 }
 
 # use can use "--url" to specify the exact url for os repo
@@ -78,7 +78,7 @@ source "qemu" "centos9-stream" {
   communicator     = "none"
   disk_size        = "4G"
   headless         = true
-  iso_checksum     = var.centos9_stream_sha256sum_url
+  iso_checksum     = "file:${var.centos9_stream_sha256sum_url}"
   iso_url          = var.centos9_stream_iso_url
   memory           = 2048
   qemuargs         = [["-serial", "stdio"], ["-cpu", "host"]]
