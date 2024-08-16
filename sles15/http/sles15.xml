@@ -160,6 +160,7 @@
             <package>glibc</package>
             <package>jfsutils</package>
             <package>kernel-default-devel</package>
+            <package>kernel-default</package>
             <package>kexec-tools</package>
             <package>lvm2</package>
             <package>make</package>

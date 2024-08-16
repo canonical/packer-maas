@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+# Copyright (C) 2024 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import os
+import shutil
+import platform
+
+from curtin import distro, util
+from curtin.config import load_command_config
+from curtin.log import LOG
+from curtin.paths import target_path
+from curtin.util import load_command_environment, ChrootableTarget
+from curtin.commands import curthooks
+
+def run_hook_in_target(target, hook):
+    """Look for "hook" in "target" and run in a chroot"""
+    target_hook = target_path(target, '/curtin/' + hook)
+    if os.path.isfile(target_hook):
+        LOG.debug("running %s" % target_hook)
+        with ChrootableTarget(target=target) as in_chroot:
+            in_chroot.subp(['/curtin/' + hook])
+        return True
+    return False
+
+def curthook(cfg, target, state):
+    """Configure network and bootloader"""
+    LOG.info('Running curtin builtin curthooks')
+    state_etcd = os.path.split(state['fstab'])[0]
+    machine = platform.machine()
+
+    distro_info = distro.get_distroinfo(target=target)
+    if not distro_info:
+        raise RuntimeError('Failed to determine target distro')
+    osfamily = distro_info.family
+    LOG.info('Configuring target system for distro: %s osfamily: %s',
+             distro_info.variant, osfamily)
+    
+    sources = cfg.get('sources', {})
+    dd_image = len(util.get_dd_images(sources)) > 0
+
+    curthooks.disable_overlayroot(cfg, target)
+    curthooks.disable_update_initramfs(cfg, target, machine)
+    
+    if not dd_image:
+        curthooks.configure_iscsi(cfg, state_etcd, target, osfamily=osfamily)
+        curthooks.configure_mdadm(cfg, state_etcd, target, osfamily=osfamily)
+        curthooks.copy_fstab(state.get('fstab'), target)
+        curthooks.add_swap(cfg, target, state.get('fstab'))
+
+    run_hook_in_target(target, 'install-custom-packages')
+    
+    curthooks.apply_networking(target, state)
+    curthooks.handle_pollinate_user_agent(cfg, target)
+    
+    # set cloud-init maas datasource
+    if cfg.get('cloudconfig'):
+        curthooks.handle_cloudconfig(
+                      cfg['cloudconfig'],
+                      base_dir=target_path(target,
+                                                 'etc/cloud/cloud.cfg.d'))
+
+    run_hook_in_target(target, 'setup-bootloader')
+
+def cleanup():
+    """Remove curtin-hooks so its as if we were never here."""
+    curtin_dir = os.path.dirname(__file__)
+    shutil.rmtree(curtin_dir)
+
+
+def main():
+    state = load_command_environment()
+    config = load_command_config(None, state)
+    target = state['target']
+
+    curthook(config, target, state)
+    cleanup()
+
+
+if __name__ == "__main__":
+    main()
