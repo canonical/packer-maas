@@ -295,34 +295,13 @@ def get_starting_sector(path):
     return starting_sector + 1
 
 
-def get_ending_sector(blocksize, starting_sector, size):
-    """Return the ending sector from the size."""
-    if isinstance(size, int):
-        return size
-    elif isinstance(size, float):
-        if int(size) != size:
-            raise ValueError(
-                "'%s': resulted in non-integer (%s)" % ((size, int(size)))
-            )
-    elif not isinstance(size, str):
-        raise TypeError("cannot convert type %s ('%s')." % (type(size), size))
+def get_ending_sector(path):
+    """Return the ending sector from the disk path."""
+    ending_sector = 0
+    part_info = check_output(["partedUtil", "get", path]).decode().splitlines()[0]
+    ending_sector = int(part_info.split()[3]) - int(part_info.split()[0])
 
-    size = size.upper()
-    # Any size can end with B
-    if size.endswith("B"):
-        size = size[:-1]
-
-    mpliers = {"B": 1, "K": 2**10, "M": 2**20, "G": 2**30, "T": 2**40}
-
-    mplier = "B"
-    for m in mpliers:
-        if size.endswith(m):
-            size = size[0 : -len(m)]
-            mplier = m
-            break
-
-    return int(starting_sector + float(size) * mpliers[mplier] / blocksize)
-
+    return ending_sector
 
 def partition_disks(disks, partitions):
     """Partition all disks."""
@@ -335,9 +314,14 @@ def partition_disks(disks, partitions):
         # It needs to be recreated. On VMware ESXi 7.0 the offical installer
         # defines 5 partitions and skips partitions 2-4. Partition 8 is the
         # datastore which can be extended.
+        #
+        # When vmfs6 storage layout is selected, MAAS nonetheless sets
+        # partition 3 for datastores on grub_device.
+        #
+        # On non-grub-device disks, the datastore remains partition 1.
         if disk.get("grub_device") and (
             (is_esxi67() and part["number"] != 3 and part["number"] <= 9)
-            or (has_esx_os_data() and part["number"] <= 7)
+            or (has_esx_os_data() and part["number"] != 3)
         ):
             continue
         elif not disk.get("partitioned"):
@@ -348,11 +332,13 @@ def partition_disks(disks, partitions):
             check_call(["partedUtil", "mklabel", disk["path"], disk["ptable"]])
             disk["partitioned"] = True
 
-        info("Creating partition %s on %s" % (part["number"], disk["path"]))
         starting_sector = get_starting_sector(disk["path"])
-        ending_sector = get_ending_sector(
-            disk["blocksize"], starting_sector, part["size"]
+        ending_sector = get_ending_sector(disk["path"])
+        info(
+             "Creating partition %s on %s (Start: %s End: %s)"
+             % (part["number"], disk["path"], starting_sector, ending_sector)
         )
+
         check_call(
             [
                 "partedUtil",
