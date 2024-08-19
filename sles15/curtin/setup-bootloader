@@ -1,0 +1,23 @@
+#!/bin/bash
+# Ensure There are adequete storage drivers
+echo 'add_drivers+=" ahci nvme nvme_core raid_class scsi_mod sd_mod "' > /etc/dracut.conf.d/custom.conf
+
+# Update All initramfs files
+for kernel in $(ls /lib/modules/); do
+  dracut --force /boot/initrd-${kernel} ${kernel}
+done
+
+# Generate the GRUB config file
+grub2-mkconfig -o /boot/grub2/grub.cfg
+
+# Install GRUB and update the configuration
+if [ -d /sys/firmware/efi/efivars/ ]; then
+        shim-install
+else
+        grub_dev="/dev/$(lsblk -r | grep 'part /$' | awk '{print $1}' | sed s/[0-9]//g)"
+
+        grub2-install \
+            --target=i386-pc \
+            --recheck ${grub_dev}
+fi
+exit 0
