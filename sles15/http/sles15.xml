@@ -180,6 +180,9 @@
             <package>tar</package>
             <package>wget</package>
             <package>xfsprogs</package>
+            <package>grub2-i386-pc</package>
+            <package>grub2-x86_64-efi</package>
+            <package>grub2-branding-SLE</package>
         </packages>
         <patterns config:type="list">
             <pattern>base</pattern>

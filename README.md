@@ -31,7 +31,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | Rocky 8         | Beta               | >= 3.3           |
 | Rocky 9         | Beta               | >= 3.3           |
 | SLES 12         | Beta               | >= 3.4           |
-| SLES 15         | Beta               | >= 3.4           |
+| SLES 15         | Beta               | >= 3.3           |
 | Ubuntu          | Stable             | >= 3.0           |
 | VMWare ESXi 6   | EOL                | >= 3.0           |
 | VMWare ESXi 7   | Stable             | >= 3.0           |
