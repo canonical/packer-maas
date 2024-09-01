@@ -8,7 +8,7 @@ locals {
     "arm64" = "AAVMF"
   }
   qemu_machine = {
-    "amd64" = "ubuntu,accel=kvm"
+    "amd64" = "accel=kvm"
     "arm64" = "virt"
   }
   qemu_cpu = {
