@@ -99,12 +99,25 @@ build {
 
   provisioner "file" {
     destination = "/tmp/"
-    sources     = ["${path.root}/scripts/cloudimg/curtin-hooks"]
+    sources     = [
+      "${path.root}/scripts/cloudimg/curtin-hooks",
+      "${path.root}/zadara"
+    ]
   }
 
   provisioner "shell" {
     environment_vars = ["CLOUDIMG_CUSTOM_KERNEL=${var.kernel}"]
     scripts          = ["${path.root}/scripts/cloudimg/setup-curtin.sh"]
+  }
+
+  # provisioner "breakpoint" {
+  #   disable = false
+  #   note    = "this is a breakpoint"
+  # }
+
+  provisioner "ansible" {
+    playbook_file = "${path.root}/zadara/install-playbook.yml"
+    ansible_env_vars = ["ANSIBLE_CONFIG=ansible.cfg"]
   }
 
   provisioner "shell" {

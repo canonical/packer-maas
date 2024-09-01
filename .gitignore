@@ -20,4 +20,4 @@ ubuntu/packages/*.tar.gz
 .python-version
 .env
 .envrc
-*.packer.log
+*.log

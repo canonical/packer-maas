@@ -6,7 +6,7 @@ PACKER ?= packer
 PACKER_LOG ?= 0
 export PACKER_LOG
 
-SERIES ?= jammy
+SERIES ?= noble
 ARCH ?= amd64
 URL ?= http://releases.ubuntu.com
 SUMS ?= SHA256SUMS
@@ -43,6 +43,7 @@ OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS*.fd
 	cp -v $< $@
 
 custom-cloudimg.tar.gz: check-deps clean
+	export ANSIBLE_LOG_PATH=$@_$(TIMESTAMP).ansible.log && \
 	${PACKER} init . && ${PACKER} build \
 		-only='cloudimg.*' \
 		-var ubuntu_series=${SERIES} \
@@ -52,6 +53,7 @@ custom-cloudimg.tar.gz: check-deps clean
 
 custom-ubuntu.tar.gz: check-deps clean seeds-flat.iso OVMF_VARS.fd \
 			packages/custom-packages.tar.gz
+	export ANSIBLE_LOG_PATH=$@_$(TIMESTAMP).ansible.log && \
 	${PACKER} init . && ${PACKER} build -only=qemu.flat \
 		-var ubuntu_series=${SERIES} \
 		-var ubuntu_iso=${ISO} \
@@ -60,6 +62,7 @@ custom-ubuntu.tar.gz: check-deps clean seeds-flat.iso OVMF_VARS.fd \
 		-var timeout=${TIMEOUT} . | tee $@_$(TIMESTAMP).packer.log
 
 custom-ubuntu-lvm.dd.gz: check-deps clean seeds-lvm.iso OVMF_VARS.fd
+	export ANSIBLE_LOG_PATH=$@_$(TIMESTAMP).ansible.log && \
 	${PACKER} init . && ${PACKER} build -only=qemu.lvm \
 		-var ubuntu_series=${SERIES} \
 		-var ubuntu_lvm_iso=${ISO} \

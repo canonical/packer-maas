@@ -1,0 +1,22 @@
+- name: install scripts
+  hosts: all
+  tasks:
+    - name: find all scripts
+      find:
+        paths: /tmp/zadara/setup
+        patterns: "*.sh"
+        recurse: yes
+      register: setup_scripts
+    - name: allow execution
+      command: chmod +x "{{ item }}"
+      with_items: "{{ setup_scripts.files | map(attribute='path') | list }}"
+    - name: run install scripts
+      shell: "{{ item }}"
+      with_items: "{{ setup_scripts.files | sort(attribute='path') | map(attribute='path') | list }}"
+      args:
+        executable: /bin/bash
+        chdir: /tmp/zadara
+      register: install_output
+    - debug:
+        var: item
+      with_items: "{{ install_output.results }}"

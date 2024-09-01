@@ -1,6 +1,6 @@
 variable "ubuntu_series" {
   type        = string
-  default     = "jammy"
+  default     = "noble"
   description = "The codename of the Ubuntu series to build."
 }
 
