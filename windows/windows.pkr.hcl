@@ -49,6 +49,7 @@ source "qemu" "windows_builder" {
   cpus             = "2"
   net_device       = "e1000"
   qemuargs         = [
+    ["-cpu", "host"],
     ["-serial", "stdio"],
     ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=/usr/share/OVMF/OVMF_CODE${var.ovmf_suffix}.fd"],
     ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=OVMF_VARS.fd"],
