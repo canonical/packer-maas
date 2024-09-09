@@ -30,7 +30,7 @@ in BIOS and UEFI modes. The process currently works with the following Debian se
 
 ## Supported Architectures
 
-Currently amd64 (x86_64) and arm64 (aarch64) architectures are supported with aemd64
+Currently amd64 (x86_64) and arm64 (aarch64) architectures are supported with amd64
 being the default.
 
 ## Known Issues
