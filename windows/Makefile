@@ -39,7 +39,7 @@ OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS*.fd
 
 http/Autounattend.xml: http/Autounattend.xml.${BOOT}.template
 	sed s#@VERSION@#"${TYPE} ${VERSION} ${EDIT}"#g $< > $@
-ifneq ($(strip $(PKEY1)),)
+ifneq ($(strip $(PKEY)),)
 	sed -i s#@PKEY@#${PKEY}#g $@
 	sed -i 's/<!--<ProductKey>/<ProductKey>/;s/<\/ProductKey>-->/<\/ProductKey>/' $@
 endif
