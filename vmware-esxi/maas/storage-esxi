@@ -4,7 +4,7 @@
 #
 # Author: Lee Trager <lee.trager@canonical.com>
 #
-# Copyright (C) 2019-2021 Canonical
+# Copyright (C) 2019-2024 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -71,7 +71,7 @@ def has_esx_os_data():
 
 def get_nvme_serial_numbers():
     """Parse all NVME disks on the system to
-       generate a map of Serial Number to EUI64
+       generate a map of Serial Numbers to Adapter Names
     """
     nvmes = []
 
@@ -84,31 +84,21 @@ def get_nvme_serial_numbers():
            if deviceline.split()[0]:
               nvme = {}
               nvmehba = deviceline.split()[0]
+              signature = deviceline.split()[2]
+              # Attach the adapter name to each nvme drive
+              nvme['adapter'] = nvmehba
+              # Convert nvme names to Linux equivalents
+              nvme['devname'] = f"nvme{signature[-1]}n1"
               hbaout = check_output(
                   ["esxcli", "nvme", "device", "get", "-A", nvmehba]
               ).decode()
               for hbaline in hbaout.splitlines():
                   if hbaline.strip().startswith("Serial Number:"):
                         nvme["serial"] = hbaline.strip().split(":")[1].strip()
-                  if hbaline.strip().startswith("NVM Subsystem NVMe Qualified Name:"):
-                        # Detect empty eui64 field from esxcli command
-                        if hbaline.strip().split(":")[1].strip():
-                            nvme["eui64"] = hbaline.strip().split("-")[-1].strip()
-                        else:
-                            nvme["eui64"] = None
-              # Fall back to S/N if eui64 field is empty from esxcli command
-              if not nvme["eui64"] and nvme["serial"]:
-                  nvme["eui64"] = nvme["serial"]
 
               if nvme:
                   nvmes.append(nvme)
     return nvmes
-
-def disk_has_matching_eui64(id1, id2):
-    """ Compare EUI64 from nvme device get with the
-        scrambled one from esxcfg-scsidevs
-    """
-    return sorted(id1.strip().lower()) == sorted(id2.strip().lower())
 
 def get_disks():
     """Parse all disks on the system."""
@@ -127,20 +117,24 @@ def get_disks():
     disk = None
     other_names = False
 
+    # Regex to read name, model, and serial numbers
+    serial_regex = re.compile(
+        r"^(?P<name>t10\.(?:ATA|NVMe)____)"    # The device names (either ATA or NVMe)
+        r"(?P<model>[A-Z0-9_]+?)__+"           # The model names until multiple underscores
+        r"(?P<serial>[A-Z0-9]+)_*$"            # The serial numbers after multiple underscores
+    )
+
     vendor_model_regex = re.compile(
         r"^Vendor:\s+(?P<vendor>.*)\s*"
         r"Model:\s+(?P<model>.*)\s*"
         r"Revis:\s+(?P<revis>.*)\s*$"
     )
 
-    serial_regex = re.compile(
-        r"^(?P<name>\S+?)__+(?P<model>\S+?)__+(?P<serial>\S+?)__+$"
-    )
-
+    # Parse the device list
     for line in output.splitlines():
         if not line.startswith(" " * 3):
-            # Each section starts with the device name, all fields are defined
-            # below and start with 3 spaces.
+            # Each section starts with the device name,
+            # all fields are defined below and start with 3 spaces.
             if disk:
                 disks.append(disk)
                 other_names = False
@@ -151,11 +145,14 @@ def get_disks():
                 "other_names": [],
                 "blocksize": disk_block_sizes.get(name, 0),
                 "serial": m.group("serial") if m else "",
+                "model": m.group("model") if m else "",
+                "path": "",
+                "adapter": ""
             }
         elif disk:
+            # Other names is a list of alias.
+            # Entries must start with 6 spaces.
             if other_names and not line.startswith(" " * 6):
-                # Other names is a list of alias.
-                # Entries must start with 6 spaces.
                 other_names = False
             line = line.strip()
             if line.startswith("Size"):
@@ -164,13 +161,7 @@ def get_disks():
             elif line.startswith("Devfs Path"):
                 _, path = line.split(":", 1)
                 disk["path"] = path.strip()
-                # For NVME Disks we need the EUI64 which is printed
-                # at the end of paths and is 16 bytes
-                if len(disk["path"]) >= 16:
-                   disk["eui64"] = disk["path"][-16:]
             elif line.startswith("Vendor"):
-                # Vendor isn't actually the vendor, normally its ATA
-                # Stored on the same line is the model which is needed.
                 m = vendor_model_regex.search(line)
                 if m:
                     disk["model"] = m.group("model").strip()
@@ -178,27 +169,40 @@ def get_disks():
                 other_names = True
             elif other_names:
                 disk["other_names"].append(line)
+
     if disk:
         disks.append(disk)
+
+    # Map adapter names using serial numbers
+    output = check_output(["esxcli", "storage", "core", "path", "list"]).decode()
+
+    current_disk = None
+    for line in output.splitlines():
+        line = line.strip()
+
+        for disk in disks:
+            if disk['serial'] in line:
+                current_disk = disk
+                break
+
+        if current_disk:
+            if line.startswith("Adapter:"):
+                _, adapter = line.split(":", 1)
+                current_disk["adapter"] = adapter.strip()
+
     return disks
 
-
-def get_disk(disks, model, serial, nvmes):
+def get_disk(disks, nvmes, serial, devname):
     """Return the disk matching the model and serial from the list of disk."""
     for disk in disks:
-        # udev will sometimes replace a space in the model name with an
-        # underscore.
-        if disk["model"] == model or disk["model"].replace(" ", "_") == model:
-            if serial == disk["serial"]:
-                return disk
-            for other_name in disk["other_names"]:
-                # VMware doesn't provide the exact serial number. It provides
-                # a list of other names, one of which contains the serial
-                if serial in other_name:
-                    return disk
-            for nvme in nvmes:
-                # If NVME eui64 is matching the serial number or has a matching eui64 return the disk
-                if nvme["eui64"] == serial or disk_has_matching_eui64(disk["eui64"], nvme["eui64"]):
+        if serial == disk["serial"]:
+            return disk
+    # For NVME disks, match adapter names as serial numbers
+    # reported in Linux and ESXi do not match
+    for nvme in nvmes:
+        for disk in disks:
+            if nvme["adapter"] == disk["adapter"]:
+                if nvme["devname"] == devname:
                     return disk
     return None
 
@@ -218,7 +222,8 @@ def parse_config(config):
                 i["partitioned"] = True
             model = i["model"].replace(" ", "_")
             serial = i["serial"].replace(" ", "_")
-            disk = get_disk(detected_disks, model, serial, nvmes)
+            devname = i["name"]
+            disk = get_disk(detected_disks, nvmes, serial, devname)
             if disk:
                 i["path"] = disk["path"]
                 i["blocksize"] = disk["blocksize"]
@@ -332,24 +337,31 @@ def partition_disks(disks, partitions):
             check_call(["partedUtil", "mklabel", disk["path"], disk["ptable"]])
             disk["partitioned"] = True
 
-        starting_sector = get_starting_sector(disk["path"])
-        ending_sector = get_ending_sector(disk["path"])
-        info(
-             "Creating partition %s on %s (Start: %s End: %s)"
-             % (part["number"], disk["path"], starting_sector, ending_sector)
-        )
+        if not os.path.exists("%s:%s" % (disk["path"], part["number"])):
+            starting_sector = get_starting_sector(disk["path"])
+            ending_sector = get_ending_sector(disk["path"])
 
-        check_call(
-            [
-                "partedUtil",
-                "add",
-                disk["path"],
-                disk["ptable"],
-                # partedUtil expects this as one argument
-                "%s %s %s AA31E02A400F11DB9590000C2911D1B8 0"
-                % (part["number"], starting_sector, ending_sector),
-            ]
-        )
+            info(
+                 "Creating partition %s on %s (Start: %s End: %s)"
+                 % (part["number"], disk["path"], starting_sector, ending_sector)
+                )
+
+            check_call(
+                [
+                    "partedUtil",
+                    "add",
+                    disk["path"],
+                    disk["ptable"],
+                    # partedUtil expects this as one argument
+                    "%s %s %s AA31E02A400F11DB9590000C2911D1B8 0"
+                    % (part["number"], starting_sector, ending_sector),
+                ]
+            )
+        else:
+            info(
+                 "Skip creating partition %s on %s"
+                 % (part["number"], disk["path"])
+            )
 
 
 def get_partition_dev(disks, partitions, id):
