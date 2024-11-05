@@ -37,7 +37,7 @@ Microsoft Windows:
 * The current process builds UEFI compatible images only.
 
 
-## windows.json Template
+## windows.pkr.hcl Template
 
 This template builds a dd.tgz MAAS image from an official Microsoft Windows ISO. 
 This process also installs the latest VirtIO drivers as well as Cloudbase-init.
@@ -58,7 +58,7 @@ The build the image you give the template a script which has all the
 customization:
 
 ```shell
-sudo make windows ISO=<path-to-iso> VERSION=<windows-version> windows.json
+sudo make windows ISO=<path-to-iso> VERSION=<windows-version>
 ```
 
 ### Makefile Parameters
