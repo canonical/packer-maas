@@ -13,6 +13,7 @@ The Packer templates in this directory creates Windows Server images for use wit
 * ovmf
 * cloud-image-utils
 * [Packer](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
+* Ubuntu 22.04+ is required to build Windows 11 images (swtpm package)
 
 
 ## Requirements (to deploy the image)
@@ -26,30 +27,35 @@ The Packer templates in this directory creates Windows Server images for use wit
 This process has been build and deployment tested with the following versions of
 Microsoft Windows:
 
+* Windows Server 2025
 * Windows Server 2022
 * Windows Server 2019
 * Windows Server 2016
-* Windows 10 Pro 22H2
+* Windows 10 PRO+
+* Windows 11 PRO+
 
 
-## Known Issues
+## Known Limitations
 
 * The current process builds UEFI compatible images only.
 
 
 ## windows.pkr.hcl Template
 
-This template builds a dd.tgz MAAS image from an official Microsoft Windows ISO. 
+This template builds a dd.tgz MAAS image from an official Microsoft Windows ISO/VHDX. 
 This process also installs the latest VirtIO drivers as well as Cloudbase-init.
 
 
 ## Obtaining Microsoft Windows ISO images
 
-You can obtains Microsoft Windows Evaluation ISO images from the following links:
+You can obtains Microsoft Windows Evaluation ISO/VHDX images from the following links:
 
+* [Windows Server 2025](https://www.microsoft.com/en-us/evalcenter/download-windows-server-2025)
 * [Windows Server 2022](https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022)
 * [Windows Server 2019](https://www.microsoft.com/en-us/evalcenter/download-windows-server-2019)
 * [Windows Server 2016](https://www.microsoft.com/en-us/evalcenter/download-windows-server-2016)
+* [Windows 10 Enterprise](https://www.microsoft.com/en-us/evalcenter/download-windows-10-enterprise)
+* [Windows 11 Enterprise](https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise)
 
 
 ### Building the image
@@ -59,6 +65,12 @@ customization:
 
 ```shell
 sudo make windows ISO=<path-to-iso> VERSION=<windows-version>
+```
+
+Example:
+
+```shell
+sudo make ISO=/mnt/iso/Windows_Server_2025_SERVER_EVAL_x64FRE_en-us.iso VERSION=2025
 ```
 
 ### Makefile Parameters
@@ -80,7 +92,7 @@ Whether VNC viewer should not be launched. Default is set to false.
 
 #### ISO
 
-Path to Microsoft Windows ISO used to build the image.
+Path to Microsoft Windows ISO image used to build the image.
 
 #### PACKER_LOG
 
@@ -98,10 +110,18 @@ the build time depending on the type of ISO being used. Evaluation series ISO
 images usually do not require a product key to proceed, however this is not
 true with Enterprise and Retail ISO images.
 
+#### TIMEOUT
+
+Defaults to 1h. Supports variables in h (hour) and m (Minutes).
+
+#### VHDX
+
+Path to Microsoft Windows VHDX image used to build the image.
+
 #### VERSION
 
-Specify the Microsoft Windows Version. Example inputs include: 2022, 2019, 2016
-and 10.
+Specify the Microsoft Windows Version. Example inputs include: 2025, 2022, 2019, 2016, 10
+and 11.
 
 
 ## Uploading images to MAAS

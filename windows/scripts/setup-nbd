@@ -4,7 +4,7 @@
 #
 # Author: Lee Trager <lee.trager@canonical.com>
 #
-# Copyright (C) 2020 Canonical
+# Copyright (C) 2024 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -24,7 +24,16 @@ if [ $UID -ne 0 ]; then
     exit 1
 fi
 
-if [ ! -f output-windows_builder/packer-windows_builder ]; then
+if [ -z ${1} ]; then
+    disk_path="output-windows_builder/packer-windows_builder"
+else
+    disk_path="${1}"
+    IMG_FMT="raw"
+fi
+
+echo ${disk_path}
+
+if [ ! -f ${disk_path} ]; then
     echo "ERROR: Not in the same path as template!" >&2
     exit
 fi
@@ -34,23 +43,24 @@ shopt -s extglob
 modprobe nbd
 for nbd in /sys/class/block/nbd+([0-9]); do
     if [ "$(cat ${nbd}/size)" -eq 0 ]; then
-	nbd="/dev/$(basename $nbd)"
-	echo "Using $nbd"
-	break
+        nbd="/dev/$(basename ${nbd})"
+        echo ${nbd} > /tmp/nbd.lock
+        echo "Using ${nbd}"
+        break
     fi
 done
 
-if [ -z "${nbd}" ] || ! echo $nbd | grep -q "/dev"; then
+if [ -z "${nbd}" ] || ! echo ${nbd} | grep -q "/dev"; then
     echo "ERROR: Unable to find nbd device to mount image!" >&2
     exit 1
 fi
 
-echo "Binding image to $nbd..."
-qemu-nbd -d $nbd
+echo "Binding image to ${nbd}..."
+qemu-nbd -d ${nbd}
 if [ -n "$IMG_FMT" ]; then
-    qemu-nbd -c $nbd -f "$IMG_FMT" -n output-windows_builder/packer-windows_builder
+    qemu-nbd -c ${nbd} -f "$IMG_FMT" -n ${disk_path}
 else
-    qemu-nbd -c $nbd -n output-windows_builder/packer-windows_builder
+    qemu-nbd -c ${nbd} -n ${disk_path}
 fi
 echo 'Waiting for partitions to be created...'
 tries=0
