@@ -66,7 +66,7 @@ build {
 
   provisioner "shell-local" {
     inline = [
-      "cp /usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd ${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd",
+      "cp /usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_VARS${var.ovmf_suffix}.fd ${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd",
       "cloud-localds seeds-cloudimg.iso user-data-cloudimg meta-data"
     ]
     inline_shebang = "/bin/bash -e"
