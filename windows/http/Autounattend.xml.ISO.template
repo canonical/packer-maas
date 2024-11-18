@@ -43,10 +43,8 @@
             <ImageInstall>
                 <OSImage>
                     <InstallTo>
- 		 
                         <PartitionID>3</PartitionID>
                         <DiskID>0</DiskID>
-                 
                     </InstallTo>
                     <InstallToAvailablePartition>false</InstallToAvailablePartition>
                     <WillShowUI>OnError</WillShowUI>
@@ -66,7 +64,7 @@
                 <AcceptEula>true</AcceptEula>
             </UserData>
         </component>
-        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State"xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <SetupUILanguage>
                 <UILanguage>en-US</UILanguage>
             </SetupUILanguage>
@@ -92,11 +90,6 @@
                 <ProtectYourPC>3</ProtectYourPC>
                 <NetworkLocation>Work</NetworkLocation>
                 <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-                <!-- Comment the following two options on Windows Vista / 7 and Windows Server 2008 / 2008 R2 -->
-                <!--
-                <HideOnlineAccountScreens>true</HideOnlineAccountScreens>
-                <HideLocalAccountScreen>true</HideLocalAccountScreen>
-                -->
             </OOBE>
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">

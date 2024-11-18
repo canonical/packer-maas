@@ -99,7 +99,7 @@ try
 
         # Install virtio drivers
         $Host.UI.RawUI.WindowTitle = "Installing Virtio Drivers..."
-        certutil -addstore "TrustedPublisher" A:/rh.cer
+        certutil -addstore "TrustedPublisher" A:\rh.cer
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         Invoke-WebRequest "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-gt-x64.msi" -Outfile "c:\virtio.msi"
         Invoke-WebRequest "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-guest-tools.exe" -Outfile "c:\virtio.exe"

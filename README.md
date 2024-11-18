@@ -39,7 +39,9 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | Windows 2016    | Beta               | >= 3.3           |
 | Windows 2019    | Beta               | >= 3.3           |
 | Windows 2022    | Beta               | >= 3.3           |
+| Windows 2025    | Beta               | >= 3.3           |
 | Windows 10      | Beta               | >= 3.3           |
+| Windows 11      | Beta               | >= 3.3           |
 
 ### Maturity level
 
