@@ -26,6 +26,12 @@ ifeq ($(strip $(ARCH)),arm64)
 	boot = uefi
 endif
 
+ifeq ($(wildcard /usr/share/OVMF/OVMF_CODE.fd),)
+	OVMF_SFX ?= _4M
+else
+	OVMF_SFX ?=
+endif
+
 .PHONY: all clean
 
 all: debian
@@ -47,6 +53,7 @@ debian: check-deps clean
 		-var debian_series=${SERIES} \
 		-var debian_version=${VERSION} \
 		-var architecture=${ARCH} \
+		-var ovmf_suffix=${OVMF_SFX} \
 		-var boot_mode=${BOOT} \
 		-var timeout=${TIMEOUT} .
 
