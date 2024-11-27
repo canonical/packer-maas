@@ -17,8 +17,13 @@
                             <Type>MSR</Type>
                         </CreatePartition>
                         <CreatePartition wcm:action="add">
-                            <Extend>true</Extend>
                             <Order>3</Order>
+                            <Type>Primary</Type>
+                            <Size>768</Size>
+                        </CreatePartition>
+                        <CreatePartition wcm:action="add">
+                            <Order>4</Order>
+                            <Extend>true</Extend>
                             <Type>Primary</Type>
                         </CreatePartition>
                     </CreatePartitions>
@@ -30,9 +35,16 @@
                             <PartitionID>1</PartitionID>
                         </ModifyPartition>
                         <ModifyPartition wcm:action="add">
+                            <Label>WinRE</Label>
                             <Format>NTFS</Format>
                             <Order>2</Order>
+                            <TypeID>DE94BBA4-06D1-4D40-A16A-BFD50179D6AC</TypeID>
                             <PartitionID>3</PartitionID>
+                        </ModifyPartition>
+                        <ModifyPartition wcm:action="add">
+                            <Format>NTFS</Format>
+                            <Order>3</Order>
+                            <PartitionID>4</PartitionID>
                             <Label>System</Label>
                         </ModifyPartition>
                     </ModifyPartitions>
@@ -43,7 +55,7 @@
             <ImageInstall>
                 <OSImage>
                     <InstallTo>
-                        <PartitionID>3</PartitionID>
+                        <PartitionID>4</PartitionID>
                         <DiskID>0</DiskID>
                     </InstallTo>
                     <InstallToAvailablePartition>false</InstallToAvailablePartition>
