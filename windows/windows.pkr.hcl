@@ -105,7 +105,7 @@ build {
       "source scripts/setup-nbd",
       "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
       "echo 'Adding curtin-hooks to image...'",
-      "mount -t ntfs $${nbd}p3 $TMP_DIR",
+      "mount -t ntfs $${nbd}p4 $TMP_DIR",
       "mkdir -p $TMP_DIR/curtin",
       "cp ./curtin/* $TMP_DIR/curtin/",
       "sync -f $TMP_DIR/curtin",
