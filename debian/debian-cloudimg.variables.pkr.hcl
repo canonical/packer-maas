@@ -39,3 +39,9 @@ variable "architecture" {
   default     = "amd64"
   description = "The architecture to build the image for (amd64 or arm64)"
 }
+
+variable "ovmf_suffix" {
+  type        = string
+  default     = ""
+  description = "Suffix for OVMF CODE and VARS files. Newer systems such as Noble use _4M."
+}
