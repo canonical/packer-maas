@@ -28,9 +28,8 @@ skipx
 # Initial disk setup
 # Use the first paravirtualized disk
 ignoredisk --only-use=vda
-# Place the bootloader on the Master Boot Record
-bootloader --location=mbr --driveorder="vda" --timeout=1
-# Wipe invalid partition tables
+
+bootloader --disabled
 zerombr
 # Erase all partitions and assign default labels
 clearpart --all --initlabel
@@ -87,7 +86,7 @@ chmod 440 /etc/sudoers.d/rocky
 
 %end
 
-%packages
+%packages --ignoremissing
 @Core
 bash-completion
 cloud-init
@@ -96,9 +95,10 @@ rsync
 tar
 patch
 yum-utils
-grub2-efi-x64
-shim-x64
-grub2-efi-x64-modules
+grub2-pc
+grub2-efi-*
+shim-*
+grub2-efi-*-modules
 efibootmgr
 dosfstools
 lvm2

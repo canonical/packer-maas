@@ -2,13 +2,18 @@
 
 ## Introduction
 
-The Packer template in this directory creates a Rocky 8 AMD64 image for use with MAAS.
+The Packer template in this directory creates a Rocky 8 AMD64/ARM64 image for use with MAAS.
 
 ## Prerequisites to create the image
 
-* A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.
+* A machine running Ubuntu 22.04+ with the ability to run KVM virtual machines.
 * qemu-utils, libnbd-bin, nbdkit and fuse2fs
-* [Packer.](https://www.packer.io/intro/getting-started/install.html), v1.7.0 or newer
+* qemu-system
+* qemu-system-modules-spice (If building on Ubuntu 24.04 LTS "Noble")
+* ovmf
+* cloud-image-utils
+* parted
+* [Packer.](https://www.packer.io/intro/getting-started/install.html), v1.11.0 or newer
 
 ## Requirements to deploy the image
 
@@ -59,6 +64,10 @@ Note: rocky8.pkr.hcl runs Packer in headless mode, with the serial port output f
 
 ### Makefile Parameters
 
+#### ARCH
+
+Defaults to x86_64 to build AMD64 compatible images. In order to build ARM64 images, use ARCH=aarch64
+
 #### TIMEOUT
 
 The timeout to apply when building the image. The default value is set to 1h.
@@ -71,6 +80,34 @@ maas $PROFILE boot-resources create name='custom/rocky8' \
     base_image='rhel/8' filetype='tgz' \
     content@=rocky8.tar.gz
 ```
+
+For ARM64, use:
+
+```shell
+maas $PROFILE boot-resources create name='custom/rocky8' \
+    title='Rocky 8 Custom' architecture='arm64/generic' \
+    base_image='rhel/8' filetype='tgz' \
+    content@=rocky8.tar.gz
+```
+
+Please note that, currently due to lack of support in curtin, deploying ARM64 images needs a preseed file. This is due to [LP# 2090874](https://bugs.launchpad.net/curtin/+bug/2090874) and currently is in the process of getting fixed.
+
+```
+#cloud-config
+debconf_selections:
+ maas: |
+  {{for line in str(curtin_preseed).splitlines()}}
+  {{line}}
+  {{endfor}}
+  
+extract_commands:
+  grub_install: curtin in-target -- cp -v /boot/efi/EFI/rocky/shimaa64.efi /boot/efi/EFI/rocky/shimx64.efi
+
+late_commands:
+  maas: [wget, '--no-proxy', '{{node_disable_pxe_url}}', '--post-data', '{{node_disable_pxe_data}}', '-O', '/dev/null']
+```
+
+This file needs to be saved on Region Controllers under /var/snap/maas/current/preseeds/curtin_userdata_custom_arm64_generic_rocky8 or /etc/maas/preseeds/curtin_userdata_custom_arm64_generic_rocky8. The last portion of this file must match the image name uploaded in MAAS.
 
 ## Default username
 
