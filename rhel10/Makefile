@@ -1,0 +1,56 @@
+#!/usr/bin/make -f
+
+include ../scripts/check.mk
+
+PACKER ?= packer
+PACKER_LOG ?= 0
+ISO ?= rhel-baseos-10.0-x86_64-dvd.iso
+TIMEOUT ?= 1h
+ARCH ?= x86_64
+
+ifeq ($(wildcard /usr/share/OVMF/OVMF_CODE.fd),)
+	OVMF_SFX ?= _4M
+else
+	OVMF_SFX ?=
+endif
+
+export PACKER_LOG
+
+# Fallback
+ifeq ($(strip $(ARCH)),amd64)
+	ARCH = x86_64
+endif
+
+.PHONY: all clean
+
+all: rhel10.tar.gz
+
+$(eval $(call check_packages_deps))
+
+lint:
+	packer validate .
+	packer fmt -check -diff .
+
+format:
+	packer fmt .
+
+OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS${OVMF_SFX}.fd
+	cp -v $< ${ARCH}_VARS.fd
+
+SIZE_VARS.fd:
+ifeq ($(strip $(ARCH)),aarch64)
+	truncate -s 64m ${ARCH}_VARS.fd
+else
+	truncate -s 2m ${ARCH}_VARS.fd
+endif
+
+rhel10.tar.gz: check-deps clean OVMF_VARS.fd SIZE_VARS.fd
+	${PACKER} init rhel10.pkr.hcl && ${PACKER} build \
+							-var architecture=${ARCH} \
+							-var ovmf_suffix=${OVMF_SFX} \
+							-var "rhel10_iso_path=${ISO}" \
+							-var timeout=${TIMEOUT} \
+							rhel10.pkr.hcl
+
+clean:
+	${RM} -rf *.fd output-rhel10 rhel10.tar.gz

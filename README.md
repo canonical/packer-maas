@@ -28,6 +28,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | RHEL 7          | EOL                | >= 2.3           |
 | RHEL 8          | Stable             | >= 2.7           |
 | RHEL 9          | Beta               | >= 3.3           |
+| RHEL 10         | Beta               | >= 3.3           |
 | Rocky 8         | Beta               | >= 3.3           |
 | Rocky 9         | Beta               | >= 3.3           |
 | SLES 12         | Beta               | >= 3.4           |
