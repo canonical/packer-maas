@@ -1,19 +1,21 @@
-cdrom
+#cdrom
+harddrive --partition=vdb --dir=/
 poweroff
+eula --agreed
 firewall --enabled --service=ssh
 firstboot --disable
-ignoredisk --only-use=vda
 lang en_US.UTF-8
 keyboard us
 network --device eth0 --bootproto=dhcp
 firewall --enabled --service=ssh
 selinux --enforcing
-timezone UTC --isUtc
-bootloader --location=mbr --driveorder="vda" --timeout=1
+timezone UTC --utc
 rootpw --plaintext password
 
 repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
 
+ignoredisk --only-use=vda
+bootloader --disabled
 zerombr
 clearpart --all --initlabel
 part / --size=1 --grow --asprimary --fstype=ext4
@@ -44,7 +46,7 @@ sed -i 's/GRUB_ENABLE_BLSCFG=.*/GRUB_ENABLE_BLSCFG=false/g' /etc/default/grub
 dnf clean all
 %end
 
-%packages
+%packages --ignoremissing
 @core
 bash-completion
 cloud-init
@@ -56,9 +58,11 @@ tar
 # grub2-efi-x64 ships grub signed for UEFI secure boot. If grub2-efi-x64-modules
 # is installed grub will be generated on deployment and unsigned which breaks
 # UEFI secure boot.
-grub2-efi-x64
+grub2-pc
+grub2-efi-*
+shim-*
+grub2-efi-*-modules
 efibootmgr
-shim-x64
 dosfstools
 lvm2
 mdadm
