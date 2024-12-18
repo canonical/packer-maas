@@ -18,7 +18,7 @@ The Packer template in this directory creates a RHEL 10 AMD64/ARM64 image for us
 
 ## Customizing the Image
 
-The deployment image may be customized by modifying http/rhel10.ks. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.
+The deployment image may be customized by modifying http/rhel10.ks.pkrtpl.hcl. See the [CentOS kickstart documentation](https://docs.centos.org/en-US/centos/install-guide/Kickstart2/) for more information.
 
 ## Building the image using a proxy
 
@@ -81,7 +81,7 @@ For ARM64, use:
 
 ```shell
 maas $PROFILE boot-resources create \
-    name='rhel/rhel' title='RHEL 10 Custom' \
+    name='rhel/rhel10' title='RHEL 10 Custom' \
     architecture='arm64/generic' filetype='tgz' \
     content@=rhel10.tar.gz
 ```
