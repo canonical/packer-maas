@@ -4,10 +4,22 @@ include ../scripts/check.mk
 
 PACKER ?= packer
 PACKER_LOG ?= 0
-ISO ?= rhel-baseos-9.1-x86_64-dvd.iso
+ISO ?= rhel-baseos-9.0-x86_64-dvd.iso
 TIMEOUT ?= 1h
+ARCH ?= x86_64
+
+ifeq ($(wildcard /usr/share/OVMF/OVMF_CODE.fd),)
+	OVMF_SFX ?= _4M
+else
+	OVMF_SFX ?=
+endif
 
 export PACKER_LOG
+
+# Fallback
+ifeq ($(strip $(ARCH)),amd64)
+	ARCH = x86_64
+endif
 
 .PHONY: all clean
 
@@ -15,8 +27,30 @@ all: rhel9.tar.gz
 
 $(eval $(call check_packages_deps))
 
-rhel9.tar.gz: check-deps clean
-	${PACKER} init rhel9.pkr.hcl && ${PACKER} build -var "rhel9_iso_path=${ISO}" -var timeout=${TIMEOUT} rhel9.pkr.hcl
+lint:
+	packer validate .
+	packer fmt -check -diff .
+
+format:
+	packer fmt .
+
+OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS${OVMF_SFX}.fd
+	cp -v $< ${ARCH}_VARS.fd
+
+SIZE_VARS.fd:
+ifeq ($(strip $(ARCH)),aarch64)
+	truncate -s 64m ${ARCH}_VARS.fd
+else
+	truncate -s 2m ${ARCH}_VARS.fd
+endif
+
+rhel9.tar.gz: check-deps clean OVMF_VARS.fd SIZE_VARS.fd
+	${PACKER} init rhel9.pkr.hcl && ${PACKER} build \
+							-var architecture=${ARCH} \
+							-var ovmf_suffix=${OVMF_SFX} \
+							-var "rhel9_iso_path=${ISO}" \
+							-var timeout=${TIMEOUT} \
+							rhel9.pkr.hcl
 
 clean:
-	${RM} -rf output-rhel9 rhel9.tar.gz
+	${RM} -rf *.fd output-rhel9 rhel9.tar.gz
