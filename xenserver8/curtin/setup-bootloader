@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Update initrd
+#for k in $(find /boot/ -type f -name vmlinuz-* | awk -F 'vmlinuz-' '{print $2}'); do dracut --no-hostonly -f /boot/initrd-${k}.img ${k}; done
+
+# Generate the GRUB config file
+grub-mkconfig -o /boot/grub/grub.cfg
+
+# Install GRUB and update the configuration
+if [ -d /sys/firmware/efi/efivars/ ]; then
+        # Mount /boot/efi first if not mounted
+        if [ ! -d /boot/efi/EFI ]; then
+            mount -L $(blkid | grep vfat | grep -oP 'LABEL="[^"]*"' | cut -d'"' -f2) /boot/efi/
+        fi
+
+        grub_dev="/dev/$(lsblk -r | grep 'part /$' | awk '{print $1}' | sed s/[0-9]//g)"
+        grub_part_num="$(lsblk -r | grep 'part /boot/efi' | awk '{print $1}' | sed s/[a-z]//g)"
+
+        mkdir -p /boot/efi/EFI/BOOT
+        mkdir -p /boot/efi/boot/grub
+
+        efibootmgr --create --disk ${grub_dev} --part ${grub_part_num} --label "XenServer8" --loader /EFI/xenserver/grubx64.efi
+        grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=xenserver
+fi
+exit 0
