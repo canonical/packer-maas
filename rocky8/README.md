@@ -105,6 +105,8 @@ extract_commands:
 
 late_commands:
   maas: [wget, '--no-proxy', '{{node_disable_pxe_url}}', '--post-data', '{{node_disable_pxe_data}}', '-O', '/dev/null']
+  bootloader_01: ["curtin", "in-target", "--", "cp", "-v", "/boot/efi/EFI/rocky/shimaa64.efi", "/boot/efi/EFI/BOOT/bootaa64.efi"]
+  bootloader_02: ["curtin", "in-target", "--", "cp", "-v", "/boot/efi/EFI/rocky/grubaa64.efi", "/boot/efi/EFI/BOOT/"]
 ```
 
 This file needs to be saved on Region Controllers under /var/snap/maas/current/preseeds/curtin_userdata_custom_arm64_generic_rocky8 or /etc/maas/preseeds/curtin_userdata_custom_arm64_generic_rocky8. The last portion of this file must match the image name uploaded in MAAS.
