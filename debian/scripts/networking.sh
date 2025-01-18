@@ -67,11 +67,11 @@ chmod 755 /usr/local/bin/netplan
 
 # Bookworm LP#2011454
 if [ ${DEBIAN_VERSION} == '12' ]; then
-     wget http://archive.ubuntu.com/ubuntu/pool/main/c/cloud-init/cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
+     wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ubuntu-security-collab/+build/26002103/+files/cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
      dpkg -i cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
      rm cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
 else
-    wget http://archive.ubuntu.com/ubuntu/pool/main/c/cloud-init/cloud-init_20.1-10-g71af48df-0ubuntu5_all.deb
+    wget https://launchpad.net/ubuntu/+source/cloud-init/20.1-10-g71af48df-0ubuntu5/+build/19168684/+files/cloud-init_20.1-10-g71af48df-0ubuntu5_all.deb
     dpkg -i cloud-init_20.1-10-g71af48df-0ubuntu5_all.deb
     rm cloud-init_20.1-10-g71af48df-0ubuntu5_all.deb
 fi
