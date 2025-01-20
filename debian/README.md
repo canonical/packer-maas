@@ -142,7 +142,7 @@ The default username is ```debian```
 TGZ image
 
 ```shell
-maas admin boot-resources create \
+maas $PROFILE boot-resources create \
     name='custom/debian-12' \
     title='Debian 12 Custom' \
     architecture='amd64/generic' \
