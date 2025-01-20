@@ -47,7 +47,7 @@
             <os_prober>false</os_prober>
             <timeout config:type="integer">8</timeout>
         </global>
-        <loader_type>grub2</loader_type>
+        <loader_type>grub2-efi</loader_type>
     </bootloader>
     <firewall>
         <enable_firewall config:type="boolean">false</enable_firewall>
@@ -55,9 +55,11 @@
     </firewall>
     <general>
         <ask-list config:type="list" />
+        <self_update config:type="boolean">false</self_update>
         <mode>
-            <final_halt config:type="boolean">true</final_halt>
+            <halt config:type="boolean">true</halt>
             <confirm config:type="boolean">false</confirm>
+            <second_stage config:type="boolean">false</second_stage>
         </mode>
         <proposals config:type="list" />
         <signature-handling>
@@ -180,8 +182,7 @@
             <package>tar</package>
             <package>wget</package>
             <package>xfsprogs</package>
-            <package>grub2-i386-pc</package>
-            <package>grub2-x86_64-efi</package>
+            ${GRUB_PKGS}
             <package>grub2-branding-SLE</package>
         </packages>
         <patterns config:type="list">
