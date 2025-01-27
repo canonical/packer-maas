@@ -18,8 +18,8 @@ The Packer templates in this directory creates Windows Server images for use wit
 
 ## Requirements (to deploy the image)
 
-* [MAAS](https://maas.io) 3.2+
-* [Curtin](https://launchpad.net/curtin) 21.0+
+* [MAAS](https://maas.io) 3.3+
+* [Curtin](https://launchpad.net/curtin) 22.1+
 
 
 ## Supported Microsoft Windows Versions
@@ -27,6 +27,7 @@ The Packer templates in this directory creates Windows Server images for use wit
 This process has been build and deployment tested with the following versions of
 Microsoft Windows:
 
+* Azure Local 23H2
 * Windows Server 2025
 * Windows Server 2022
 * Windows Server 2019
@@ -56,6 +57,8 @@ You can obtains Microsoft Windows Evaluation ISO/VHDX images from the following 
 * [Windows Server 2016](https://www.microsoft.com/en-us/evalcenter/download-windows-server-2016)
 * [Windows 10 Enterprise](https://www.microsoft.com/en-us/evalcenter/download-windows-10-enterprise)
 * [Windows 11 Enterprise](https://www.microsoft.com/en-us/evalcenter/download-windows-11-enterprise)
+
+To download an ISO image for Azure Local (formerly Azure Stack HCI), [follow the instructions here](https://learn.microsoft.com/en-us/azure/azure-local/deploy/download-software).
 
 
 ### Building the image
@@ -120,7 +123,7 @@ Path to Microsoft Windows VHDX image used to build the image.
 
 #### VERSION
 
-Specify the Microsoft Windows Version. Example inputs include: 2025, 2022, 2019, 2016, 10
+Specify the Microsoft Windows Version. Example inputs include: HCI, 2025, 2022, 2019, 2016, 10
 and 11.
 
 

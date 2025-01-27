@@ -12,6 +12,7 @@ VERSION ?= 2022
 HEADLESS ?= false
 FORMAT ?= ISO
 TIMEOUT ?= 1h
+TEMPLATE ?= http/Autounattend.xml.${FORMAT}.template
 
 ifeq ($(strip $(VERSION)),10)
 	TYPE = Windows
@@ -23,6 +24,8 @@ else ifeq ($(strip $(VERSION)),11)
 else ifeq ($(strip $(VERSION)),2025)
 	TYPE = Windows Server
 	EDIT ?= SERVERSTANDARD
+else ifeq ($(strip $(VERSION)),HCI)
+	TEMPLATE = http/Autounattend.xml.HCI.template
 else
 	TYPE = Windows Server
 	EDIT ?= SERVERSTANDARD
@@ -47,7 +50,8 @@ $(eval $(call check_packages_deps,cloud-image-utils,genisoimage,swtpm ovmf,cloud
 OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS*.ms.fd
 	cp -v $< $@
 
-http/Autounattend.xml: http/Autounattend.xml.${FORMAT}.template
+http/Autounattend.xml: ${TEMPLATE}
+	echo "Using ${TEMPLATE}..."
 	sed s#@VERSION@#"${TYPE} ${VERSION} ${EDIT}"#g $< > $@
 ifneq ($(strip $(PKEY)),)
 	sed -i s#@PKEY@#${PKEY}#g $@
