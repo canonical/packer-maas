@@ -43,7 +43,8 @@
 
 param(
     [Parameter()]
-    [switch]$RunPowershell
+    [switch]$RunPowershell,
+    [bool]$DoGeneralize
 )
 
 $ErrorActionPreference = "Stop"
@@ -130,8 +131,13 @@ try
         New-Item -Path c:\success.tch -Type file -Force
 
         $Host.UI.RawUI.WindowTitle = "Running Sysprep..."
-        $unattendedXmlPath = "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\conf\Unattend.xml"
-        & "$ENV:SystemRoot\System32\Sysprep\Sysprep.exe" `/generalize `/oobe `/shutdown `/unattend:"$unattendedXmlPath"
+        if ($DoGeneralize) {
+            $unattendedXmlPath = "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\conf\Unattend.xml"
+            & "$ENV:SystemRoot\System32\Sysprep\Sysprep.exe" `/generalize `/oobe `/shutdown `/unattend:"$unattendedXmlPath"
+        } else {
+            $unattendedXmlPath = "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\conf\Unattend.xml"
+            & "$ENV:SystemRoot\System32\Sysprep\Sysprep.exe" `/oobe `/shutdown `/unattend:"$unattendedXmlPath"
+        }
 }
 catch
 {
