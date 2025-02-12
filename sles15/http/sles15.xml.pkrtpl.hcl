@@ -36,7 +36,7 @@
     <bootloader>
         <global>
             <activate>true</activate>
-            <append>splash=silent quiet showopts</append>
+            <append>splash=silent quiet showopts net.ifnames=1</append>
             <append_failsafe>showopts apm=off noresume edd=off powersaved=off nohz=off highres=off processor.max_cstate=1 nomodeset x11failsafe</append_failsafe>
             <boot_boot>true</boot_boot>
             <boot_extended>false</boot_extended>
