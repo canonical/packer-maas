@@ -52,11 +52,11 @@ locals {
   }
   qemu_machine = {
     "x86_64"  = "accel=kvm"
-    "aarch64" = "virt"
+    "aarch64" = "virt" # Set to "virt,accel=kvm" on native arm64
   }
   qemu_cpu = {
     "x86_64"  = "host"
-    "aarch64" = "max"
+    "aarch64" = "max" # Set to "host" on native arm64
   }
   grub_pkgs = {
     "x86_64"  = "<package>grub2-i386-pc</package><package>grub2-x86_64-efi</package>"
