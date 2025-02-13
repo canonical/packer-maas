@@ -10,42 +10,42 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 
 ## Existing templates
 
-| **OS**            | **Maturity Level** | **MAAS Version** |
-|-------------------|:------------------:|:-----------------|
-| Azure Local (HCI) | Beta               | >= 3.3           |
-| AlmaLinux 8       | Beta               | >= 3.5           |
-| AlmaLinux 9       | Beta               | >= 3.5           |
-| AzureLinux 2.0    | Beta               | >= 3.3           |
-| CentOS 6          | EOL                | >= 1.6           |
-| CentOS 7          | Stable             | >= 2.3           |
-| CentOS 8          | EOL                | >= 2.7           |
-| CentOS 8 Stream   | Beta               | >= 3.2           |
-| CentOS 9 Stream   | Beta               | >= 3.2           |
-| Debian 10         | Beta               | >= 3.2           |
-| Debian 11         | Beta               | >= 3.2           |
-| Debian 12         | Beta               | >= 3.2           |
-| OL8               | Alpha              | >= 3.5           |
-| OL9               | Alpha              | >= 3.5           |
-| RHEL 7            | EOL                | >= 2.3           |
-| RHEL 8            | Stable             | >= 2.7           |
-| RHEL 9            | Beta               | >= 3.3           |
-| RHEL 10           | Beta               | >= 3.3           |
-| Rocky 8           | Beta               | >= 3.3           |
-| Rocky 9           | Beta               | >= 3.3           |
-| SLES 12           | Beta               | >= 3.4           |
-| SLES 15           | Beta               | >= 3.3           |
-| Ubuntu            | Stable             | >= 3.0           |
-| VMWare ESXi 6     | EOL                | >= 3.0           |
-| VMWare ESXi 7     | Stable             | >= 3.0           |
-| VMWare ESXi 8     | Beta               | >= 3.0           |
-| Windows 2016      | Beta               | >= 3.3           |
-| Windows 2019      | Beta               | >= 3.3           |
-| Windows 2022      | Beta               | >= 3.3           |
-| Windows 2025      | Beta               | >= 3.3           |
-| Windows 10        | Beta               | >= 3.3           |
-| Windows 11        | Beta               | >= 3.3           |
-| XenServer 8       | Beta               | >= 3.3           |
-| XCP-ng 8.x        | Beta               | >= 3.3           |
+| **OS**            | **Maturity Level** | **Architecture**  | **MAAS Version** |
+|-------------------|:------------------:|:-----------------:|:-----------------|
+| [Azure Local (HCI)](windows/README.md) | Beta               | x86_64            | >= 3.3           |
+| [AlmaLinux 8](alma8/README.md)       | Beta               | x86_64            | >= 3.5           |
+| [AlmaLinux 9](alma9/README.md)       | Beta               | x86_64            | >= 3.5           |
+| [AzureLinux 2.0](azurelinux/README.md)    | Beta               | x86_64            | >= 3.3           |
+| [CentOS 6](centos6/README.md)          | EOL                | x86_64            | >= 1.6           |
+| [CentOS 7](centos7/README.md)          | Stable             | x86_64            | >= 2.3           |
+| [CentOS 8](centos8/README.md)          | EOL                | x86_64            | >= 2.7           |
+| [CentOS 8 Stream](centos8-stream/README.md)   | Beta               | x86_64            | >= 3.2           |
+| [CentOS 9 Stream](centos9-stream/README.md)   | Beta               | x86_64            | >= 3.2           |
+| [Debian 10](debian/README.md)         | Beta               | x86_64 / aarch64  | >= 3.2           |
+| [Debian 11](debian/README.md)         | Beta               | x86_64 / aarch64  | >= 3.2           |
+| [Debian 12](debian/README.md)         | Beta               | x86_64 / aarch64  | >= 3.2           |
+| [OL8](ol8/README.md)               | Alpha              | x86_64            | >= 3.5           |
+| [OL9](ol9/README.md)               | Alpha              | x86_64            | >= 3.5           |
+| [RHEL 7](rhel7/README.md)            | EOL                | x86_64            | >= 2.3           |
+| [RHEL 8](rhel8/README.md)            | Stable             | x86_64 / aarch64  | >= 2.7           |
+| [RHEL 9](rhel9/README.md)            | Beta               | x86_64 / aarch64  | >= 3.3           |
+| [RHEL 10](rhel10/README.md)           | Beta               | x86_64 / aarch64  | >= 3.3           |
+| [Rocky 8](rocky8/README.md)           | Beta               | x86_64 / aarch64  | >= 3.3           |
+| [Rocky 9](rocky9/README.md)           | Beta               | x86_64 / aarch64  | >= 3.3           |
+| [SLES 12](sles12/README.md)           | Beta               | x86_64            | >= 3.4           |
+| [SLES 15](sles15/README.md)           | Beta               | x86_64 / aarch64  | >= 3.3           |
+| [Ubuntu](ubuntu/README.md)            | Stable             | x86_64            | >= 3.0           |
+| [VMWare ESXi 6](vmware-esxi/README.md)     | EOL                | x86_64            | >= 3.0           |
+| [VMWare ESXi 7](vmware-esxi/README.md)     | Stable             | x86_64            | >= 3.0           |
+| [VMWare ESXi 8](vmware-esxi/README.md)     | Beta               | x86_64            | >= 3.0           |
+| [Windows 2016](windows/README.md)      | Beta               | x86_64            | >= 3.3           |
+| [Windows 2019](windows/README.md)      | Beta               | x86_64            | >= 3.3           |
+| [Windows 2022](windows/README.md)      | Beta               | x86_64            | >= 3.3           |
+| [Windows 2025](windows/README.md)      | Beta               | x86_64            | >= 3.3           |
+| [Windows 10](windows/README.md)        | Beta               | x86_64            | >= 3.3           |
+| [Windows 11](windows/README.md)        | Beta               | x86_64            | >= 3.3           |
+| [XenServer 8](xenserver8/README.md)       | Beta               | x86_64            | >= 3.3           |
+| [XCP-ng 8.x](xenserver8/README.md)        | Beta               | x86_64            | >= 3.3           |
 
 ### Maturity level
 
