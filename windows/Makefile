@@ -45,7 +45,7 @@ endif
 
 all: windows
 
-$(eval $(call check_packages_deps,cloud-image-utils,genisoimage,swtpm ovmf,cloud-image-utils ovmf,genisoimage,swtpm))
+$(eval $(call check_packages_deps,cloud-image-utils,genisoimage,swtpm ovmf,cloud-image-utils ovmf,genisoimage,swtpm,ntfs-3g))
 
 OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS*.ms.fd
 	cp -v $< $@
@@ -64,7 +64,7 @@ else ifeq ($(strip $(VERSION)),11)
 endif
 
 extra_drivers:
-	mkisofs -o drivers.iso -V 'Extra Drivers' -input-charset utf-8 drivers
+	mkisofs -o drivers.iso -V 'Extra Drivers' -input-charset utf-8 -r -J drivers
 
 .INTERMEDIATE: extra_drivers http/Autounattend.xml
 
