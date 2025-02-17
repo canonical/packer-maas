@@ -1,5 +1,4 @@
 url ${KS_OS_REPOS} ${KS_PROXY}
-url ${KS_BASE_OS_REPOS} ${KS_PROXY}
 repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
 repo --name="Extras" ${KS_EXTRAS_REPOS} ${KS_PROXY}
 
@@ -29,8 +28,8 @@ skipx
 # Initial disk setup
 # Use the first paravirtualized disk
 ignoredisk --only-use=vda
-# Place the bootloader on the Master Boot Record
-bootloader --location=mbr --driveorder="vda" --timeout=1
+# No need for bootloader
+bootloader --disabled
 # Wipe invalid partition tables
 zerombr
 # Erase all partitions and assign default labels
@@ -65,7 +64,7 @@ rm -f /etc/sysconfig/network-scripts/ifcfg-[^lo]*
 sed -i 's/^GRUB_TERMINAL=.*/GRUB_TERMINAL_OUTPUT="console"/g' /etc/default/grub
 sed -i '/GRUB_SERIAL_COMMAND="serial"/d' /etc/default/grub
 sed -ri 's/(GRUB_CMDLINE_LINUX=".*)\s+console=ttyS0(.*")/\1\2/' /etc/default/grub
-sed -i 's/GRUB_ENABLE_BLSCFG=.*/GRUB_ENABLE_BLSCFG=false/g' /etc/default/grub 
+sed -i 's/GRUB_ENABLE_BLSCFG=.*/GRUB_ENABLE_BLSCFG=false/g' /etc/default/grub
 
 yum clean all
 
