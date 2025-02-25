@@ -36,6 +36,12 @@ variable "architecture" {
   description = "The architecture to build the image for (amd64 or arm64)"
 }
 
+variable "host_is_arm" {
+  type        = bool
+  default     = false
+  description = "The host architecture is aarch64"
+}
+
 variable "ovmf_suffix" {
   type        = string
   default     = ""
@@ -57,11 +63,11 @@ locals {
   }
   qemu_machine = {
     "x86_64"  = "accel=kvm"
-    "aarch64" = "virt"
+    "aarch64" = var.host_is_arm ? "virt,accel=kvm" : "virt"
   }
   qemu_cpu = {
     "x86_64"  = "host"
-    "aarch64" = "max"
+    "aarch64" = var.host_is_arm ? "host" : "max"
   }
 
   ks_proxy           = var.ks_proxy != "" ? "--proxy=${var.ks_proxy}" : ""

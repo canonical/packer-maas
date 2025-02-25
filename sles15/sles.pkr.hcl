@@ -31,6 +31,12 @@ variable "architecture" {
   description = "The architecture to build the image for (x86_64 or aarch64)"
 }
 
+variable "host_is_arm" {
+  type        = bool
+  default     = false
+  description = "The host architecture is aarch64"
+}
+
 variable "ovmf_suffix" {
   type        = string
   default     = ""
@@ -52,11 +58,11 @@ locals {
   }
   qemu_machine = {
     "x86_64"  = "accel=kvm"
-    "aarch64" = "virt" # Set to "virt,accel=kvm" on native arm64
+    "aarch64" = var.host_is_arm ? "virt,accel=kvm" : "virt"
   }
   qemu_cpu = {
     "x86_64"  = "host"
-    "aarch64" = "max" # Set to "host" on native arm64
+    "aarch64" = var.host_is_arm ? "host" : "max"
   }
   grub_pkgs = {
     "x86_64"  = "<package>grub2-i386-pc</package><package>grub2-x86_64-efi</package>"

@@ -9,6 +9,13 @@ ISO ?= SLE-15-SP4-Full-x86_64-GM-Media1.iso
 TIMEOUT ?= 1h
 ARCH ?= x86_64
 
+# Detect if running on ARM host
+ifeq ($(shell uname -m),aarch64)
+    HOST_IS_ARM = true
+else
+    HOST_IS_ARM = false
+endif
+
 ifeq ($(wildcard /usr/share/OVMF/OVMF_CODE.fd),)
 	OVMF_SFX ?= _4M
 else
@@ -50,6 +57,7 @@ sles15.tar.gz: check-deps clean OVMF_VARS.fd SIZE_VARS.fd
 	${PACKER} init sles.pkr.hcl && ${PACKER} build \
 		-var sles15_iso_path=${ISO} \
 		-var architecture=${ARCH} \
+		-var host_is_arm=${HOST_IS_ARM} \
 		-var timeout=${TIMEOUT} \
 		-var ovmf_suffix=${OVMF_SFX} \
 		-var timeout=${TIMEOUT} -on-error=ask sles.pkr.hcl
