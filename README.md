@@ -38,6 +38,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | [VMWare ESXi 6](vmware-esxi/README.md)     | EOL                | x86_64            | >= 3.0           |
 | [VMWare ESXi 7](vmware-esxi/README.md)     | Stable             | x86_64            | >= 3.0           |
 | [VMWare ESXi 8](vmware-esxi/README.md)     | Beta               | x86_64            | >= 3.0           |
+| [VMWare ESXi 9](vmware-esxi/README.md)     | Beta               | x86_64            | >= 3.0           |
 | [Windows 2016](windows/README.md)      | Beta               | x86_64            | >= 3.3           |
 | [Windows 2019](windows/README.md)      | Beta               | x86_64            | >= 3.3           |
 | [Windows 2022](windows/README.md)      | Beta               | x86_64            | >= 3.3           |
