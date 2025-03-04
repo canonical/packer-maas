@@ -136,6 +136,6 @@ maas admin boot-resources create \
     name='windows/windows-server' \
     title='Windows Server' \
     architecture='amd64/generic' \
-    filetype='ddtgz' \
-    content@=windows-server-amd64-root-dd.gz
+    filetype='ddgz' \
+    content@=windows.dd.gz
 ```
