@@ -24,7 +24,7 @@ scripts.tar.xz:
 	find $${SCRIPT_DIR} -name __pycache__ -type d -or -name *.so | xargs rm -rf ;\
 	tar cJf $@ --group=0 --owner=0 -C $${SCRIPT_DIR} .
 
-vmware-esxi.dd.gz: check-deps clean scripts.tar.xz
+vmware-esxi.dd.gz: check-deps clean usb.img scripts.tar.xz
 	${PACKER} init vmware-esxi.pkr.hcl && ${PACKER} build -var "vmware_esxi_iso_path=${ISO}" -var timeout=${TIMEOUT} vmware-esxi.pkr.hcl
 
 $(VENV): requirements-dev.txt requirements.txt
@@ -42,8 +42,15 @@ format: $(VENV)
 	$(VENV)/bin/isort $(py_files)
 	$(VENV)/bin/black -q $(py_files)
 
+usb.img:
+	dd if=/dev/zero of=usb.img bs=1M count=32
+	parted usb.img --script mklabel msdos
+	parted usb.img --script mkpart primary fat32 1MiB 100%
+	mformat -i usb.img@@1M ::
+	mcopy -i usb.img@@1M KS.CFG ::
+
 clean:
 	${RM} -rf output-esxi vmware-esxi.dd vmware-esxi.dd.gz \
-		scripts.tar.xz $(VENV)
+		scripts.tar.xz usb.img $(VENV)
 
 .INTERMEDIATE: scripts.tar.xz

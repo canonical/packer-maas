@@ -1,5 +1,5 @@
 packer {
-  required_version = ">= 1.7.0"
+  required_version = ">= 1.12.0"
   required_plugins {
     qemu = {
       version = "~> 1.0"
@@ -20,20 +20,30 @@ variable "timeout" {
 }
 
 source "qemu" "esxi" {
-  boot_command     = ["<enter><wait>", "<leftShift>O", " ks=cdrom:/KS.CFG", " cpuUniformityHardCheckPanic=FALSE", "systemMediaSize=min", " com1_Port=0x3f8 tty2Port=com1", "<enter>"]
+  accelerator      = "kvm"
+  boot_command     = ["<enter><wait>", "<leftShift>O", " ks=usb://ks.cfg", " cpuUniformityHardCheckPanic=FALSE", " systemMediaSize=min", " com1_Port=0x3f8 tty2Port=com1", "<enter>"]
   boot_wait        = "3s"
-  cd_files         = ["./KS.CFG"]
-  cd_label         = "kickstart"
   communicator     = "none"
-  disk_interface   = "ide"
   disk_size        = "32G"
   format           = "raw"
   headless         = true
   iso_checksum     = "none"
   iso_url          = var.vmware_esxi_iso_path
+  machine_type     = "q35"
   memory           = 8192
+  cpus             = "4"
   net_device       = "vmxnet3"
-  qemuargs         = [["-cpu", "host"], ["-smp", "2,sockets=2,cores=1,threads=1"], ["-serial", "stdio"], ["-enable-kvm"]]
+  qemuargs         = [
+      ["-cpu", "host"],
+      ["-serial", "stdio"],
+      ["-usb"],
+      ["-device", "usb-storage,drive=usb0"],
+      ["-drive", "file=usb.img,if=none,id=usb0,format=raw"],
+      ["-cdrom", "${var.vmware_esxi_iso_path}" ],
+      ["-device", "ide-hd,drive=ide-disk"],
+      ["-drive", "file=output-esxi/packer-esxi,if=none,id=ide-disk,cache=writeback,discard=ignore,format=raw"],
+      ["-boot", "d"]
+  ]
   shutdown_timeout = var.timeout
 }
 
