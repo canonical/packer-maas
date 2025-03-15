@@ -34,6 +34,7 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | [Rocky 9](rocky9/README.md)           | Beta               | x86_64 / aarch64  | >= 3.3           |
 | [SLES 12](sles12/README.md)           | Beta               | x86_64            | >= 3.4           |
 | [SLES 15](sles15/README.md)           | Beta               | x86_64 / aarch64  | >= 3.3           |
+| [SLES 16](sles16/README.md)           | Alpha              | x86_64 / aarch64  | >= 3.3           |
 | [Ubuntu](ubuntu/README.md)            | Stable             | x86_64            | >= 3.0           |
 | [VMWare ESXi 6](vmware-esxi/README.md)     | EOL                | x86_64            | >= 3.0           |
 | [VMWare ESXi 7](vmware-esxi/README.md)     | Stable             | x86_64            | >= 3.0           |
