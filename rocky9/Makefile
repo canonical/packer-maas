@@ -20,7 +20,8 @@ else
 	OVMF_SFX ?=
 endif
 
-export PACKER_LOG
+export PACKER_LOG=1
+
 
 # Fallback
 ifeq ($(strip $(ARCH)),amd64)
