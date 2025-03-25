@@ -59,8 +59,13 @@ locals {
 # Use the same base source
 source "qemu" "rocky9" {
   boot_command     = ["<up><wait>", "e", "<down><down><down><left>", " console=ttyS0 inst.cmdline inst.text inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/rocky9.ks <f10>"]
-  boot_wait        = "5s"
-  communicator     = "none"
+  boot_wait        = "240s"
+  communicator = "ssh"
+  ssh_username = "rocky"
+  ssh_password = "rocky"
+  ssh_timeout  = "30m"
+  ssh_pty           = true
+  ssh_wait_timeout  = "5m"
   disk_size        = "45G"
   format           = "qcow2"
   headless         = true
@@ -77,6 +82,8 @@ source "qemu" "rocky9" {
     ["-device", "usb-kbd"],
     ["-device", "virtio-net-pci,netdev=net0"],
     ["-netdev", "user,id=net0"],
+    [ "-netdev", "user,hostfwd=tcp::{{ .SSHHostPort }}-:22,id=forward"],
+    [ "-device", "virtio-net,netdev=forward,id=net0"],
     ["-device", "virtio-blk-pci,drive=drive0,bootindex=0"],
     ["-device", "virtio-blk-pci,drive=cdrom0,bootindex=1"],
     ["-machine", "${lookup(local.qemu_machine, var.architecture, "")}"],
