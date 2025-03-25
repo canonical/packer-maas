@@ -106,6 +106,11 @@ mdadm
 device-mapper-multipath
 iscsi-initiator-utils
 -plymouth
+gcc
+make
+kernel-devel
+kernel-headers
+dkms
 # Remove ALSA firmware
 -a*-firmware
 # Remove Intel wireless firmware
