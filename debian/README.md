@@ -101,13 +101,17 @@ When used snaps, the path is /var/snap/maas/current/preseeds/curtin_userdata_cus
 Example ready to use preesed files has been included with this repository. Please
 see curtin_userdata_custom_amd64 and curtin_userdata_custom_arm64.
 
-Please be aware that this could potentially create a conflict with the rest of custom
-images present in your setup, hence a through investigation and testing might be
-required prior to deployment.
+**Please be aware** this could potentially create a conflict with the rest of custom
+images present in your setup. To work around a conflict, it is possible to rename the
+preseed file something similar to curtin_userdata_custom_amd64_generic_debian-10 assuming
+the architecture was set to amd64/generic and the uploaded **name** was set to custom/debian-10.
 
-To work around a conflict, it is possible to name the preseed file something similar to
-curtin_userdata_custom_amd64_generic_debian-10 assuming the architecture was set to
-amd64/generic and the uploaded name was set to custom/debian-10.
+In other words, depending on the image name parameter used during the import, the preseed
+file(s) can be renamed to apply in a targetted manner.
+
+For more information about the preseed file naming schema, see
+[Custom node setup (Preseed)](https://github.com/CanonicalLtd/maas-docs/blob/master/en/nodes-custom.md) and
+[Preseed filenames](https://github.com/canonical/maas/blob/master/src/maasserver/preseed.py#L756).
 
 ### Makefile Parameters
 
