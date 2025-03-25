@@ -20,3 +20,6 @@ ubuntu/packages/*.tar.gz
 .python-version
 .env
 .envrc
+*.tgz
+*.rpm
+*.deb
