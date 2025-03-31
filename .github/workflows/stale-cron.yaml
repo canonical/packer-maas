@@ -1,0 +1,9 @@
+name: Close inactive issues
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  close-issues:
+    uses: canonical/maas-github-workflows/.github/workflows/stale-cron.yaml@v0
+    secrets: inherit
