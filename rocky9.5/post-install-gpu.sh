@@ -1,4 +1,13 @@
 #!/bin/bash
+set -e
+
+if [ "$IMAGE_TYPE" != "gpu" ]; then
+  echo "Skipping GPU setup since IMAGE_TYPE is not 'gpu'"
+  exit 0
+fi
+
+# Actual GPU setup commands
+
 cd /root
 
 curl -JLO -q https://www.mellanox.com/downloads/DOCA/DOCA_v2.10.0/host/doca-host-2.10.0-093000_25.01_rhel95.x86_64.rpm

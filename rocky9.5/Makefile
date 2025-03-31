@@ -21,14 +21,14 @@ export PACKER_LOG
 
 .PHONY: all clean validate doca gpu
 
-all: doca gpu
+all: cpu gpu
 
 validate:
 	${PACKER} fmt -check -diff .
 	${PACKER} validate rocky9.pkr.hcl
 
 clean:
-	${RM} -rf *.fd output-rocky9 *.qcow2 packer_cache
+	${RM} -rf *.fd output-rocky9 *.qcow2
 
 OVMF_VARS.fd: /usr/share/OVMF/OVMF_VARS${OVMF_SFX}.fd
 	cp -v $< ${ARCH}_VARS.fd

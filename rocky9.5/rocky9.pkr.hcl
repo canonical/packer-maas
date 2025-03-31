@@ -83,12 +83,20 @@ build {
   name    = "rocky-${var.image_type}"
   sources = ["source.qemu.rocky9"]
 
+  # Always run DOCA post-install script
   provisioner "shell" {
-    script = var.image_type == "gpu" ? "./post-install-gpu.sh" : "./post-install-doca.sh"
+    script = "./post-install-doca.sh"
     execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
+  }
+
+  # Conditionally run GPU post-install script if image_type is gpu
+  provisioner "shell" {
+    script = "./post-install-gpu.sh"
+    execute_command = "if [ \"${var.image_type}\" = \"gpu\" ]; then chmod +x {{ .Path }} && {{ .Vars }} sudo -E sh '{{ .Path }}'; else echo 'Skipping GPU script'; fi"
   }
 
   post-processor "shell-local" {
     inline = ["mv output-rocky9/packer-rocky9 rocky-${var.image_type}.qcow2"]
   }
 }
+
