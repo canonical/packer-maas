@@ -71,31 +71,36 @@ locals {
   }
 
   ks_proxy           = var.ks_proxy != "" ? "--proxy=${var.ks_proxy}" : ""
-  ks_os_repos        = var.ks_mirror != "" ? "--url=${var.ks_mirror}/BaseOS/${var.architecture}/os" : "--mirrorlist='http://mirrors.rockylinux.org/mirrorlist?arch=${var.architecture}&repo=BaseOS-9'"
-  ks_appstream_repos = var.ks_mirror != "" ? "--baseurl=${var.ks_mirror}/AppStream/${var.architecture}/os" : "--mirrorlist='https://mirrors.rockylinux.org/mirrorlist?release=9&arch=${var.architecture}&repo=AppStream-9'"
-  ks_extras_repos    = var.ks_mirror != "" ? "--baseurl=${var.ks_mirror}/extras/${var.architecture}/os" : "--mirrorlist='https://mirrors.rockylinux.org/mirrorlist?arch=${var.architecture}&repo=extras-9'"
+  ks_os_repos        = var.ks_mirror != "" ? "--url=${var.ks_mirror}/BaseOS/${var.architecture}/os" : "--mirrorlist='http://mirrors.rockylinux.org/mirrorlist?arch=${var.architecture}&repo=BaseOS-9.4'"
+  ks_appstream_repos = var.ks_mirror != "" ? "--baseurl=${var.ks_mirror}/AppStream/${var.architecture}/os" : "--mirrorlist='https://mirrors.rockylinux.org/mirrorlist?release=9&arch=${var.architecture}&repo=AppStream-9.4'"
+  ks_extras_repos    = var.ks_mirror != "" ? "--baseurl=${var.ks_mirror}/extras/${var.architecture}/os" : "--mirrorlist='https://mirrors.rockylinux.org/mirrorlist?arch=${var.architecture}&repo=extras-9.4'"
 }
 
 source "qemu" "rocky9" {
   boot_command     = ["<up><wait>", "e", "<down><down><down><left>", " console=ttyS0 inst.cmdline inst.text inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/rocky9.ks <f10>"]
   boot_wait        = "5s"
-  communicator     = "none"
+  communicator     = "ssh"
+  ssh_username     = "root"
+  ssh_password     = "password"
+  ssh_timeout      = "60m"
   disk_size        = "45G"
   format           = "qcow2"
   headless         = true
-  iso_checksum     = "file:http://download.rockylinux.org/pub/rocky/9/isos/${var.architecture}/CHECKSUM"
-  iso_url          = "http://download.rockylinux.org/pub/rocky/9/isos/${var.architecture}/Rocky-${var.architecture}-boot.iso"
+  iso_checksum     = "file:https://dl.rockylinux.org/vault/rocky/9.4/isos/${var.architecture}/Rocky-9.4-${var.architecture}-boot.iso.CHECKSUM"
+  iso_url          = "https://dl.rockylinux.org/vault/rocky/9.4/isos/${var.architecture}/Rocky-9.4-${var.architecture}-boot.iso"
   iso_target_path  = "packer_cache/Rocky-${var.architecture}-boot.iso"
   memory           = 2048
   cores            = 4
   qemu_binary      = "qemu-system-${lookup(local.qemu_arch, var.architecture, "")}"
   qemuargs = [
+    ["-device", "virtio-rng-pci"],
+    ["-boot", "order=c"],
     ["-serial", "stdio"],
     ["-boot", "strict=off"],
     ["-device", "qemu-xhci"],
     ["-device", "usb-kbd"],
-    ["-device", "virtio-net-pci,netdev=net0"],
-    ["-netdev", "user,id=net0"],
+    [ "-netdev", "user,hostfwd=tcp::{{ .SSHHostPort }}-:22,id=forward"],
+    [ "-device", "virtio-net,netdev=forward,id=net0"],
     ["-device", "virtio-blk-pci,drive=drive0,bootindex=0"],
     ["-device", "virtio-blk-pci,drive=cdrom0,bootindex=1"],
     ["-machine", "${lookup(local.qemu_machine, var.architecture, "")}"],
@@ -123,14 +128,9 @@ source "qemu" "rocky9" {
 build {
   sources = ["source.qemu.rocky9"]
 
-  post-processor "shell-local" {
-    inline = [
-      "SOURCE=${source.name}",
-      "OUTPUT=${var.filename}",
-      "source ../scripts/fuse-nbd",
-      "source ../scripts/fuse-tar-root",
-      "rm -rf output-${source.name}",
-    ]
-    inline_shebang = "/bin/bash -e"
+  provisioner "shell" {
+    script = "./post-install.sh"
+    # Ensure the script is executable and run it with sudo
+    execute_command = "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'"
   }
 }

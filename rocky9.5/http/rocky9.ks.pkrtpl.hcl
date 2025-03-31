@@ -1,54 +1,59 @@
-url ${KS_OS_REPOS} ${KS_PROXY}
-repo --name="AppStream" ${KS_APPSTREAM_REPOS} ${KS_PROXY}
-repo --name="Extras" ${KS_EXTRAS_REPOS} ${KS_PROXY}
+url --url=https://dl.rockylinux.org/vault/rocky/9.4/BaseOS/x86_64/os/
+repo --name="AppStream" --baseurl=https://dl.rockylinux.org/vault/rocky/9.4/AppStream/x86_64/os/
+repo --name="Extras"    --baseurl=https://dl.rockylinux.org/vault/rocky/9.4/extras/x86_64/os/
 
 eula --agreed
 
-# Turn off after installation
-poweroff
+# Reboot after installation
+reboot
 
+# Do not start the Inital Setup app
 firstboot --disable
 
+# System language, keyboard and timezone
 lang en_US.UTF-8
 keyboard us
 timezone UTC --utc
 
+# Set the first NIC to acquire IPv4 address via DHCP
 network --device eth0 --bootproto=dhcp
-firewall --enabled --service=ssh
-selinux --enforcing
 
+# Disable the firewall completely
+firewall --disabled
+
+# Permissive SELinux
+selinux --permissive
+
+# Do not set up XX Window System
 skipx
 
+# Initial disk setup
+# Use the first paravirtualized disk
 ignoredisk --only-use=vda
-bootloader --disabled
+# Bootloader
+bootloader --location=mbr --boot-drive=vda
+# Wipe invalid partition tables
 zerombr
+# Erase all partitions and assign default labels
 clearpart --all --initlabel
+# Initialize the primary root partition with ext4 filesystem
+part /boot/efi --fstype=efi --size=512 --ondisk=vda
+part /boot --fstype=ext4 --size=1024 --ondisk=vda
 part / --size=1 --grow --asprimary --fstype=ext4
 
+# Set root password
 rootpw --plaintext password
 
+# Add a user named packer
 user --groups=wheel --name=rocky --password=rocky --plaintext --gecos="rocky"
 
 %post --erroronfail
 
-systemctl enable sshd
-systemctl start sshd
-
-# Clear root password (lock access)
-passwd -d root
-passwd -l root
-
-# Clean up default config
-for f in resolv.conf fstab; do
-    rm -f /etc/$f
-    touch /etc/$f
-    chown root:root /etc/$f
-    chmod 644 /etc/$f
-done
-
 rm -f /etc/sysconfig/network-scripts/ifcfg-[^lo]*
-
-# Fix GRUB for serial console output
+dnf -y install dkms
+# Kickstart copies install boot options. Serial is turned on for logging with
+# Packer which disables console output. Disable it so console output is shown
+# during deployments
 sed -i 's/^GRUB_TERMINAL=.*/GRUB_TERMINAL_OUTPUT="console"/g' /etc/default/grub
 sed -i '/GRUB_SERIAL_COMMAND="serial"/d' /etc/default/grub
 sed -ri 's/(GRUB_CMDLINE_LINUX=".*)\s+console=ttyS0(.*")/\1\2/' /etc/default/grub
@@ -56,34 +61,32 @@ sed -i 's/GRUB_ENABLE_BLSCFG=.*/GRUB_ENABLE_BLSCFG=false/g' /etc/default/grub
 
 yum clean all
 
-# Passwordless sudo for the rocky user
+# Passwordless sudo for the user 'rocky'
 echo "rocky ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/rocky
 chmod 440 /etc/sudoers.d/rocky
 
-# Enable cloud-init data sources for Metal³ / Ironic
-cat > /etc/cloud/cloud.cfg.d/90-metal3.cfg <<EOF
-datasource_list: [ NoCloud, ConfigDrive ]
-EOF
-
-# Ensure cloud-init is enabled
-systemctl enable cloud-init
-systemctl enable cloud-config
-systemctl enable cloud-final
-
-# Optional: Install your SSH key
+#---- Optional - Install your SSH key ----
 # mkdir -m0700 /home/rocky/.ssh/
-# echo "ssh-rsa AAAA..." > /home/rocky/.ssh/authorized_keys
+#
+# cat <<EOF >/home/rocky/.ssh/authorized_keys
+# ssh-rsa <your_public_key_here> you@your.domain
+# EOF
+#
+### set permissions
 # chmod 0600 /home/rocky/.ssh/authorized_keys
+#
+#### fix up selinux context
 # restorecon -R /home/rocky/.ssh/
+#
+# Move to a writeable directory in the new system
 
-# 💡 Install dkms in %post to avoid installer dependency resolution issues
-dnf install -y dkms
-
+sed -i 's/^#*PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config
+eject /dev/cdrom || true
 %end
 
 %packages
 @Core
-openssh-server
+epel-release
 bash-completion
 cloud-init
 cloud-utils-growpart
@@ -100,13 +103,21 @@ lvm2
 mdadm
 device-mapper-multipath
 iscsi-initiator-utils
-gcc
-make
-kernel-devel
+openssh-server
+curl
+wget
+selinux-policy
+selinux-policy-targeted
+policycoreutils
 kernel-headers
-# Exclude unneeded firmware
+kernel-devel
+kernel-devel-matched
+kernel-modules
+kernel-modules-core
+kernel-modules-extra
 -plymouth
+# Remove ALSA firmware
 -a*-firmware
+# Remove Intel wireless firmware
 -i*-firmware
 %end
-
