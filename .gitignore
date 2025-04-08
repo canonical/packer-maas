@@ -12,6 +12,7 @@ packer_cache
 *.iso
 *.qcow2
 *_VARS.fd
+*_CODE.fd
 ubuntu/packages/*.deb
 ubuntu/packages/*.bin
 ubuntu/packages/*.tar.gz

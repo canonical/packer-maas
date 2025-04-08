@@ -2,7 +2,7 @@
 #
 # setup-boot.sh - Set up the image after initial boot
 #
-# Copyright (C) 2023 Canonical
+# Copyright (C) 2023-2025 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -44,9 +44,9 @@ else
         apt-get install -y grub-cloud-${ARCH} grub-pc
 fi
 
-# Bookworm does not include this, but curtin requires this during the installation.
-if [ ${DEBIAN_VERSION} == '12' ]; then
-        wget http://ftp.us.debian.org/debian/pool/main/e/efibootmgr/efibootmgr_15-1_${ARCH}.deb
-        dpkg -i efibootmgr_15-1_${ARCH}.deb
-        rm efibootmgr_15-1_${ARCH}.deb
+# Bookworm+ does not include this, but curtin requires this during the installation.
+if [ ${DEBIAN_VERSION} == '12' ] || [ ${DEBIAN_VERSION} == '13' ]; then
+        wget http://ftp.us.debian.org/debian/pool/main/e/efibootmgr/efibootmgr_17-1_${ARCH}.deb
+        dpkg -i efibootmgr_17-1_${ARCH}.deb
+        rm efibootmgr_17-1_${ARCH}.deb
 fi
