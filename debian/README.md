@@ -27,6 +27,7 @@ in BIOS and UEFI modes. The process currently works with the following Debian se
 * Debian 10 (Buster)
 * Debian 11 (Bullseye)
 * Debian 12 (Bookworm)
+* Debian 13 (Trixie)
 
 ## Supported Architectures
 
@@ -53,8 +54,8 @@ customizations:
 
 ```shell
 packer init .
-packer build -var customize_script=my-changes.sh -var debian_series=bullseye \
-    -var debian_version=11 .
+packer build -var customize_script=my-changes.sh -var debian_series=bookworm \
+    -var debian_version=12 .
 ```
 
 `my-changes.sh` is a script you write which customizes the image from within
@@ -64,7 +65,7 @@ ansible, or whatever you want.
 Using make:
 
 ```shell
-make debian SERIES=bullseye
+make debian SERIES=bookworm
 ```
 
 #### Accessing external files from you script
@@ -121,7 +122,7 @@ Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
 
 #### SERIES
 
-Specify the Debian Series to build. The default value is set to bullseye.
+Specify the Debian Series to build. The default value is set to Bookworm (12).
 
 #### BOOT
 

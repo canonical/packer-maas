@@ -1,12 +1,12 @@
 variable "debian_series" {
   type        = string
-  default     = "bullseye"
+  default     = "bookworm"
   description = "The codename of the debian series to build."
 }
 
 variable "debian_version" {
   type        = string
-  default     = "11"
+  default     = "12"
   description = "The version number of the debian series to build."
 }
 

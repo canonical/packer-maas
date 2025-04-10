@@ -66,7 +66,8 @@ chmod 755 /usr/local/bin/netplan
 # TODO: Figure a way to upstream the changes.
 
 # Bookworm LP#2011454
-if [ ${DEBIAN_VERSION} == '12' ]; then
+if [ ${DEBIAN_VERSION} == '12' ] || [ ${DEBIAN_VERSION} == '13' ]; then
+     apt-get -y install python3-netifaces isc-dhcp-client python3-six
      wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ubuntu-security-collab/+build/26002103/+files/cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
      dpkg -i cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
      rm cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
@@ -76,6 +77,13 @@ else
     rm cloud-init_20.1-10-g71af48df-0ubuntu5_all.deb
 fi
 
+# Extra Trixie Specific
+if [ ${DEBIAN_VERSION} == '13' ]; then
+     # Fix lsb_release for Trixie beta
+     grep -q '^VERSION_ID=' /etc/os-release || sed -i '/^VERSION_CODENAME/ a VERSION_ID=13.0' /etc/os-release
+     # Another Trixie fix
+     truncate --size 0 /etc/apt/sources.list
+fi
 
 # Enable the following lines if willing to use Netplan
 #echo 'ENABLED=1' > /etc/default/netplan

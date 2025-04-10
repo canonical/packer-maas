@@ -3,17 +3,13 @@ locals {
     "amd64" = "x86_64"
     "arm64" = "aarch64"
   }
-  uefi_imp = {
-    "amd64" = "OVMF"
-    "arm64" = "AAVMF"
-  }
   qemu_machine = {
     "amd64" = "accel=kvm"
-    "arm64" = "virt"
+    "arm64" = var.host_is_arm ? "virt,accel=kvm" : "virt"
   }
   qemu_cpu = {
     "amd64" = "host"
-    "arm64" = "cortex-a57"
+    "arm64" = var.host_is_arm ? "host" : "max"
   }
 
   proxy_env = [
@@ -35,8 +31,8 @@ source "qemu" "cloudimg" {
   format         = "qcow2"
   headless       = var.headless
   http_directory = var.http_directory
-  iso_checksum   = "file:https://cloud.debian.org/images/cloud/${var.debian_series}/latest/SHA512SUMS"
-  iso_url        = "https://cloud.debian.org/images/cloud/${var.debian_series}/latest/debian-${var.debian_version}-generic-${var.architecture}.qcow2"
+  iso_checksum   = "file:http://cloud.debian.org/images/cloud/${var.debian_series}/daily/latest/SHA512SUMS"
+  iso_url        = "http://cloud.debian.org/images/cloud/${var.debian_series}/daily/latest/debian-${var.debian_version}-generic-${var.architecture}-daily.qcow2"
   memory         = 2048
   qemu_binary    = "qemu-system-${lookup(local.qemu_arch, var.architecture, "")}"
   qemu_img_args {
@@ -46,8 +42,8 @@ source "qemu" "cloudimg" {
     ["-machine", "${lookup(local.qemu_machine, var.architecture, "")}"],
     ["-cpu", "${lookup(local.qemu_cpu, var.architecture, "")}"],
     ["-device", "virtio-gpu-pci"],
-    ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=/usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_CODE${var.ovmf_suffix}.fd"],
-    ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd"],
+    ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=OVMF_CODE.fd"],
+    ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=OVMF_VARS.fd"],
     ["-drive", "file=output-cloudimg/packer-cloudimg,format=qcow2"],
     ["-drive", "file=seeds-cloudimg.iso,format=raw"]
   ]
@@ -66,7 +62,6 @@ build {
 
   provisioner "shell-local" {
     inline = [
-      "cp /usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_VARS${var.ovmf_suffix}.fd ${lookup(local.uefi_imp, var.architecture, "")}_VARS.fd",
       "cloud-localds seeds-cloudimg.iso user-data-cloudimg meta-data"
     ]
     inline_shebang = "/bin/bash -e"
