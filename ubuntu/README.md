@@ -4,6 +4,9 @@
 
 The Packer templates in this directory creates Ubuntu images for use with MAAS.
 
+This templates supports building amd64 and arm64 images in all three supported
+modes including, cloudimg, flat as wellas lvm.
+
 ## Prerequisites (to create the image)
 
 * A machine running Ubuntu 18.04+ with the ability to run KVM virtual machines.

@@ -30,11 +30,19 @@ apt-get update
 # Ensure the existence of linux-image-generic for non-cloudimg images.
 apt-get -y install linux-image-generic
 
-dpkg-reconfigure grub-efi-amd64
+ARCH=$(dpkg --print-architecture)
+
+dpkg-reconfigure grub-efi-${ARCH}
 update-grub
 
+if [ ${ARCH} == "amd64" ]; then
+    GRUB_TARGET="x86_64-efi"
+else
+    GRUB_TARGET="arm64-efi"
+fi
+
 grub-install \
-    --target=x86_64-efi \
+    --target=${GRUB_TARGET} \
     --efi-directory=/boot/efi \
     --bootloader-id=ubuntu \
     --recheck

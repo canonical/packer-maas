@@ -14,6 +14,12 @@ variable "headless" {
   description = "Whether VNC viewer should not be launched."
 }
 
+variable "host_is_arm" {
+  type        = bool
+  default     = false
+  description = "The host architecture is aarch64"
+}
+
 variable "http_directory" {
   type    = string
   default = "http"
