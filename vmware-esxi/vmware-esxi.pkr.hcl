@@ -21,7 +21,7 @@ variable "timeout" {
 
 source "qemu" "esxi" {
   accelerator      = "kvm"
-  boot_command     = ["<enter><wait>", "<leftShift>O", " ks=usb://KS.CFG", " cpuUniformityHardCheckPanic=FALSE", " systemMediaSize=min", " com1_Port=0x3f8 tty2Port=com1", "<enter>"]
+  boot_command     = ["<enter><wait>", "<leftShift>O", " ks=usb://ks.cfg", " cpuUniformityHardCheckPanic=FALSE", " systemMediaSize=min", " com1_Port=0x3f8 tty2Port=com1", "<enter>"]
   boot_wait        = "3s"
   communicator     = "none"
   disk_size        = "32G"
