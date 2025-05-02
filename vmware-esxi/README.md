@@ -39,7 +39,7 @@ VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com
 ## Customizing the Image
 
 The deployment image may be customized by modifying packer-maas/vmware-esxi/KS.CFG see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/esxi-installation-and-setup-8-0/installing-and-setting-up-esxi-install/installing-esxi-install/installing-esxi-by-using-a-script-install/installation-and-upgrade-scripts-used-for-esxi-installation-install.html) for more information.
-                               
+
 ## Building an image
 
 You can easily build the image using the Makefile:
