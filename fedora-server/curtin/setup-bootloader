@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Update All initramfs files
+for kernel in $(ls /lib/modules/); do
+  dracut --force /boot/initramfs-${kernel}.img ${kernel}
+done
+
+# Reinstall shim
+dnf reinstall -y shim-*
+
+# Generate the GRUB config file
+mkdir -p /boot/efi/EFI/fedora/
+grub2-mkconfig -o /boot/efi/EFI/fedora/grub.cfg
+
+# Install GRUB and update the configuration
+if [ -d /sys/firmware/efi/efivars/ ]; then
+        # Fix boot delays due to PXE loop
+        cp /boot/efi/EFI/fedora/grub* /boot/efi/EFI/boot/
+        cp /boot/efi/EFI/fedora/*.efi /boot/efi/EFI/boot/
+else
+        grub_dev="/dev/$(lsblk -r | grep 'part /$' | awk '{print $1}' | sed s/[0-9]//g)"
+
+        grub2-install \
+            --target=i386-pc \
+            --recheck ${grub_dev}
+fi
+exit 0
