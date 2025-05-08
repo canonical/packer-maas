@@ -18,6 +18,7 @@
 * libosinfo-bin
 * libvirt-daemon
 * libvirt-daemon-system
+* mtools
 * nbdfuse
 * nbdkit
 * ovmf
@@ -37,7 +38,7 @@ VMware ESXi has a specific set of [hardware requirements](https://www.vmware.com
 
 ## Customizing the Image
 
-The deployment image may be customized by modifying packer-maas/vmware-esxi/KS.CFG see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://docs.vmware.com/en/VMware-vSphere/6.7/vsphere-esxi-67-installation-setup-guide.pdf) for more information.
+The deployment image may be customized by modifying packer-maas/vmware-esxi/KS.CFG see Installation and Upgrade Scripts in the [VMware ESXi installation and Setup manual](https://techdocs.broadcom.com/us/en/vmware-cis/vsphere/vsphere/8-0/esxi-installation-and-setup-8-0/installing-and-setting-up-esxi-install/installing-esxi-install/installing-esxi-by-using-a-script-install/installation-and-upgrade-scripts-used-for-esxi-installation-install.html) for more information.
 
 ## Building an image
 
@@ -46,15 +47,6 @@ You can easily build the image using the Makefile:
 ```shell
 make ISO=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso
 ```
-
-Alternatively you can manually run packer. Your current working directory must be in packer-maas/vmware-esxi, where this file is located. Once in packer-maas/vmware-esxi you can generate an image with:
-
-```shell
-sudo packer init .
-sudo PACKER_LOG=1 packer build -var 'vmware_esxi_iso_path=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso' .
-```
-
-Note: vmware-esxi.pkr.hcl is configured to run Packer in headless mode. Only Packer output will be seen. If you wish to see the installation output connect to the VNC port given in the Packer output or remove the line containing "headless" in vmware-esxi.pkr.hcl.
 
 Installation is non-interactive.
 
