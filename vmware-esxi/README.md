@@ -6,7 +6,7 @@
 
 ## Hardware Prerequisites (to create the images)
 
-* A machine running Ubuntu 18.04 or 20.04 with the ability to run KVM virtual machines.
+* A machine running Ubuntu 20.04 or newer with the ability to run KVM virtual machines.
 * Dual core x86_64 processor supporting hardware virtualization with at least 8GB of RAM and 32GB of disk space available.
 
 ## Package Prerequisites (to create the images)
@@ -28,7 +28,7 @@
 * qemu-system-x86
 * qemu-utils
 * Packer - Install from [upstream repository](https://developer.hashicorp.com/packer/install), v1.9.0 or newer
-* The VMware ESXi installation ISO must be downloaded manually. You can download it [here.](https://www.vmware.com/go/get-free-esxi)
+* The VMware ESXi installation ISO must be downloaded manually and need an active subscription. You can download it [here](https://www.vmware.com/products/cloud-infrastructure/vsphere).
 
 ## Requirements (to deploy the image)
 
@@ -45,7 +45,7 @@ The deployment image may be customized by modifying packer-maas/vmware-esxi/KS.C
 You can easily build the image using the Makefile:
 
 ```shell
-make ISO=/path/to/VMware-VMvisor-Installer-8.0b-21203435.x86_64.iso
+make ISO=/path/to/VMware-VMvisor-Installer-9.0.0-24314719.x86_64.iso
 ```
 
 Installation is non-interactive.
@@ -62,7 +62,7 @@ _Note: If using snap-based MAAS, the image to be uploaded needs reside under you
 
 ```shell
 maas $PROFILE boot-resources create \
-  name='esxi/8.0b' title='VMware ESXi 8.0b' \
+  name='esxi/9' title='VMware ESXi 9.0' \
   architecture='amd64/generic' filetype='ddgz' \
   content@=vmware-esxi.dd.gz
 ```
@@ -74,9 +74,10 @@ The default username is ```root``` and the default password is set to ```passwor
 
 ### VMWare support
 
-MAAS uses cloning as the mechanism to deploy all supported OS. **This is [explicitly not supported by VMWare since ESXi 7.0 U2](https://kb.vmware.com/s/article/84280)**, as doing so could lead to data corruption if VMFS volumes are shared among hosts cloned using the same image. There's [no known workaround](https://kb.vmware.com/s/article/84349) for this limitation.
+MAAS uses cloning as the mechanism to deploy all supported OS. **This is [explicitly not supported by VMWare since ESXi 7.0 U2](https://knowledge.broadcom.com/external/article?legacyId=84280)**, as doing so could lead to data corruption if VMFS volumes are shared among hosts cloned using the same image. There's [no known workaround](https://knowledge.broadcom.com/external/article?legacyId=84349) for this limitation.
 
 This image should be safe for standalone hosts and if you don't use any kind of shared storage.
+
 **Use this image at your own risk**
 
 ### Storage
@@ -96,4 +97,4 @@ Only datastores may be configured using the devices available on the system. The
 
 ### libvirt testing
 
-While VMware ESXi does not support running in any virtual machine it is possible to deploy to one. The libvirt machine must be a KVM instance with at least CPU 2 cores and 4GB of RAM. To give VMware ESXi access to hardware virtualization go into machine settings, CPUs, and select 'copy host CPU configuration.' VMware ESXi has no support for libvirt drivers, instead an emulated IDE disk, and an emulated e1000 NIC must be used.
+While VMware ESXi does not support running in any virtual machine it is possible to deploy to one. The libvirt machine must be a KVM instance with at least CPU 2 cores and 8GB of RAM. To give VMware ESXi access to hardware virtualization go into machine settings, CPUs, and select 'copy host CPU configuration.' VMware ESXi has no support for libvirt drivers, instead an emulated SATA disk, and an emulated e1000 (or e1000e) NIC must be used.
