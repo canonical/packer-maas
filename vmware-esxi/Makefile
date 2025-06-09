@@ -13,7 +13,7 @@ TIMEOUT ?= 1h
 
 all: vmware-esxi.dd.gz
 
-$(eval $(call check_packages_deps,fusefat mtools,fusefat))
+$(eval $(call check_packages_deps,fusefat mtools python3-pip,fusefat mtools python3-pip))
 
 scripts.tar.xz:
 	export TMP_DIR=$$(mktemp -d /tmp/packer-maas-XXXX);\
