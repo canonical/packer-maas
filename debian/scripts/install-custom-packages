@@ -39,6 +39,7 @@ dpkg -l 'linux-image-*' 'linux-headers-*' | awk '/^ii/{print $2}' | xargs apt-ge
 echo "install new kernel"
 tar xzvf "${PKG_TGZ}" -C "${WORKDIR}"
 DEBS=$(find "${WORKDIR}" -name '*.deb')
+apt-get update
 apt-get install -y --no-install-recommends ${DEBS}
 apt-get install --fix-broken
 
