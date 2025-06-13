@@ -68,6 +68,7 @@ locals {
     ["-tpmdev", "emulator,id=tpm0,chardev=chrtpm"],
     ["-device", "tpm-tis,tpmdev=tpm0"]
   ]
+  part_num = var.is_vhdx ? "3" : "4"
 }
 
 source "qemu" "windows_builder" {
@@ -105,7 +106,7 @@ build {
       "source scripts/setup-nbd",
       "TMP_DIR=$(mktemp -d /tmp/packer-maas-XXXX)",
       "echo 'Adding curtin-hooks to image...'",
-      "mount -t ntfs $${nbd}p4 $TMP_DIR",
+      "mount -t ntfs $${nbd}p${local.part_num} $TMP_DIR",
       "mkdir -p $TMP_DIR/curtin",
       "cp ./curtin/* $TMP_DIR/curtin/",
       "sync -f $TMP_DIR/curtin",
