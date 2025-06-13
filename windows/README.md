@@ -67,13 +67,13 @@ The build the image you give the template a script which has all the
 customization:
 
 ```shell
-sudo make windows ISO=<path-to-iso> VERSION=<windows-version>
+sudo make ISO=<path-to-iso> VERSION=<windows-version>
 ```
 
 Example:
 
 ```shell
-sudo make ISO=/mnt/iso/Windows_Server_2025_SERVER_EVAL_x64FRE_en-us.iso VERSION=2025
+sudo make ISO=/path/to/Windows_Server_2025_SERVER_EVAL_x64FRE_en-us.iso VERSION=2025
 ```
 
 ### Makefile Parameters
@@ -91,11 +91,14 @@ edition such as Standard or Datacenter etc.
 
 #### HEADLESS
 
-Whether VNC viewer should not be launched. Default is set to false.
+Whether VNC viewer should not be launched. Default is set to false. This requires GTK
+or SDL libraries to be present on the machine. If building on headless servers, set this
+to true. The use a VNC client to connecto to the displayed VNC port during the build.
 
 #### ISO
 
-Path to Microsoft Windows ISO image used to build the image.
+Path to Microsoft Windows ISO image used to build the image. Do not use this if using
+VHDX images. See the VHDX parameter below.
 
 #### PACKER_LOG
 

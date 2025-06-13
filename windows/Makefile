@@ -10,7 +10,6 @@ ISO ?=
 VHDX ?=
 VERSION ?= 2022
 HEADLESS ?= false
-FORMAT ?= ISO
 TIMEOUT ?= 1h
 TEMPLATE ?= http/Autounattend.xml.${FORMAT}.template
 
@@ -32,7 +31,9 @@ else
 endif
 
 ifneq ($(strip $(VHDX)),)
-	FORMAT ?= VHDX
+	FORMAT := VHDX
+else
+	FORMAT := ISO
 endif
 
 ifeq ($(wildcard /usr/share/OVMF/OVMF_CODE.fd),)
