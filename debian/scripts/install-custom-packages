@@ -33,6 +33,11 @@ cleanup() {
 }
 trap cleanup EXIT
 
+echo 'Apt proxy (Optional, MaaS/Subnet config)'
+CI_COMBINED_JSON=/run/cloud-init/combined-cloud-config.json
+[ -f "$CI_COMBINED_JSON" ] && APT_PROXY=$(jq -r '.apt.proxy // ""' "$CI_COMBINED_JSON")  # rewrite literal 'null' to empty str for next test [when not in JSON]
+[ -n "$APT_PROXY" ] && printf 'Acquire::http::Proxy "%s";\nAcquire::https::Proxy "%s";' "$APT_PROXY"{,} | tee /etc/apt/apt.conf.d/90cloud-init-aptproxy
+
 echo "remove existing kernels"
 dpkg -l 'linux-image-*' 'linux-headers-*' | awk '/^ii/{print $2}' | xargs apt-get -y purge
 
