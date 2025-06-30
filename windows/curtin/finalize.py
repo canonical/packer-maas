@@ -110,8 +110,8 @@ def curthooks():
     license_key = config.get("license_key")
     if license_key and len(license_key) > 0:
         try:
-            license_script = CHANGE_LICENSE_TPL.format({"license_key": license_key})
-            os.makedirs(local_scripts)
+            license_script = CHANGE_LICENSE_TPL.format(license_key=license_key)
+            os.makedirs(local_scripts, exist_ok=True)
             licensekey_path = os.path.join(local_scripts, "ChangeLicenseKey.ps1")
             with open(licensekey_path, "w") as script:
                 script.write(license_script)
