@@ -93,6 +93,16 @@ packer build -var architecture=arm64 -var customize_script=my-changes.sh \
     -only='cloudimg.*' .
 ```
 
+### Customization example: BlueField DPU
+
+An example of how to use the _customize_script_ to build an image for
+BlueField DPUs is provided. The kernel and packages for the NVIDIA DOCA version
+installed by the customization script require the use of _jammy_ as Ubuntu series.
+
+```shell
+make custom-cloudimg.tar.gz SERIES=jammy ARCH=arm64 CUSTOMIZE=scripts/examples/bluefield-doca-2-9-lts.sh
+```
+
 ## ubuntu-flat.pkr.hcl and ubuntu-lvm.pkr.hcl
 
 These templates use an Ubuntu server image to install the image to the VM. It
@@ -165,6 +175,10 @@ The file name for the checksums file. The default value is set to SHA256SUMS.
 #### TIMEOUT
 
 The timeout to apply when building the image. The default value is set to 1h.
+
+#### CUSTOMIZE
+
+When specified, use the provided file to customize the content of ubuntu-cloudimg.
 
 ### Default Username
 

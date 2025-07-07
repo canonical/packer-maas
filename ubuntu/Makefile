@@ -75,7 +75,7 @@ endif
 
 custom-cloudimg.tar.gz: check-deps clean OVMF_CODE.fd OVMF_VARS.fd SIZE_CODE.fd SIZE_VARS.fd
 	${PACKER} init . && ${PACKER} build \
-		-only='cloudimg.*' \
+		-only='cloudimg.*' $(if ${CUSTOMIZE},-var customize_script=${CUSTOMIZE}) \
 		-var ubuntu_series=${SERIES} \
 		-var architecture=${ARCH} \
 		-var host_is_arm=${HOST_IS_ARM} \
