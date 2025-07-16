@@ -4,7 +4,7 @@ include ../scripts/check.mk
 
 PACKER ?= packer
 PACKER_LOG ?= 0
-KS_MIRROR ?= http://mirrorlist.centos.org
+KS_MIRROR ?= https://vault.centos.org
 TIMEOUT ?= 1h
 export PACKER_LOG
 
