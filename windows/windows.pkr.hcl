@@ -2,7 +2,7 @@ packer {
   required_version = ">= 1.11.0"
   required_plugins {
     qemu = {
-      version = ">= 1.1.0, < 1.1.2"
+      version = ">= 1.1.3"
       source  = "github.com/hashicorp/qemu"
     }
   }
