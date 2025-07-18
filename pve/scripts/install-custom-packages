@@ -1,0 +1,46 @@
+#!/bin/bash -ex
+#
+# install-custom-packages - Install custom packages
+#
+# Author: Alexsander de Souza <alexsander.souza@canonical.com>
+#
+# Copyright (C) 2021 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+export DEBIAN_FRONTEND=noninteractive
+
+PKG_TGZ="/curtin/custom-packages.tar.gz"
+
+if [ ! -f "${PKG_TGZ}" ]; then
+    exit 0
+fi
+
+WORKDIR=$(mktemp -d)
+
+cleanup() {
+    rm -rf "${WORKDIR}"
+}
+trap cleanup EXIT
+
+echo "remove existing kernels"
+dpkg -l 'linux-image-*' 'linux-headers-*' | awk '/^ii/{print $2}' | xargs apt-get -y purge
+
+echo "install new kernel"
+tar xzvf "${PKG_TGZ}" -C "${WORKDIR}"
+DEBS=$(find "${WORKDIR}" -name '*.deb')
+apt-get install -y --no-install-recommends ${DEBS}
+apt-get install --fix-broken
+
+echo "purge unused packages"
+apt-get autoremove -y
