@@ -72,9 +72,9 @@ The timeout to apply when building the image. The default value is set to 1h.
 
 ```shell
 maas $PROFILE boot-resources create \
-    name='centos/8-custom' title='CentOS 8 Custom' \
+    name='custom/centos-8' title='CentOS 8 Custom' \
     architecture='amd64/generic' filetype='tgz' \
-    content@=centos8.tar.gz
+    base_image='centos/8' content@=centos8.tar.gz
 ```
 
 ## Default Username
