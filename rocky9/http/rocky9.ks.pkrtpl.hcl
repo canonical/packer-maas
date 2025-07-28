@@ -66,7 +66,7 @@ sed -i '/GRUB_SERIAL_COMMAND="serial"/d' /etc/default/grub
 sed -ri 's/(GRUB_CMDLINE_LINUX=".*)\s+console=ttyS0(.*")/\1\2/' /etc/default/grub
 sed -i 's/GRUB_ENABLE_BLSCFG=.*/GRUB_ENABLE_BLSCFG=false/g' /etc/default/grub
 
-yum clean all
+dnf clean all
 
 # Passwordless sudo for the user 'rocky'
 echo "rocky ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/rocky
@@ -87,8 +87,8 @@ chmod 440 /etc/sudoers.d/rocky
 
 %end
 
-%packages
-@Core
+%packages  --ignoremissing
+@core
 bash-completion
 cloud-init
 cloud-utils-growpart
@@ -96,9 +96,10 @@ rsync
 tar
 patch
 yum-utils
-grub2-efi-x64
-shim-x64
-grub2-efi-x64-modules
+grub2-pc
+grub2-efi-*
+shim-*
+grub2-efi-*-modules
 efibootmgr
 dosfstools
 lvm2
