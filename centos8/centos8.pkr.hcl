@@ -16,30 +16,30 @@ variable "filename" {
 
 variable "centos8_iso_url" {
   type    = string
-  default = "https://mirrors.edge.kernel.org/centos/8.4.2105/isos/x86_64/CentOS-8.4.2105-x86_64-boot.iso"
+  default = "https://vault.centos.org/8.5.2111/isos/x86_64/CentOS-8.5.2111-x86_64-boot.iso"
 }
 
 variable "centos8_sha256sum_url" {
   type    = string
-  default = "https://mirrors.edge.kernel.org/centos/8.4.2105/isos/x86_64/CHECKSUM"
+  default = "https://vault.centos.org/8.5.2111/isos/x86_64/CHECKSUM"
 }
 
 # use can use "--url" to specify the exact url for BaseOS repo
 variable "ks_os_repos" {
   type    = string
-  default = "--mirrorlist='http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=BaseOS'"
+  default = "--url='https://vault.centos.org/8.5.2111/BaseOS/x86_64/os/'"
 }
 
 # Use --baseurl to specify the exact url for AppStream repo
 variable "ks_appstream_repos" {
   type    = string
-  default = "--mirrorlist='http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=AppStream'"
+  default = "--baseurl='https://vault.centos.org/8.5.2111/AppStream/x86_64/os/'"
 }
 
 # Use --baseurl to specify the exact url for extras repo
 variable "ks_extras_repos" {
   type    = string
-  default = "--mirrorlist='http://mirrorlist.centos.org/?release=8&arch=x86_64&repo=extras'"
+  default = "--baseurl='https://vault.centos.org/8.5.2111/extras/x86_64/os/'"
 }
 
 variable ks_proxy {
