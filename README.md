@@ -1,12 +1,12 @@
 # Packer MAAS
 
-[Packer](http://packer.io) [templates](https://www.packer.io/docs/templates/index.html),
+[Packer](https://developer.hashicorp.com/packer) [templates](https://developer.hashicorp.com/packer/docs/templates),
 associated scripts, and configuration for creating deployable OS images for [MAAS](http://maas.io).
 
 See README.md in each directory for documentation on how to customize, build,
 and upload images.
 
-Read more about how [custom images](https://maas.io/docs/how-to-customise-images) work.
+Read more about how [custom images](https://canonical.com/maas/docs/how-to-build-custom-images) work.
 
 ## Existing templates
 
@@ -17,11 +17,11 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 | [AlmaLinux 9](alma9/README.md)       | Beta               | x86_64            | >= 3.5           |
 | [AzureLinux 2.0](azurelinux/README.md)    | Beta               | x86_64            | >= 3.3           |
 | [CentOS 6](centos6/README.md)          | EOL                | x86_64            | >= 1.6           |
-| [CentOS 7](centos7/README.md)          | Stable             | x86_64            | >= 2.3           |
+| [CentOS 7](centos7/README.md)          | EOL                | x86_64            | >= 2.3           |
 | [CentOS 8](centos8/README.md)          | EOL                | x86_64            | >= 2.7           |
 | [CentOS 8 Stream](centos8-stream/README.md)   | Beta               | x86_64            | >= 3.2           |
 | [CentOS 9 Stream](centos9-stream/README.md)   | Beta               | x86_64            | >= 3.2           |
-| [Debian 10](debian/README.md)         | Beta               | x86_64 / aarch64  | >= 3.2           |
+| [Debian 10](debian/README.md)         | EOL                | x86_64 / aarch64  | >= 3.2           |
 | [Debian 11](debian/README.md)         | Beta               | x86_64 / aarch64  | >= 3.2           |
 | [Debian 12](debian/README.md)         | Beta               | x86_64 / aarch64  | >= 3.2           |
 | [Debian 13](debian/README.md)         | Beta               | x86_64 / aarch64  | >= 3.2           |
@@ -58,11 +58,11 @@ Read more about how [custom images](https://maas.io/docs/how-to-customise-images
 * *Alpha* templates require packages that are not yet generally available, e.g. an unreleased MAAS or Curtin version. These should not be used in production environments.
 * *Beta* templates should work but we still don't have enough successful deployment reports to regard it as *Stable*.
 
-### Output
+### Output & Debugging
 
 All templates are configured to output to serial. Packer does not officially
 support serial output([GH:5](https://github.com/hashicorp/packer-plugin-qemu/issues/5)).
-To see output run with PACKER_LOG=1.
+To see output run with `PACKER_LOG=1`.
 
 If you wish to use a GUI modify each template as follows:
 
@@ -71,8 +71,19 @@ If you wish to use a GUI modify each template as follows:
 
 If you wish to use QEMU's UI also remove "headless": true
 
-If you keep "headless": true you can connect using VNC. Packer will output the
-IP and port to connect to when run.
+If you keep "headless": true you can connect using VNC. Packer prints the IP and port
+number to connect upon execution.
+
+For additional visibility for debugging, use `FOREGROUND=1` in combination with `PACKER_LOG=1`.
+
+## Best practices and notes for importing images
+
+* Model import commands after example(s) provided in target OS template README.md files. There are small but important variations depending on the image type and format.
+* The `name` parameter is formatted as `prefix/title` and the `title` part can include dashes, dots and numbers but no space and special characters.
+* It is highly recommended to use unique `name` values for images to avoid potential caching overlaps and such.
+* The `title` parameter is free text format as long as enclosed in quotation marks.
+* Refrain from uploading images from distant remote locations involving high latency. This slows down the process and has potential for failures.
+* To reduce latency issues, transfer built images to a machine adjacent to MAAS Region controller(s) or directly to a Region controller and upload.
 
 ## Contributing new templates
 
@@ -87,14 +98,15 @@ Each OS has it's own directory in the repository. The typical contents is:
 * one or more HCL2 templates
 * a `scripts` directory with auxiliary scripts required by `provisioner` and `post-processor` blocks
 * a `http` directory with auto-configuration files used by the OS installer
-* a `README.md` file describing
-  * what is the target OS
-  * host requirements for building this template
+* a `README.md` file describing:
+  * What is the target OS
+  * Host requirements for building this template
   * MAAS requirements for deploying the generated image
-  * description of each template (HCL2) file, including the use of all parameters defined by them
-  * step by step instruction to build it
-  * default login credentials for the image (if any)
-  * instructions for uploading this image to MAAS
+  * Description of each template (HCL2) file, including the use of all parameters defined by them
+  * Step by step instruction to build it
+  * Default login credentials for the image (if any)
+  * Instructions for uploading this image to MAAS
+  * Any other applicable details and considerations
 * a `Makefile` to build the template
 
 ### How to submit a new template
@@ -105,5 +117,5 @@ Each OS has it's own directory in the repository. The typical contents is:
 4. If you are creating a new template for an already supported OS, just create a HCL2 file and add auxiliary files it requires to the appropriate directories
 5. Run `packer validate .` in the directory to check your template
 6. Commit your changes and push the branch to your repository
-7. Open a Merge Request to packer-maas
+7. Open a Merge Request to `packer-maas`
 8. Wait for review
