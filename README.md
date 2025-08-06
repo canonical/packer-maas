@@ -3,6 +3,8 @@
 [Packer](https://developer.hashicorp.com/packer) [templates](https://developer.hashicorp.com/packer/docs/templates),
 associated scripts, and configuration for creating deployable OS images for [MAAS](http://maas.io).
 
+See [installing-packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli#installing-packer) to get it installed on the builder machine.
+
 See README.md in each directory for documentation on how to customize, build,
 and upload images.
 
@@ -58,6 +60,10 @@ Read more about how [custom images](https://canonical.com/maas/docs/how-to-build
 * *Alpha* templates require packages that are not yet generally available, e.g. an unreleased MAAS or Curtin version. These should not be used in production environments.
 * *Beta* templates should work but we still don't have enough successful deployment reports to regard it as *Stable*.
 
+## Hardware Requirement
+
+A physical or virtual machine capable of accelerated virtualization, with 4 CPU cores, 8GB of RAM and 25GB or storage is recommended.
+
 ### Output & Debugging
 
 All templates are configured to output to serial. Packer does not officially
@@ -76,10 +82,10 @@ number to connect upon execution.
 
 For additional visibility for debugging, use `FOREGROUND=1` in combination with `PACKER_LOG=1`.
 
-## Best practices and notes for importing images
+## Best practices and notes for uploading images
 
-* Model import commands after example(s) provided in target OS template README.md files. There are small but important variations depending on the image type and format.
-* The `name` parameter is formatted as `prefix/title` and the `title` part can include dashes, dots and numbers but no space and special characters.
+* Model upload commands after example(s) provided in target OS template README.md files. There are small but important variations depending on the image type and format.
+* The `name` parameter is formatted as `prefix/os-name` and the `os-name` part can include dashes, dots and numbers but no space and special characters.
 * It is highly recommended to use unique `name` values for images to avoid potential caching overlaps and such.
 * The `title` parameter is free text format as long as enclosed in quotation marks.
 * Refrain from uploading images from distant remote locations involving high latency. This slows down the process and has potential for failures.
