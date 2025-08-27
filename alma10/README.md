@@ -17,8 +17,7 @@ The Packer template in this directory creates a Alma 10 AMD64/ARM64 image for us
 
 ## Requirements to deploy the image
 
-* [MAAS](https://maas.io) 3.5 or later, as that version introduces support for Alma
-* [Curtin](https://launchpad.net/curtin) 23.1 or later. If you have a MAAS with an earlier Curtin version, you can [patch](https://code.launchpad.net/~alexsander-souza/curtin/+git/curtin/+merge/462367) distro.py to deploy Alma.
+* [MAAS](https://maas.io) 3.3 or later
 
 ## Customizing the image
 

@@ -15,8 +15,9 @@ Read more about how [custom images](https://canonical.com/maas/docs/how-to-build
 | **OS**            | **Maturity Level** | **Architecture**  | **MAAS Version** |
 |-------------------|:------------------:|:-----------------:|:-----------------|
 | [Azure Local (HCI)](windows/README.md) | Beta               | x86_64            | >= 3.3           |
-| [AlmaLinux 8](alma8/README.md)       | Beta               | x86_64            | >= 3.5           |
-| [AlmaLinux 9](alma9/README.md)       | Beta               | x86_64            | >= 3.5           |
+| [AlmaLinux 8](alma8/README.md)       | Beta               | x86_64 / aarch64  | >= 3.3           |
+| [AlmaLinux 9](alma9/README.md)       | Beta               | x86_64 / aarch64  | >= 3.3           |
+| [AlmaLinux 10](alma10/README.md)     | Beta               | x86_64 / aarch64  | >= 3.3           |
 | [AzureLinux 2.0](azurelinux/README.md)    | Beta               | x86_64            | >= 3.3           |
 | [CentOS 6](centos6/README.md)          | EOL                | x86_64            | >= 1.6           |
 | [CentOS 7](centos7/README.md)          | EOL                | x86_64            | >= 2.3           |
