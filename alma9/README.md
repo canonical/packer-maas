@@ -2,26 +2,30 @@
 
 ## Introduction
 
-The Packer template in this directory creates a Alma 9 AMD64 image for use with MAAS.
+The Packer template in this directory creates a Alma 9 AMD64/ARM64 image for use with MAAS.
 
 ## Prerequisites to create the image
 
-* A machine running Ubuntu 22.04+ with the ability to run KVM virtual machines and with a CPU that supports x86-64-v2 extensions
+* A machine running Ubuntu 22.04+ with the ability to run KVM virtual machines.
 * qemu-utils, libnbd-bin, nbdkit and fuse2fs
-* [Packer.](https://www.packer.io/intro/getting-started/install.html)
+* qemu-system
+* qemu-system-modules-spice (If building on Ubuntu 24.04 LTS "Noble")
+* ovmf
+* cloud-image-utils
+* parted
+* [Packer.](https://www.packer.io/intro/getting-started/install.html), v1.11.0 or newer
 
 ## Requirements to deploy the image
 
-* [MAAS](https://maas.io) 3.5 or later, as that version introduces support for Alma
-* [Curtin](https://launchpad.net/curtin) 23.1 or later. If you have a MAAS with an earlier Curtin version, you can [patch](https://code.launchpad.net/~alexsander-souza/curtin/+git/curtin/+merge/462367) distro.py to deploy Alma.
+* [MAAS](https://maas.io) 3.3 or later
 
 ## Customizing the image
 
-You can customize the deployment image by modifying http/alma.ks. See the [RHEL kickstart documentation](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/performing_an_advanced_rhel_installation/kickstart-commands-and-options-reference_installing-rhel-as-an-experienced-user#part-or-partition_kickstart-commands-for-handling-storage) for more information.
+You can customize the deployment image by modifying http/alma.ks. See the [RHEL kickstart documentation](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/automatically_installing_rhel/kickstart-commands-and-options-reference_rhel-installer#part-or-partition_kickstart-commands-for-handling-storage) for more information.
 
 ## Building the image using a proxy
 
-The Packer template downloads the Alma ISO image from the Internet. You can tell Packer to use a proxy by setting the HTTP_PROXY environment variable to point to your proxy server. You can also  redefine alma_iso_url to a local file. If you want to skip the base image integrity check, set iso_checksum_type to none and remove iso_checksum.
+The Packer template downloads the Alma ISO image from the Internet. You can tell Packer to use a proxy by setting the HTTP_PROXY environment variable to point to your proxy server. You can also redefine alma_iso_url to a local file. If you want to skip the base image integrity check, set iso_checksum_type to none and remove iso_checksum.
 
 To use a proxy during the installation define the `KS_PROXY` variable in the environment, as bellow:
 
@@ -59,6 +63,10 @@ Note: alma9.pkr.hcl runs Packer in headless mode, with the serial port output fr
 
 ### Makefile Parameters
 
+#### ARCH
+
+Defaults to x86_64 to build AMD64 compatible images. In order to build ARM64 images, use ARCH=aarch64
+
 #### TIMEOUT
 
 The timeout to apply when building the image. The default value is set to 1h.
@@ -72,6 +80,36 @@ maas $PROFILE boot-resources create \
     content@=alma9.tar.gz
 ```
 
+For ARM64, use:
+
+```shell
+maas $PROFILE boot-resources create \
+    name='custom/alma9' title='Alma 9 Custom' \
+    architecture='arm64/generic' base_image='rhel/9' filetype='tgz' \
+    content@=alma9.tar.gz
+```
+
+Please note that, currently due to lack of support in curtin, deploying ARM64 images needs a preseed file. This is due to [LP# 2090874](https://bugs.launchpad.net/curtin/+bug/2090874) and currently is in the process of getting fixed.
+
+```
+#cloud-config
+debconf_selections:
+ maas: |
+  {{for line in str(curtin_preseed).splitlines()}}
+  {{line}}
+  {{endfor}}
+
+extract_commands:
+  grub_install: curtin in-target -- cp -v /boot/efi/EFI/almalinux/shimaa64.efi /boot/efi/EFI/almalinux/shimx64.efi
+
+late_commands:
+  maas: [wget, '--no-proxy', '{{node_disable_pxe_url}}', '--post-data', '{{node_disable_pxe_data}}', '-O', '/dev/null']
+  bootloader_01: ["curtin", "in-target", "--", "cp", "-v", "/boot/efi/EFI/almalinux/shimaa64.efi", "/boot/efi/EFI/BOOT/bootaa64.efi"]
+  bootloader_02: ["curtin", "in-target", "--", "cp", "-v", "/boot/efi/EFI/almalinux/grubaa64.efi", "/boot/efi/EFI/BOOT/"]
+```
+
+This file needs to be saved on Region Controllers under /var/snap/maas/current/preseeds/curtin_userdata_custom_arm64_generic_alma9 or /etc/maas/preseeds/curtin_userdata_custom_arm64_generic_alma9. The last portion of this file must match the image name uploaded in MAAS.
+
 ## Default username
 
 MAAS uses cloud-init to create ```cloud-user``` account using the ssh keys configured for the MAAS admin user (e.g. imported from Launchpad). Log in to the machine:
@@ -80,4 +118,4 @@ MAAS uses cloud-init to create ```cloud-user``` account using the ssh keys confi
 ssh -i ~/.ssh/<your_identity_file> cloud-user@<machine-ip-address>
 ```
 
-Next to that, the kickstart script creates an account with both username and password set to  ```alma```. Note that the default sshd configuration in Alma 9 disallows password-based authentication when logging in via ssh, so trying `ssh alma@<machine-ip-address>` will fail. Password-based authentication can be enabled by having `PasswordAuthentication yes` in /etc/ssh/sshd_config after logging in with ```cloud-user```. Perhaps there is a way to make that change using kickstart script, but it is not obvious as ```anaconda```, the installer, makes its own changes to sshd_config file during installation. If you know how to do this, a PR is welcome.
+Next to that, the kickstart script creates an account with both username and password set to  ```alma```. Note that the default sshd configuration in Alma 9 disallows password-based authentication when logging in via ssh, so trying `ssh alma<machine-ip-address>` will fail. Password-based authentication can be enabled by having `PasswordAuthentication yes` in /etc/ssh/sshd_config after logging in with ```cloud-user```. Perhaps there is a way to make that change using kickstart script, but it is not obvious as ```anaconda```, the installer, makes its own changes to sshd_config file during installation. If you know how to do this, a PR is welcome.
