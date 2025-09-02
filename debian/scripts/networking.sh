@@ -60,12 +60,13 @@ chmod 755 /usr/local/bin/netplan
 
 
 # This is a super dirty trick to make this work. Debian's cloud-init is
-# missing MAAS bindings and this causes the installation to fail the 
-# last phase after a reboot. This can be upgraded back to Debian's 
+# missing MAAS bindings and this causes the installation to fail the
+# last phase after a reboot. This can be upgraded back to Debian's
 # version after the installation has been completed.
 # TODO: Figure a way to upstream the changes.
 
 # Bookworm LP#2011454
+cp /cloud/cloud.cfg /tmp/cloud.cfg
 if [ ${DEBIAN_VERSION} == '12' ] || [ ${DEBIAN_VERSION} == '13' ]; then
      apt-get -y install python3-netifaces isc-dhcp-client python3-six
      wget https://launchpad.net/~ubuntu-security/+archive/ubuntu/ubuntu-security-collab/+build/26002103/+files/cloud-init_23.1.2-0ubuntu0~23.04.1_all.deb
@@ -76,6 +77,7 @@ else
     dpkg -i cloud-init_20.1-10-g71af48df-0ubuntu5_all.deb
     rm cloud-init_20.1-10-g71af48df-0ubuntu5_all.deb
 fi
+mv /tmp/cloud.cfg /etc/cloud/cloud.cfg
 
 # Extra Trixie Specific
 if [ ${DEBIAN_VERSION} == '13' ]; then
