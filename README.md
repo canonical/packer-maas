@@ -105,6 +105,64 @@ Then deploy a test machine with the new image and confirm you can log in.
 
 ---
 
+### Ubuntu example (quick start)
+
+Here’s a complete example for building and uploading a custom Ubuntu image.
+
+1. **Install dependencies**
+
+```shell
+sudo apt update
+sudo apt install packer qemu-utils qemu-system ovmf cloud-image-utils
+````
+
+2. **Clone the Packer MAAS repository**
+
+```shell
+git clone https://github.com/canonical/packer-maas.git
+cd packer-maas/ubuntu
+```
+
+3. **Build an image**
+
+Use the included `Makefile` to build an Ubuntu LVM image:
+
+```shell
+make custom-ubuntu-lvm.dd.gz
+```
+
+This may take a few minutes. Packer will boot the image in headless mode and attempt repeated SSH handshakes until provisioning succeeds.
+
+4. **Upload the image to MAAS**
+
+```shell
+maas admin boot-resources create \
+    name='custom/ubuntu-raw' \
+    title='Ubuntu Custom RAW' \
+    architecture='amd64/generic' \
+    filetype='ddgz' \
+    content@=custom-ubuntu-lvm.dd.gz
+```
+
+5. **Verify deployment**
+
+Deploy the image to a test machine:
+
+```shell
+maas admin machines read | jq -r '(["HOSTNAME","SYSID","STATUS","OS","DISTRO"]),
+(.[] | [.hostname, .system_id, .status_name, .osystem, .distro_series]) | @tsv' | column -t
+```
+
+You should see your custom image listed under `OS = custom`.
+
+Log in with the default Ubuntu username:
+
+```shell
+ssh ubuntu@<machine-ip>
+```
+
+---
+
 ## Customizing templates
 
 Every OS template can be adjusted to include your own configuration. Common options include:
