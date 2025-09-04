@@ -1,14 +1,122 @@
-# Packer MAAS
+# Building Custom Images for MAAS with Packer
 
-[Packer](https://developer.hashicorp.com/packer) [templates](https://developer.hashicorp.com/packer/docs/templates),
-associated scripts, and configuration for creating deployable OS images for [MAAS](http://maas.io).
+This repository provides [Packer](https://developer.hashicorp.com/packer) templates, scripts, and configuration to build custom operating system images for [MAAS](https://maas.io).  
 
-See [installing-packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli#installing-packer) to get it installed on the builder machine.
+Use these templates if you need:
+- **Custom Ubuntu images** with pre-installed packages, security hardening, or organization-specific tweaks.  
+- **Non-Ubuntu images** (RHEL, CentOS, SLES, Windows, ESXi, etc.) that MAAS does not provide out-of-the-box.  
+- A **repeatable, automated build process** for images you can upload into MAAS.  
 
-See README.md in each directory for documentation on how to customize, build,
-and upload images.
+> ⚠️ If you only need stock Ubuntu images, see the [How to manage images](https://canonical.com/maas/docs/how-to-manage-images) guide instead.
 
-Read more about how [custom images](https://canonical.com/maas/docs/how-to-build-custom-images) work.
+---
+
+## Why build custom images?
+
+- **Consistency**: Standardize environments across your MAAS deployments.  
+- **Control**: Add, remove, or patch software before deployment.  
+- **Compliance**: Ensure security and audit requirements are met.  
+- **Coverage**: Deploy non-Ubuntu operating systems through MAAS.  
+
+MAAS relies on these images when commissioning, deploying, and testing machines. Custom images let you tailor exactly what gets deployed.
+
+---
+
+## Prerequisites
+
+Before building an image, prepare a build environment:
+
+- An Ubuntu host or VM with:
+  - 4 CPU cores  
+  - 8 GB RAM  
+  - 25 GB free storage  
+  - Hardware-assisted virtualization enabled  
+- [Packer installed](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli#installing-packer)  
+- (Optional) QEMU with GUI if you want to see builds interactively  
+
+Verify Packer is installed:
+
+```bash
+packer version
+```
+
+---
+
+## How to build and upload a custom image
+
+Follow these steps to build and make an image available in MAAS.
+
+### 1. Clone this repository
+
+```bash
+git clone https://github.com/canonical/packer-maas.git
+cd packer-maas
+```
+
+### 2. Select a template
+
+Each supported operating system has its own directory with:
+- One or more **HCL2 templates**  
+- A `scripts/` directory with helper scripts  
+- An `http/` directory with auto-configuration files  
+- A `README.md` explaining OS-specific details  
+- A `Makefile` for convenience  
+
+See the [Existing templates](#existing-templates) table below for the full list.  
+
+### 3. Build the image
+
+Run Packer from within the template directory. Example for Ubuntu:
+
+```bash
+cd ubuntu
+packer build ubuntu.pkr.hcl
+```
+
+For debugging, use:
+
+```bash
+PACKER_LOG=1 packer build ubuntu.pkr.hcl
+```
+
+If you want to view the VM build process:
+- Remove `"headless": true` from the template  
+- Or connect via VNC using the IP/port shown during build  
+
+### 4. Upload the image to MAAS
+
+After building, upload the image to your MAAS region controller:
+
+```bash
+maas $PROFILE boot-resources create name='custom/ubuntu-24.04'     title='Ubuntu 24.04 Custom'     architecture='amd64/generic'     filetype='tgz'     content@=ubuntu-24.04-custom.tgz
+```
+
+> ℹ️ Commands vary slightly by OS — see the template’s `README.md` for exact syntax.
+
+### 5. Verify in MAAS
+
+Check that the image is available:
+
+```bash
+maas $PROFILE boot-resources read | grep custom
+```
+
+Then deploy a test machine with the new image and confirm you can log in.
+
+---
+
+## Customizing templates
+
+Every OS template can be adjusted to include your own configuration. Common options include:
+
+- Adding extra packages in the provisioner step  
+- Including custom cloud-init or preseed files  
+- Adjusting the Packer `boot_command` to change installation behavior  
+- Changing image names (`name`, `title`) to avoid cache conflicts  
+
+Refer to the `README.md` inside each OS directory for supported parameters.  
+
+---
 
 ## Existing templates
 
@@ -55,74 +163,59 @@ Read more about how [custom images](https://canonical.com/maas/docs/how-to-build
 | [XenServer 8](xenserver8/README.md)       | Beta               | x86_64            | >= 3.3           |
 | [XCP-ng 8.x](xenserver8/README.md)        | Beta               | x86_64            | >= 3.3           |
 
-### Maturity level
+---
 
-* Templates marked as *EOL* are OSes that are no longer supported by the upstream maintainer, and **are not recommended for new deployments**. These systems don't receive security updates and mirrors can become permanently offline at any moment.
-* *Alpha* templates require packages that are not yet generally available, e.g. an unreleased MAAS or Curtin version. These should not be used in production environments.
-* *Beta* templates should work but we still don't have enough successful deployment reports to regard it as *Stable*.
+## Maturity levels
 
-## Hardware Requirement
+- **Stable**: Tested and suitable for production.  
+- **Beta**: Works in most cases but needs broader validation.  
+- **Alpha**: Depends on unreleased MAAS or Curtin versions; not production-ready.  
+- **EOL**: Upstream OS is no longer supported — not recommended.  
 
-A physical or virtual machine capable of accelerated virtualization, with 4 CPU cores, 8GB of RAM and 25GB or storage is recommended.
+---
 
-### Output & Debugging
+## Debugging builds
 
-All templates are configured to output to serial. Packer does not officially
-support serial output([GH:5](https://github.com/hashicorp/packer-plugin-qemu/issues/5)).
-To see output run with `PACKER_LOG=1`.
+- Use `PACKER_LOG=1` to enable verbose logging.  
+- Use `FOREGROUND=1` to keep processes in the foreground.  
+- To view the build VM:
+  - Remove `headless=true` in the template, or  
+  - Connect via VNC using the IP/port printed during build.  
 
-If you wish to use a GUI modify each template as follows:
+---
 
-* Remove any boot_command line that contains "console" or "com1_Port"
-* Remove ""-serial", "stdio"" from qemuargs. qemuargs may be removed as well if empty.
+## Best practices for uploading images
 
-If you wish to use QEMU's UI also remove "headless": true
+- Follow examples in each OS’s `README.md`.  
+- Use **unique names** for images to avoid cache collisions.  
+- Keep `title` values descriptive (quoted strings).  
+- Upload from a machine close to the MAAS region controller to reduce latency.  
+- Test images on a small scale before wide deployment.  
 
-If you keep "headless": true you can connect using VNC. Packer prints the IP and port
-number to connect upon execution.
-
-For additional visibility for debugging, use `FOREGROUND=1` in combination with `PACKER_LOG=1`.
-
-## Best practices and notes for uploading images
-
-* Model upload commands after example(s) provided in target OS template README.md files. There are small but important variations depending on the image type and format.
-* The `name` parameter is formatted as `prefix/os-name` and the `os-name` part can include dashes, dots and numbers but no space and special characters.
-* It is highly recommended to use unique `name` values for images to avoid potential caching overlaps and such.
-* The `title` parameter is free text format as long as enclosed in quotation marks.
-* Refrain from uploading images from distant remote locations involving high latency. This slows down the process and has potential for failures.
-* To reduce latency issues, transfer built images to a machine adjacent to MAAS Region controller(s) or directly to a Region controller and upload.
+---
 
 ## Contributing new templates
 
-We welcome contributions of new templates.
-
-The following is a set of guidelines for contributing to Packer MAAS. These are mostly guidelines, not rules. Use your best judgment, and feel free to propose changes to this document in a pull request.
+We welcome contributions.  
 
 ### Project structure
+Each OS directory typically contains:
+- One or more `.pkr.hcl` templates  
+- `scripts/` for provisioning  
+- `http/` for installer automation  
+- A `README.md` with OS-specific instructions  
+- A `Makefile` for build automation  
 
-Each OS has it's own directory in the repository. The typical contents is:
+### Submit a new template
+1. [Fork the repo](https://github.com/canonical/packer-maas/fork).  
+2. Create a branch.  
+3. Add a new directory or `.pkr.hcl` template.  
+4. Run `packer validate .` to check.  
+5. Commit and push.  
+6. Open a pull request.  
 
-* one or more HCL2 templates
-* a `scripts` directory with auxiliary scripts required by `provisioner` and `post-processor` blocks
-* a `http` directory with auto-configuration files used by the OS installer
-* a `README.md` file describing:
-  * What is the target OS
-  * Host requirements for building this template
-  * MAAS requirements for deploying the generated image
-  * Description of each template (HCL2) file, including the use of all parameters defined by them
-  * Step by step instruction to build it
-  * Default login credentials for the image (if any)
-  * Instructions for uploading this image to MAAS
-  * Any other applicable details and considerations
-* a `Makefile` to build the template
+---
 
-### How to submit a new template
+## Next steps
 
-1. [Fork the project](https://github.com/canonical/packer-maas/fork) to your own GH account
-2. Create a local branch
-3. If you are contributing a new OS, create a new directory following the guidelines above
-4. If you are creating a new template for an already supported OS, just create a HCL2 file and add auxiliary files it requires to the appropriate directories
-5. Run `packer validate .` in the directory to check your template
-6. Commit your changes and push the branch to your repository
-7. Open a Merge Request to `packer-maas`
-8. Wait for review
+- [How to manage images in MAAS](https://canonical.com/maas/docs/how-to-manage-images)  
