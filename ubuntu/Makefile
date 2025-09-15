@@ -29,9 +29,9 @@ endif
 
 ifeq ($(strip $(ARCH)),arm64)
 	URL = https://cdimage.ubuntu.com/releases
-	ISO=$(shell wget -O- -q ${URL}/${SERIES}/release/${SUMS} | grep live-server | grep ${ARCH}.iso| cut -d'*' -f2)
+	ISO=$(shell wget -O- -q ${URL}/${SERIES}/release/${SUMS} | grep live-server | grep ${ARCH}.iso| cut -d'*' -f2 | tail -n1)
 else
-	ISO=$(shell wget -O- -q ${URL}/${SERIES}/${SUMS} | grep live-server | cut -d'*' -f2)
+	ISO=$(shell wget -O- -q ${URL}/${SERIES}/${SUMS} | grep live-server | cut -d'*' -f2 | tail -n1)
 endif
 
 .PHONY: all clean
