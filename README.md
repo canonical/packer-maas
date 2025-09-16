@@ -245,8 +245,9 @@ Refer to the `README.md` inside each OS directory for supported parameters.
 ## Best practices for uploading images
 
 - Follow examples in each OS’s `README.md`.  
+- The `name` parameter is formatted as `prefix/os-name`. The `os-name` can include dashes, dots and numbers but no space and special characters.
 - Use **unique names** for images to avoid cache collisions.  
-- Keep `title` values descriptive (quoted strings).  
+- The `title` parameter is free text format as long as enclosed in quotes.
 - Upload from a machine close to the MAAS region controller to reduce latency.  
 - Test images on a small scale before wide deployment.  
 
