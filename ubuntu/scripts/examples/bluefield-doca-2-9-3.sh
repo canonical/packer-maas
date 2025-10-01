@@ -3,11 +3,12 @@ export DEBIAN_FRONTEND=noninteractive
 
 GPG_KEY="GPG-KEY-Mellanox.pub"
 DPU_ARCH="aarch64"
-DOCA_VERSION="latest-2.9-LTS"
+DOCA_VERSION="2.9.3"
 TMP_KEYRING="/tmp/mellanox-keyring.gpg"
 MELLANOX_GPG="/etc/apt/keyrings/mellanox.gpg"
-BF_KERNEL_VERSION="5.15.0.1060.62"
-BF_KERNEL_VERSION_DASH="5.15.0-1060.62"
+BF_KERNEL_VERSION="5.15.0.1070.72"
+KVER="5.15.0-1070"
+KSUBVER="72"
 
 mkdir -p /etc/apt/keyrings
 wget https://linux.mellanox.com/public/repo/doca/$DOCA_VERSION/ubuntu22.04/$DPU_ARCH/$GPG_KEY
@@ -19,17 +20,17 @@ echo "deb [signed-by=$MELLANOX_GPG] https://linux.mellanox.com/public/repo/doca/
 apt-get update
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -f \
     linux-bluefield=$BF_KERNEL_VERSION \
-    linux-bluefield-cloud-tools-common=$BF_KERNEL_VERSION_DASH \
-    linux-bluefield-headers-5.15.0-1060=$BF_KERNEL_VERSION_DASH \
-    linux-bluefield-tools-5.15.0-1060=$BF_KERNEL_VERSION_DASH \
-    linux-buildinfo-5.15.0-1060-bluefield=$BF_KERNEL_VERSION_DASH \
-    linux-headers-5.15.0-1060-bluefield=$BF_KERNEL_VERSION_DASH \
+    linux-bluefield-cloud-tools-common=$KVER.$KSUBVER \
+    linux-bluefield-headers-$KVER=$KVER.$KSUBVER \
+    linux-bluefield-tools-$KVER=$KVER.$KSUBVER \
+    linux-buildinfo-$KVER-bluefield=$KVER.$KSUBVER \
+    linux-headers-$KVER-bluefield=$KVER.$KSUBVER \
     linux-headers-bluefield=$BF_KERNEL_VERSION \
-    linux-image-5.15.0-1060-bluefield=$BF_KERNEL_VERSION_DASH \
+    linux-image-$KVER-bluefield=$KVER.$KSUBVER \
     linux-image-bluefield=$BF_KERNEL_VERSION \
-    linux-modules-5.15.0-1060-bluefield=$BF_KERNEL_VERSION_DASH \
-    linux-modules-extra-5.15.0-1060-bluefield=$BF_KERNEL_VERSION_DASH \
-    linux-tools-5.15.0-1060-bluefield=$BF_KERNEL_VERSION_DASH \
+    linux-modules-$KVER-bluefield=$KVER.$KSUBVER \
+    linux-modules-extra-$KVER-bluefield=$KVER.$KSUBVER \
+    linux-tools-$KVER-bluefield=$KVER.$KSUBVER \
     linux-tools-bluefield=$BF_KERNEL_VERSION \
     linux-libc-dev:arm64 \
     linux-tools-common \

@@ -100,7 +100,7 @@ BlueField DPUs is provided. The kernel and packages for the NVIDIA DOCA version
 installed by the customization script require the use of _jammy_ as Ubuntu series.
 
 ```shell
-make custom-cloudimg.tar.gz SERIES=jammy ARCH=arm64 CUSTOMIZE=scripts/examples/bluefield-doca-2-9-lts.sh
+make custom-cloudimg.tar.gz SERIES=jammy ARCH=arm64 CUSTOMIZE=scripts/examples/bluefield-doca-2-9-3.sh
 ```
 
 ## ubuntu-flat.pkr.hcl and ubuntu-lvm.pkr.hcl
