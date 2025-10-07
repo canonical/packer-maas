@@ -41,6 +41,9 @@ if [ ${BOOT_MODE} == "uefi" ]; then
                 apt-get install -y grub-efi-${ARCH}-signed shim-signed grub-efi-${ARCH}
         fi
 else
+        if [ ${DEBIAN_VERSION} == '13' ]; then
+            echo "grub-pc grub-pc/install_devices multiselect /dev/sda" | /usr/bin/debconf-set-selections
+        fi
         apt-get install -y grub-cloud-${ARCH} grub-pc
 fi
 
