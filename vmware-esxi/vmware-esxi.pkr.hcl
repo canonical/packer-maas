@@ -40,8 +40,9 @@ source "qemu" "esxi" {
       ["-device", "usb-storage,drive=usb0"],
       ["-drive", "file=usb.img,if=none,id=usb0,format=raw"],
       ["-cdrom", "${var.vmware_esxi_iso_path}" ],
-      ["-device", "ide-hd,drive=ide-disk"],
-      ["-drive", "file=output-esxi/packer-esxi,if=none,id=ide-disk,cache=writeback,discard=ignore,format=raw"],
+      ["-device", "ich9-ahci,id=sata"],
+      ["-device", "ide-hd,drive=sata-disk,bus=sata.0"],
+      ["-drive", "file=output-esxi/packer-esxi,if=none,id=sata-disk,cache=writeback,discard=ignore,format=raw"],
       ["-boot", "d"]
   ]
   shutdown_timeout = var.timeout
