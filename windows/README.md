@@ -138,7 +138,7 @@ Change the baseline defaults of the image by editing the respective [answer file
 
 ### At run time
 
-You can add arbitrary Powershell commands to be run once at deploy time by Cloudbase-Init in `http/custom.ps1`. This may be useful in situations where you wish to do some common configuration for each instance, such as joining an existing domain.
+You can add arbitrary PowerShell commands to be run once at deploy time by Cloudbase-Init in `http/custom.ps1`. This may be useful in situations where you wish to do some common configuration for each instance, such as joining an existing domain.
 
 
 ## Uploading images to MAAS
