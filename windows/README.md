@@ -130,6 +130,17 @@ Specify the Microsoft Windows Version. Example inputs include: HCI, 2025, 2022, 
 and 11.
 
 
+## Customizing the image
+
+### At build time
+
+Change the baseline defaults of the image by editing the respective [answer file](https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/update-windows-settings-and-scripts-create-your-own-answer-file-sxs) template (e.g. `http/Autounattend.xml.ISO.template`).
+
+### At run time
+
+You can add arbitrary Powershell commands to be run once at deploy time by Cloudbase-Init in `http/custom.ps1`. This may be useful in situations where you wish to do some common configuration for each instance, such as joining an existing domain.
+
+
 ## Uploading images to MAAS
 
 Use MAAS CLI to upload the image:

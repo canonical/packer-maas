@@ -122,6 +122,11 @@ try
         $Host.UI.RawUI.WindowTitle = "Running SetSetupComplete..."
         & "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\bin\SetSetupComplete.cmd"
 
+        if ((Get-Item -Path "A:\custom.ps1").Length -gt 0) {
+            $Host.UI.RawUI.WindowTitle = "Copying custom Powershell script..."
+            Copy-Item -Path "A:\custom.ps1" -Destination "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\" -Force
+        }
+
         if ($RunPowershell) {
             $Host.UI.RawUI.WindowTitle = "Paused, waiting for user to finish work in other terminal"
             Write-Host "Spawning another powershell for the user to complete any work..."
