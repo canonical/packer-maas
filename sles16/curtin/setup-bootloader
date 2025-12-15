@@ -14,7 +14,7 @@ grub2-mkconfig -o /boot/grub2/grub.cfg
 if [ -d /sys/firmware/efi/efivars/ ]; then
         shim-install
         # Set Next Boot to be SLES
-        efibootmgr --bootnext $(sudo efibootmgr -v | grep sles | awk '{print $1}' | sed s/'[^0-9]'//g)
+        efibootmgr --bootnext $(efibootmgr -v | grep sles | awk '{print $1}' | sed s/'[^0-9]'//g)
         # Fix boot delays due to PXE loop
         cp /boot/efi/EFI/sles/grub.* /boot/efi/EFI/boot/
 else

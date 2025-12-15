@@ -1,12 +1,16 @@
 {
+  "product": {
+    "id": "SLES",
+  },
+    "root": {
+    "password": "!",
+  },
   "localization": {
     "language": "en_US.UTF-8"
   },
-  "product": {
-    "id": "SLES"
-  },
-  "root": {
-    "password": "!"
+  "software": {
+    "products": ["SLES"],
+    "patterns": ["minimal_base"]
   },
   "scripts": {
     "post": [
@@ -16,7 +20,8 @@
         body: |||
           #!/bin/bash
           export fin_log="/mnt/var/log/finalize.log"
-          export ci_pkg="cloud-init-23.3-160000.4.9.${ARCH}.rpm"
+          export baseURL="https://cdn.opensuse.org/download/distribution/leap/16.0/repo/oss/${ARCH}/"
+          export ci_pkg=$(curl -s $baseURL | grep -oP '(?<=href="\./)[^"]+\.rpm(?=")' | grep cloud-init | sort | head -n1)
           mount /dev/vda2 /mnt
           for x in dev sys proc run; do mount -v -o bind /$x /mnt/$x; done &>> $fin_log
           mkdir -v /cdrom &>> $fin_log
@@ -24,8 +29,14 @@
           mkdir -pv /mnt/run/initramfs/live/install &>> $fin_log
           mount -o bind /cdrom/install /mnt/run/initramfs/live/install &>> $fin_log
           chroot /mnt /usr/bin/bash -c "echo 'nameserver 8.8.8.8' > /etc/resolv.conf" &>> $fin_log
-          chroot /mnt curl -o /tmp/$ci_pkg -L https://cdn.opensuse.org/download/distribution/leap/16.0/repo/oss/${ARCH}/$ci_pkg &>> $fin_log
+          chroot /mnt zypper install -ny cloud-init &>> $fin_log
+          chroot /mnt curl -o /tmp/$ci_pkg -L $baseURL/$ci_pkg &>> $fin_log
           chroot /mnt zypper install -ny /tmp/$ci_pkg &>> $fin_log
+          chroot /mnt suseconnect -p PackageHub/16.0/x86_64  &>> $fin_log
+          chroot /mnt zypper --non-interactive ref &>> $fin_log
+          chroot /mnt zypper --non-interactive --auto-agree-with-licenses update &>> $fin_log
+          chroot /mnt zypper --non-interactive cc &>> $fin_log
+          chroot /mnt sed -i '/^#/d' /etc/os-release &>> $fin_log
           chroot /mnt rm -v /tmp/$ci_pkg &>> $fin_log
           chroot /mnt systemctl enable cloud-init-local.service &>> $fin_log
           chroot /mnt systemctl enable cloud-init.service &>> $fin_log
@@ -41,10 +52,6 @@
         |||,
       }
     ]
-  },
-  "software": {
-    "products": ["SLES"], 
-    "patterns": ["base"],
   },
   "legacyAutoyastStorage": [
     {
