@@ -70,7 +70,7 @@ source "qemu" "sles16" {
   boot_command      = ["e", "<down><down><down><down>", "<end><wait>", "<spacebar>", "agama.auto=http://{{ .HTTPIP }}:{{ .HTTPPort }}/profile.json<wait>","<leftCtrlOn>x<leftCtrlOff>"]
   boot_wait        = "5s"
   communicator     = "none"
-  disk_size        = "8G"
+  disk_size        = "20G"
   format           = "qcow2"
   headless         = true
   iso_checksum     = "none"
@@ -99,6 +99,7 @@ source "qemu" "sles16" {
     ["-drive", "file=${var.sles16_iso_path},if=none,id=cdrom0,media=cdrom"]
   ]
   shutdown_timeout = var.timeout
+  vnc_bind_address = "0.0.0.0"
   http_content = {
     "/profile.json" = templatefile("${path.root}/http/profile.json.pkrtpl.hcl",
       {
