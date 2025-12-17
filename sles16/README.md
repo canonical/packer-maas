@@ -44,14 +44,9 @@ journalctl -u agama-auto
 ```
 ## Known Issues
 
-* As of December 2025, with SLES16-Beta2 ISO, the cloud-init package is missing
+* As of December 2025, with SLES16.0 ISO, the cloud-init package is missing
 from the installation DVD. Until this is resolved, we have a workaround to
 download and install the package from OpenSUSE online repositories.
-
-* REGRESSION: We observed an auto-installer regression with the release of the final 16.0
-ISO images and the issue was reported here: https://bugzilla.suse.com/show_bug.cgi?id=1255014
-The current workaround is to use the Beta2 ISO to build the images which in turn installs
-the available updates during the build and the resulting image should be the same as 16.0.
 
 ## Building the image using a proxy
 

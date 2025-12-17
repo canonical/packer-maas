@@ -67,7 +67,7 @@ locals {
 }
 
 source "qemu" "sles16" {
-  boot_command      = ["e", "<down><down><down><down>", "<end><wait>", "<spacebar>", "agama.auto=http://{{ .HTTPIP }}:{{ .HTTPPort }}/profile.json<wait>","<leftCtrlOn>x<leftCtrlOff>"]
+  boot_command      = ["<down>", "e", "<down><down><down><down>", "<end><wait>", "<spacebar>", "inst.auto=http://{{ .HTTPIP }}:{{ .HTTPPort }}/profile.json<wait>","<leftCtrlOn>x<leftCtrlOff>"]
   boot_wait        = "5s"
   communicator     = "none"
   disk_size        = "20G"
