@@ -33,6 +33,9 @@ rm -r /root/.ssh
 rm -r /root/.cache
 rm -r /etc/ssh/ssh_host_*
 
+# Cleanup fstab
+rm -r /etc/fstab
+
 # Final Clean-up
 apt-get autoremove --purge -yq
 apt-get clean -yq

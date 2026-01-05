@@ -113,8 +113,19 @@ try
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Unattend*
         Remove-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoLogonCount
 
+        # Fix BUG #335 - Microsoft Edge Preventing the sysprep
+        $pkg = Get-AppxPackage -Name "Microsoft.Edge.GameAssist" -AllUsers
+        if ($pkg) {
+            Reset-AppxPackage -Package $pkg.PackageFullName
+        }
+
         $Host.UI.RawUI.WindowTitle = "Running SetSetupComplete..."
         & "$ENV:ProgramFiles\Cloudbase Solutions\Cloudbase-Init\bin\SetSetupComplete.cmd"
+
+        if ((Get-Item -Path "A:\custom.ps1").Length -gt 0) {
+            $Host.UI.RawUI.WindowTitle = "Copying custom Powershell script..."
+            Copy-Item -Path "A:\custom.ps1" -Destination "C:\Program Files\Cloudbase Solutions\Cloudbase-Init\LocalScripts\" -Force
+        }
 
         if ($RunPowershell) {
             $Host.UI.RawUI.WindowTitle = "Paused, waiting for user to finish work in other terminal"

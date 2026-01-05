@@ -25,3 +25,6 @@ cloud-init clean --logs
 
 apt-get autoremove --purge -yq
 apt-get clean -yq
+
+# Cleanup fstab
+rm -r /etc/fstab
