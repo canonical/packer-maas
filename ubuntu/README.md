@@ -102,7 +102,7 @@ a DOCA release lower than `3.2.0`.
 
 ```shell
 make custom-cloudimg.tar.gz SERIES=jammy ARCH=arm64 CUSTOMIZE=scripts/examples/bluefield-doca-2-9-3.sh
-make custom-cloudimg.tar.gz SERIES=noble ARCH=arm64 CUSTOMIZE=scripts/examples/bluefield-doca-3-2-0.sh
+make custom-cloudimg.tar.gz SERIES=noble ARCH=arm64 CUSTOMIZE=scripts/examples/bluefield-doca-3-2-1.sh
 ```
 
 ## ubuntu-flat.pkr.hcl and ubuntu-lvm.pkr.hcl

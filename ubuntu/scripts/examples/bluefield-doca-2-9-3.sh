@@ -1,6 +1,7 @@
 #!/bin/bash
 export DEBIAN_FRONTEND=noninteractive
 
+BASE_URL="https://linux.mellanox.com/public/repo/doca"
 GPG_KEY="GPG-KEY-Mellanox.pub"
 DPU_ARCH="aarch64"
 DOCA_VERSION="2.9.3"
@@ -9,13 +10,17 @@ MELLANOX_GPG="/etc/apt/keyrings/mellanox.gpg"
 BF_KERNEL_VERSION="5.15.0.1070.72"
 KVER="5.15.0-1070"
 KSUBVER="72"
+BSP_VERSION="4.9.3-13692"
 
 mkdir -p /etc/apt/keyrings
 wget https://linux.mellanox.com/public/repo/doca/$DOCA_VERSION/ubuntu22.04/$DPU_ARCH/$GPG_KEY
 gpg --no-default-keyring --keyring $TMP_KEYRING --import ./$GPG_KEY
 gpg --no-default-keyring --keyring $TMP_KEYRING --export --output $MELLANOX_GPG
 rm $TMP_KEYRING
-echo "deb [signed-by=$MELLANOX_GPG] https://linux.mellanox.com/public/repo/doca/$DOCA_VERSION/ubuntu22.04/$DPU_ARCH ./" | tee /etc/apt/sources.list.d/doca.list
+echo "deb [signed-by=$MELLANOX_GPG] $BASE_URL/$DOCA_VERSION/ubuntu22.04/$DPU_ARCH ./" | tee /etc/apt/sources.list.d/doca.list
+
+wget ${BASE_URL}/${DOCA_VERSION}/ubuntu22.04/${DPU_ARCH}/mlxbf-bootimages-signed_${BSP_VERSION}_arm64.deb
+dpkg -i ./mlxbf-bootimages*.deb
 
 apt-get update
 apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -f \
