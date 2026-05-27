@@ -32,21 +32,33 @@ apt-get -y install linux-image-generic
 
 ARCH=$(dpkg --print-architecture)
 
-dpkg-reconfigure grub-efi-${ARCH}
-update-grub
+if [ -d /sys/firmware/efi/efivars ]; then
+    dpkg-reconfigure grub-efi-${ARCH}
 
-if [ ${ARCH} == "amd64" ]; then
-    GRUB_TARGET="x86_64-efi"
+    if [ ${ARCH} == "amd64" ]; then
+        GRUB_TARGET="x86_64-efi"
+    else
+        GRUB_TARGET="arm64-efi"
+    fi
+
+    grub-install \
+        --target=${GRUB_TARGET} \
+        --efi-directory=/boot/efi \
+        --bootloader-id=ubuntu \
+        --recheck
+
+    efibootmgr -v
 else
-    GRUB_TARGET="arm64-efi"
+    GRUB_TARGET="i386-pc"
+    apt-get install -y grub-pc
+    grub-install \
+        --target=${GRUB_TARGET} "$(printf '/dev/%s\n' "$(lsblk -no PKNAME "$(grub-probe --target=device /boot)")")"
 fi
 
-grub-install \
-    --target=${GRUB_TARGET} \
-    --efi-directory=/boot/efi \
-    --bootloader-id=ubuntu \
-    --recheck
+if [ -f /usr/bin/dracut ]; then
+    dracut -H --hostonly-mode=sloppy --regenerate-all --force
+else
+    update-initramfs -uk all
+fi
 
-update-initramfs -uk all
-
-efibootmgr -v
+update-grub

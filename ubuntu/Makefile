@@ -6,7 +6,7 @@ PACKER ?= packer
 PACKER_LOG ?= 0
 export PACKER_LOG
 
-SERIES ?= jammy
+SERIES ?= noble
 ARCH ?= amd64
 URL ?= http://releases.ubuntu.com
 SUMS ?= SHA256SUMS
