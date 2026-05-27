@@ -36,7 +36,7 @@ customizations:
 
 ```shell
 packer init .
-packer build -var customize_script=my-changes.sh -var ubuntu_series=jammy \
+packer build -var customize_script=my-changes.sh -var ubuntu_series=resolute \
     -only='cloudimg.*' .
 ```
 
@@ -47,7 +47,7 @@ ansible, or whatever you want.
 Building using make:
 
 ```shell
-make custom-cloudimg.tar.gz SERIES=jammy
+make custom-cloudimg.tar.gz SERIES=resolute
 ```
 
 #### Accessing external files from you script
@@ -160,7 +160,7 @@ Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
 
 #### SERIES
 
-Specify the Ubuntu Series to build. The default value is set to Jammy.
+Specify the Ubuntu Series to build. The default value is set to Noble (24.04 LTS).
 
 #### ARCH
 
