@@ -26,5 +26,7 @@ cloud-init clean --logs
 apt-get autoremove --purge -yq
 apt-get clean -yq
 
-# Cleanup fstab
-rm -r /etc/fstab
+# Cleanup fstab on non-LVM builds
+if [ $(lsblk | grep -c ubuntu--vg-ubuntu--lv) -eq 0 ]; then
+    rm -r /etc/fstab
+fi
