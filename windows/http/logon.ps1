@@ -102,8 +102,11 @@ try
         $Host.UI.RawUI.WindowTitle = "Installing Virtio Drivers..."
         certutil -addstore "TrustedPublisher" A:\rh.cer
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        Invoke-WebRequest "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-gt-x64.msi" -Outfile "c:\virtio.msi"
-        Invoke-WebRequest "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-guest-tools.exe" -Outfile "c:\virtio.exe"
+        $headers = @{
+            "User-Agent" = "curl/8.0.0"
+        }
+        Invoke-WebRequest "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-gt-x64.msi" -Outfile "c:\virtio.msi" -Headers $headers
+        Invoke-WebRequest "https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/stable-virtio/virtio-win-guest-tools.exe" -Outfile "c:\virtio.exe" -Headers $headers
         $virtioLog = "$ENV:Temp\virtio.log"
         $serialPortName = @(Get-WmiObject Win32_SerialPort)[0].DeviceId
         $p = Start-Process -Wait -PassThru -FilePath msiexec -ArgumentList "/a c:\virtio.msi /qn /norestart /l*v $virtioLog LOGGINGSERIALPORTNAME=$serialPortName"
