@@ -198,6 +198,7 @@ Refer to the `README.md` inside each OS directory for supported parameters.
 | [Fedora Server 42](fedora-server/README.md)         | Beta               | x86_64 / aarch64  | >= 3.2           |
 | [OL8](ol8/README.md)               | Alpha              | x86_64            | >= 3.5           |
 | [OL9](ol9/README.md)               | Alpha              | x86_64            | >= 3.5           |
+| [OpenEuler](openeuler/README.md)     | Beta               | x86_64 / aarch64  | >= 3.3           |
 | [RHEL 7](rhel7/README.md)            | EOL                | x86_64            | >= 2.3           |
 | [RHEL 8](rhel8/README.md)            | Stable             | x86_64 / aarch64  | >= 2.7           |
 | [RHEL 9](rhel9/README.md)            | Beta               | x86_64 / aarch64  | >= 3.3           |
