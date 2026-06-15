@@ -56,7 +56,7 @@ try
     start-sleep -s 30
 
         # Inject extra drivers if the infs directory is present on the attached iso
-        if (Test-Path -Path "E:\infs")
+        if ((Test-Path -Path "E:\infs" -PathType Container) -and (Get-ChildItem -Path "E:\infs" -Force -ErrorAction SilentlyContinue | Select-Object -First 1))
         {
             # To install extra drivers the Windows Driver Kit is needed for dpinst.exe.
             # Sadly you cannot just download dpinst.exe. The whole driver kit must be
