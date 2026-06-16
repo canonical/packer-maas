@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+# curtin-hooks - Curtin installation hooks for Ubuntu
+#
+# Copyright (C) 2022 Canonical
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import shutil
+import sys
+
+from curtin.config import load_command_config
+from curtin.util import load_command_environment
+from curtin import distro
+from curtin import config
+from curtin.log import LOG
+from curtin.reporter import events
+from curtin.commands.curthooks import *
+from curtin import util
+
+
+# import copy
+# import glob
+# import platform
+# import re
+# import textwrap
+
+
+# from curtin import block
+# from curtin.block import iscsi
+# from curtin.block import lvm
+# from curtin import net
+# from curtin import futil
+# from curtin import paths
+# from curtin import swap
+# from curtin import version as curtin_version
+# from curtin.block import deps as bdeps
+# from curtin.net import deps as ndeps
+# from curtin.commands import apply_net, apt_config
+# from curtin.commands.install_grub import install_grub
+# from curtin.url_helper import get_maas_version
+
+
+def configure_custom_kernel(config):
+    """Amend the curtin config to explicity specify the kernel to install.
+
+    The name of the kernel to install should already have been written to the
+    CUSTOM_KERNEL file in the same directory as this file.
+    """
+    custom_kernel_path = os.path.join(
+        os.path.dirname(__file__), "CUSTOM_KERNEL")
+    with open(custom_kernel_path, "r") as custom_kernel_file:
+        custom_kernel_package = custom_kernel_file.read().strip()
+    kernel_config = config.setdefault("kernel", {})
+    kernel_config["package"] = custom_kernel_package
+    return config
+
+def cleanup():
+    """Remove curtin-hooks so its as if we were never here."""
+    curtin_dir = os.path.dirname(__file__)
+    shutil.rmtree(curtin_dir)
+
+def curthook(cfg, target, state):
+    LOG.info('Running curtin builtin curthooks')
+    stack_prefix = state.get('report_stack_prefix', '')
+    state_etcd = os.path.split(state['fstab'])[0]
+    machine = platform.machine()
+
+    distro_info = distro.get_distroinfo(target=target)
+    if not distro_info:
+        raise RuntimeError('Failed to determine target distro')
+    osfamily = distro_info.family
+    LOG.info('Configuring target system for distro: %s osfamily: %s',
+             distro_info.variant, osfamily)
+    with events.ReportEventStack(
+            name=stack_prefix + '/writing-apt-config',
+            reporting_enabled=True, level="INFO",
+            description="configuring apt configuring apt"):
+        do_apt_config(cfg, target)
+        disable_overlayroot(cfg, target)
+        disable_update_initramfs(cfg, target, machine)
+
+    # LP: #1742560 prevent zfs-dkms from being installed (Xenial)
+    if distro.lsb_release(target=target)['codename'] == 'xenial':
+        distro.apt_update(target=target)
+        with util.ChrootableTarget(target) as in_chroot:
+            in_chroot.subp(['apt-mark', 'hold', 'zfs-dkms'])
+
+    # packages may be needed prior to installing kernel
+    with events.ReportEventStack(
+            name=stack_prefix + '/installing-missing-packages',
+            reporting_enabled=True, level="INFO",
+            description="installing missing packages"):
+        install_missing_packages(cfg, target, osfamily=osfamily)
+
+    with events.ReportEventStack(
+            name=stack_prefix + '/configuring-iscsi-service',
+            reporting_enabled=True, level="INFO",
+            description="configuring iscsi service"):
+        configure_iscsi(cfg, state_etcd, target, osfamily=osfamily)
+
+    with events.ReportEventStack(
+            name=stack_prefix + '/configuring-mdadm-service',
+            reporting_enabled=True, level="INFO",
+            description="configuring raid (mdadm) service"):
+        configure_mdadm(cfg, state_etcd, target, osfamily=osfamily)
+
+    with events.ReportEventStack(
+            name=stack_prefix + '/installing-kernel',
+            reporting_enabled=True, level="INFO",
+            description="installing kernel"):
+        setup_zipl(cfg, target)
+        setup_kernel_img_conf(target)
+        install_kernel(cfg, target)
+        run_zipl(cfg, target)
+        restore_dist_interfaces(cfg, target)
+        chzdev_persist_active_online(cfg, target)
+
+    # with events.ReportEventStack(
+    #         name=stack_prefix + '/setting-up-swap',
+    #         reporting_enabled=True, level="INFO",
+    #         description="setting up swap"):
+    #     add_swap(cfg, target, state.get('fstab'))
+
+    with events.ReportEventStack(
+            name=stack_prefix + '/apply-networking-config',
+            reporting_enabled=True, level="INFO",
+            description="apply networking config"):
+        apply_networking(target, state)
+
+    # with events.ReportEventStack(
+    #         name=stack_prefix + '/writing-etc-fstab',
+    #         reporting_enabled=True, level="INFO",
+    #         description="writing etc/fstab"):
+    #     copy_fstab(state.get('fstab'), target)
+
+    with events.ReportEventStack(
+            name=stack_prefix + '/configuring-multipath',
+            reporting_enabled=True, level="INFO",
+            description="configuring multipath"):
+        detect_and_handle_multipath(cfg, target, osfamily=osfamily)
+
+    with events.ReportEventStack(
+            name=stack_prefix + '/system-upgrade',
+            reporting_enabled=True, level="INFO",
+            description="updating packages on target system"):
+        system_upgrade(cfg, target, osfamily=osfamily)
+
+
+    with events.ReportEventStack(
+            name=stack_prefix + '/pollinate-user-agent',
+            reporting_enabled=True, level="INFO",
+            description="configuring pollinate user-agent on target"):
+        handle_pollinate_user_agent(cfg, target)
+
+    # check for the zpool cache file and copy to target if present
+    zpool_cache = '/etc/zfs/zpool.cache'
+    if os.path.exists(zpool_cache):
+        copy_zpool_cache(zpool_cache, target)
+
+    zkey_repository = '/etc/zkey/repository'
+    zkey_used = os.path.join(os.path.split(state['fstab'])[0], "zkey_used")
+    if all(map(os.path.exists, [zkey_repository, zkey_used])):
+        distro.install_packages(['s390-tools-zkey'], target=target,
+                                osfamily=osfamily)
+        copy_zkey_repository(zkey_repository, target)
+
+    # If a crypttab file was created by block_meta than it needs to be
+    # copied onto the target system, and update_initramfs() needs to be
+    # run, so that the cryptsetup hooks are properly configured on the
+    # installed system and it will be able to open encrypted volumes
+    # at boot.
+    crypttab_location = os.path.join(os.path.split(state['fstab'])[0],
+                                        "crypttab")
+    if os.path.exists(crypttab_location):
+        copy_crypttab(crypttab_location, target)
+        update_initramfs(target)
+
+    # If udev dname rules were created, copy them to target
+    udev_rules_d = os.path.join(state['scratch'], "rules.d")
+    if os.path.isdir(udev_rules_d):
+        copy_dname_rules(udev_rules_d, target)
+
+    with events.ReportEventStack(
+            name=stack_prefix + '/updating-initramfs-configuration',
+            reporting_enabled=True, level="INFO",
+            description="updating initramfs configuration"):
+        # re-enable update_initramfs
+        enable_update_initramfs(cfg, target, machine)
+        update_initramfs(target, all_kernels=True)
+
+
+def main():
+    state = load_command_environment()
+    config = configure_custom_kernel(load_command_config(None, state))
+    curthook(config, state['target'], state)
+    cleanup()
+
+if __name__ == "__main__":
+    main()
