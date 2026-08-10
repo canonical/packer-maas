@@ -24,7 +24,7 @@ locals {
   proxy_env = [
     "http_proxy=${var.http_proxy}",
     "https_proxy=${var.https_proxy}",
-    "no_proxy=${var.https_proxy}",
+    "no_proxy=${var.no_proxy}",
   ]
 }
 
