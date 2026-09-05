@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Packer templates in this directory creates Windows Server images for use with MAAS.
+The Packer templates in this directory create Windows Server images for use with MAAS.
 
 
 ## Prerequisites (to create the image)
@@ -24,7 +24,7 @@ The Packer templates in this directory creates Windows Server images for use wit
 
 ## Supported Microsoft Windows Versions
 
-This process has been build and deployment tested with the following versions of
+This process has been built and deployment tested with the following versions of
 Microsoft Windows:
 
 * Azure Local 23H2
@@ -49,7 +49,7 @@ This process also installs the latest VirtIO drivers as well as Cloudbase-init.
 
 ## Obtaining Microsoft Windows ISO images
 
-You can obtains Microsoft Windows Evaluation ISO/VHDX images from the following links:
+You can obtain Microsoft Windows Evaluation ISO/VHDX images from the following links:
 
 * [Windows Server 2025](https://www.microsoft.com/en-us/evalcenter/download-windows-server-2025)
 * [Windows Server 2022](https://www.microsoft.com/en-us/evalcenter/download-windows-server-2022)
@@ -63,7 +63,7 @@ To download an ISO image for Azure Local (formerly Azure Stack HCI), [follow the
 
 ### Building the image
 
-The build the image you give the template a script which has all the
+To build the image you give the template a script which has all the
 customization:
 
 ```shell
@@ -86,14 +86,14 @@ Currently uefi is the only supported value.
 
 The edition of a targeted ISO image. It defaults to PRO for Microsoft Windows 10/11
 and SERVERSTANDARD for Microsoft Windows Servers. Many Microsoft Windows Server ISO
-images do contain multiple editions and this prarameter is useful to build a particular
+images do contain multiple editions and this parameter is useful to build a particular
 edition such as Standard or Datacenter etc.
 
 #### HEADLESS
 
 Whether VNC viewer should not be launched. Default is set to false. This requires GTK
 or SDL libraries to be present on the machine. If building on headless servers, set this
-to true. The use a VNC client to connecto to the displayed VNC port during the build.
+to true. Then use a VNC client to connect to the displayed VNC port during the build.
 
 #### ISO
 
@@ -106,7 +106,7 @@ Enable (1) or Disable (0) verbose packer logs. The default value is set to 0.
 
 #### PKEY
 
-User supplied Microsoft Windows Product Key. When usimg KMS, you can obtain the
+User supplied Microsoft Windows Product Key. When using KMS, you can obtain the
 activation keys from the link below:
 
 * [KMS Client Activation and Product Keys](https://learn.microsoft.com/en-us/windows-server/get-started/kms-client-activation-keys)

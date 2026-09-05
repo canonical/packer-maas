@@ -13,7 +13,7 @@ The Packer template in this directory creates a Alma 8 AMD64/ARM64 image for use
 * ovmf
 * cloud-image-utils
 * parted
-* [Packer.](https://www.packer.io/intro/getting-started/install.html), v1.11.0 or newer
+* [Packer](https://www.packer.io/intro/getting-started/install.html), v1.11.0 or newer
 
 ## Requirements to deploy the image
 
@@ -27,7 +27,7 @@ You can customize the deployment image by modifying http/alma.ks. See the [RHEL 
 
 The Packer template downloads the Alma ISO image from the Internet. You can tell Packer to use a proxy by setting the HTTP_PROXY environment variable to point to your proxy server. You can also redefine alma_iso_url to a local file. If you want to skip the base image integrity check, set iso_checksum_type to none and remove iso_checksum.
 
-To use a proxy during the installation define the `KS_PROXY` variable in the environment, as bellow:
+To use a proxy during the installation define the `KS_PROXY` variable in the environment, as below:
 
 ```shell
 export KS_PROXY="\"${HTTP_PROXY}\""
@@ -36,7 +36,7 @@ export KS_PROXY="\"${HTTP_PROXY}\""
 # Building the image using a kickstart mirror
 
 To tell Packer to use a specific mirror set the `KS_MIRROR` environment variable
-poiniting to the mirror URL.
+pointing to the mirror URL.
 
 ```shell
 export KS_MIRROR="https://repo.almalinux.org/almalinux/8"
@@ -118,4 +118,4 @@ MAAS uses cloud-init to create ```cloud-user``` account using the ssh keys confi
 ssh -i ~/.ssh/<your_identity_file> cloud-user@<machine-ip-address>
 ```
 
-Next to that, the kickstart script creates an account with both username and password set to  ```alma```. Note that the default sshd configuration in Alma 9 disallows password-based authentication when logging in via ssh, so trying `ssh alma<machine-ip-address>` will fail. Password-based authentication can be enabled by having `PasswordAuthentication yes` in /etc/ssh/sshd_config after logging in with ```cloud-user```. Perhaps there is a way to make that change using kickstart script, but it is not obvious as ```anaconda```, the installer, makes its own changes to sshd_config file during installation. If you know how to do this, a PR is welcome.
+Next to that, the kickstart script creates an account with both username and password set to  ```alma```. Note that the default sshd configuration in Alma 8 disallows password-based authentication when logging in via ssh, so trying `ssh alma@<machine-ip-address>` will fail. Password-based authentication can be enabled by having `PasswordAuthentication yes` in /etc/ssh/sshd_config after logging in with ```cloud-user```. Perhaps there is a way to make that change using kickstart script, but it is not obvious as ```anaconda```, the installer, makes its own changes to sshd_config file during installation. If you know how to do this, a PR is welcome.

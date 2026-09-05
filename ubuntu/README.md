@@ -2,10 +2,10 @@
 
 ## Introduction
 
-The Packer templates in this directory creates Ubuntu images for use with MAAS.
+The Packer templates in this directory create Ubuntu images for use with MAAS.
 
-This templates supports building amd64 and arm64 images in all three supported
-modes including, cloudimg, flat as wellas lvm.
+These templates support building amd64 and arm64 images in all three supported
+modes including cloudimg, flat, and lvm.
 
 ## Prerequisites (to create the image)
 
@@ -31,7 +31,7 @@ results in an image that is very close to the ones that are on
 
 ### Building the image
 
-The build the image you give the template a script which has all the
+To build the image you give the template a script which has all the
 customizations:
 
 ```shell
@@ -50,7 +50,7 @@ Building using make:
 make custom-cloudimg.tar.gz SERIES=resolute
 ```
 
-#### Accessing external files from you script
+#### Accessing external files from your script
 
 If you want to put or use some files in the image, you can put those in the `http` directory.
 
