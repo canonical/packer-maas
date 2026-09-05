@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Packer templates in this directory creates Debian images for use with MAAS.
+The Packer templates in this directory create Debian images for use with MAAS.
 
 ## Prerequisites (to create the image)
 
@@ -31,12 +31,12 @@ in BIOS and UEFI modes. The process currently works with the following Debian se
 
 ## Supported Architectures
 
-Currently amd64 (x86_64) and arm64 (aarch64) architectures are supported with aemd64
+Currently amd64 (x86_64) and arm64 (aarch64) architectures are supported with amd64
 being the default.
 
 ## Known Issues
 
-* UEFI images fro Debian 10 (Buster) and 11 (Bullseye) are usable on both BIOS and 
+* UEFI images for Debian 10 (Buster) and 11 (Bullseye) are usable on both BIOS and 
 UEFI systems. However for Debian 12 (Bookworm) explicit images are required to
 support BIOS and UEFI modes. See BOOT make parameter for more details.
 
@@ -49,7 +49,7 @@ results in an image that is very close to the ones that are on
 
 ### Building the image
 
-The build the image you give the template a script which has all the
+To build the image you give the template a script which has all the
 customizations:
 
 ```shell
@@ -68,7 +68,7 @@ Using make:
 make debian SERIES=bookworm
 ```
 
-#### Accessing external files from you script
+#### Accessing external files from your script
 
 If you want to put or use some files in the image, you can put those in the `http` directory.
 
