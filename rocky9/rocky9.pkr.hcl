@@ -84,8 +84,8 @@ source "qemu" "rocky9" {
   format           = "qcow2"
   headless         = true
   iso_checksum     = "file:http://download.rockylinux.org/pub/rocky/9/isos/${var.architecture}/CHECKSUM"
-  iso_url          = "http://download.rockylinux.org/pub/rocky/9/isos/${var.architecture}/Rocky-${var.architecture}-boot.iso"
-  iso_target_path  = "packer_cache/Rocky-${var.architecture}-boot.iso"
+  iso_url          = "http://download.rockylinux.org/pub/rocky/9/isos/${var.architecture}/Rocky-9-latest-${var.architecture}-boot.iso"
+  iso_target_path  = "packer_cache/Rocky-9-latest-${var.architecture}-boot.iso"
   memory           = 2048
   cores            = 4
   qemu_binary      = "qemu-system-${lookup(local.qemu_arch, var.architecture, "")}"
@@ -105,7 +105,7 @@ source "qemu" "rocky9" {
     ["-drive", "if=pflash,format=raw,unit=0,id=ovmf_code,readonly=on,file=/usr/share/${lookup(local.uefi_imp, var.architecture, "")}/${lookup(local.uefi_imp, var.architecture, "")}_CODE${lookup(local.uefi_sfx, var.architecture, "")}.fd"],
     ["-drive", "if=pflash,format=raw,unit=1,id=ovmf_vars,file=${var.architecture}_VARS.fd"],
     ["-drive", "file=output-rocky9/packer-rocky9,if=none,id=drive0,cache=writeback,discard=ignore,format=qcow2"],
-    ["-drive", "file=packer_cache/Rocky-${var.architecture}-boot.iso,if=none,id=cdrom0,media=cdrom"]
+    ["-drive", "file=packer_cache/Rocky-9-latest-${var.architecture}-boot.iso,if=none,id=cdrom0,media=cdrom"]
   ]
   shutdown_timeout = var.timeout
   http_content = {
