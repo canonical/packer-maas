@@ -52,8 +52,8 @@ source "qemu" "cloudimg" {
     ["-machine", "${lookup(local.qemu_machine, var.architecture, "")}"],
     ["-cpu", "${lookup(local.qemu_cpu, var.architecture, "")}"],
     ["-device", "virtio-gpu-pci"],
-    ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=OVMF_CODE.fd"],
-    ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=OVMF_VARS.fd"],
+    ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=OVMF_CODE${var.ovmf_suffix}.fd"],
+    ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=OVMF_VARS${var.ovmf_suffix}.fd"],
     ["-drive", "file=output-cloudimg/packer-cloudimg,format=qcow2"],
     ["-drive", "file=seeds-cloudimg.iso,format=raw"]
   ]
