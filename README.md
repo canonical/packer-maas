@@ -209,6 +209,7 @@ Refer to the `README.md` inside each OS directory for supported parameters.
 | [SLES 12](sles12/README.md)           | Beta               | x86_64            | >= 3.4           |
 | [SLES 15](sles15/README.md)           | Beta               | x86_64 / aarch64  | >= 3.3           |
 | [SLES 16](sles16/README.md)           | Alpha              | x86_64 / aarch64  | >= 3.3           |
+| [Talos](talos/README.md)              | Alpha              | x86_64 / aarch64  | >= 3.3           |
 | [Ubuntu](ubuntu/README.md)            | Stable             | x86_64 / aarch64  | >= 3.0           |
 | [VMWare ESXi 6](vmware-esxi/README.md)     | EOL                | x86_64            | >= 3.0           |
 | [VMWare ESXi 7](vmware-esxi/README.md)     | Stable             | x86_64            | >= 3.0           |
@@ -279,4 +280,4 @@ Each OS directory typically contains:
 
 ## Next steps
 
-- [How to manage images in MAAS](https://canonical.com/maas/docs/how-to-manage-images)  
+- [How to manage images in MAAS](https://canonical.com/maas/docs/how-to-manage-images)
