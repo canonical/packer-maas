@@ -186,6 +186,7 @@ Refer to the `README.md` inside each OS directory for supported parameters.
 | [AlmaLinux 10](alma10/README.md)     | Beta               | x86_64 / aarch64  | >= 3.3           |
 | [Anolis OS 23](anolis/README.md)     | Beta               | x86_64 / aarch64  | >= 3.3           |
 | [AzureLinux 2.0](azurelinux/README.md)    | Beta               | x86_64            | >= 3.3           |
+| [AzureLinux 3.0](azurelinux/README.md)    | Beta               | x86_64            | >= 3.3           |
 | [CentOS 6](centos6/README.md)          | EOL                | x86_64            | >= 1.6           |
 | [CentOS 7](centos7/README.md)          | EOL                | x86_64            | >= 2.3           |
 | [CentOS 8](centos8/README.md)          | EOL                | x86_64            | >= 2.7           |

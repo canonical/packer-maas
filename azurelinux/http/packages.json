@@ -1,6 +1,8 @@
 {
     "packages": [
+        "awk",
         "openssh-server",
+        "shadow-utils",
         "grub2",
         "ca-certificates",
         "cronie-anacron",

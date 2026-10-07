@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The Packer template in this directory creates a [Azure Linux 2.0](https://github.com/microsoft/azurelinux) AMD64 image for use with MAAS.
+The Packer template in this directory creates a [Azure Linux](https://github.com/microsoft/azurelinux) AMD64 image for use with MAAS.
 This distribution was formerly known as `CBL-Mariner`.
 
 ## Prerequisites to create the image
@@ -22,12 +22,14 @@ See curtin/install-custom-packages file.
 
 ## Building the image
 
-The Packer template needs the [CBL-Mariner 2.0 ISO image](https://aka.ms/mariner-2.0-x86_64-iso).
+The Packer template needs the [AzureLinux-3.0 ISO image](https://aka.ms/AzureLinux-3.0-x86_64.iso).
+
+Currently both 2.0 and 3.0 ISO images are supported.
 
 You can build the image using the Makefile:
 
 ```shell
-make azurelinux.tar.gz ISO=/path/to/Mariner-2.0-x86_64.iso
+make azurelinux.tar.gz ISO=/path/to/AzureLinux-3.0-x86_64.iso
 ```
 
 The installation runs in a non-interactive mode.
@@ -47,18 +49,18 @@ The path to the ISO image.
 ## Uploading an image to MAAS
 
 ```shell
-maas $PROFILE boot-resources create name='custom/cbl-mariner-2.0' \
-    title='CBL Mariner 2.0 Custom' architecture='amd64/generic' \
+maas $PROFILE boot-resources create name='custom/azure-linux-3.0' \
+    title='Azure Linux 3.0 Custom' architecture='amd64/generic' \
     base_image='rhel/8' filetype='tgz' \
     content@=azurelinux.tar.gz
 ```
 
 ## Default username
 
-MAAS uses cloud-init to create ```mariner``` account using the ssh keys configured for the MAAS admin user (e.g. imported from Launchpad). Log in to the machine:
+MAAS uses cloud-init to create ```mariner``` (for 2.0) or ```azurelinux``` (for 3.0) accounts using the ssh keys configured for the MAAS admin user (e.g. imported from Launchpad). Log in to the machine:
 
 ```shell
-ssh -i ~/.ssh/<your_identity_file> mariner@<machine-ip-address>
+ssh -i ~/.ssh/<your_identity_file> azurelinux@<machine-ip-address>
 ```
 
 The autoinstall script sets the `mariner` account password to `mariner`.

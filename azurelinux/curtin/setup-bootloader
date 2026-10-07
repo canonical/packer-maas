@@ -9,6 +9,16 @@ mv /etc/os-release.orig /etc/os-release
 # Generate the GRUB config file
 grub2-mkconfig -o /boot/grub2/grub.cfg
 
+# Select package manager.
+if command -v tdnf >/dev/null 2>&1; then
+    PKG=tdnf
+elif command -v yum >/dev/null 2>&1; then
+    PKG=yum
+else
+    echo "ERROR: neither tdnf nor yum found"
+    exit 1
+fi
+
 # Install GRUB and update the configuration
 if [ -d /sys/firmware/efi/efivars/ ]; then
         # Sorry, we have to go through this process due to:
@@ -16,7 +26,7 @@ if [ -d /sys/firmware/efi/efivars/ ]; then
         mkdir -p /boot/efi/EFI/BOOT
         mkdir -p /boot/efi/boot/grub2
 
-        yum install --assumeyes --quiet shim grub2-efi-binary
+        ${PKG} install --assumeyes --quiet shim grub2-efi-binary
 
         cat /boot/grub2/grub.cfg | grep search | sort -u | sed 's/^[ \t]*//' | head -n1 > /boot/efi/boot/grub2/grub.cfg
         # Properly handle separate /boot partition scenarios
@@ -27,7 +37,7 @@ if [ -d /sys/firmware/efi/efivars/ ]; then
         fi
         echo 'configfile $prefix/grub.cfg' >> /boot/efi/boot/grub2/grub.cfg
 else
-        yum install --assumeyes --quiet grub2-pc
+        ${PKG} install --assumeyes --quiet grub2-pc
 
         grub_dev="/dev/$(lsblk -r | grep 'part /$' | awk '{print $1}' | sed s/[0-9]//g)"
 
