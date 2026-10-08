@@ -66,8 +66,27 @@ variable "filename" {
 
 source "qemu" "azurelinux" {
   accelerator      = "kvm"
-  boot_command     = ["<esc><<esc><wait>", "<rightCtrlOn>c<rightCtrlOff><tab><enter><wait>", "cd /root <enter><wait>", "curl http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.mariner_config_file} -o $HOME/${var.mariner_config_file} <enter>", "sed -i 's#@POSTINSTALLSCRIPT@#${var.postinstall_script}#g;s/@USERNAME@/${var.username}/g;s/@PASSWORD@/${var.password}/g' $HOME/${var.mariner_config_file} <enter>", "mkdir -p $HOME/config <enter>", "curl http://{{ .HTTPIP }}:{{ .HTTPPort }}/packages.json -o $HOME/config/packages.json <enter>", "cp -R /mnt/cdrom/config/* $HOME/config <enter>", "mkdir -p $HOME/config/scripts <enter>", "curl http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.postinstall_script} -o $HOME/config/${var.postinstall_script} <enter>", "chmod 755 $HOME/config/${var.postinstall_script} <enter>", "$HOME/runliveinstaller -u $HOME/${var.mariner_config_file} -c $HOME/config <enter>", " <wait3m>"]
-  boot_wait        = "25s"
+  boot_command = [
+        "<esc><wait>",
+        "<rightCtrlOn>c<rightCtrlOff><tab><enter><wait>",
+        "<left><enter><wait><left><enter>",
+        # Bring up QEMU/Packer NIC
+        " IFACE=$(ls /sys/class/net | grep -v '^lo$' | head -1)<enter>",
+        " mkdir -p /run/systemd/network<enter>",
+        " printf '[Match]\\nName=%s\\n\\n[Network]\\nDHCP=yes\\n' \"$IFACE\" > /run/systemd/network/10-packer.network<enter>",
+        " systemctl restart systemd-networkd<enter><wait5>",
+        " cd /root <enter><wait>",
+        " mkdir -p $HOME/config/scripts <enter><wait>",
+        " curl http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.mariner_config_file} -o $HOME/${var.mariner_config_file} <enter><wait>",
+        " sed -i 's#@POSTINSTALLSCRIPT@#${var.postinstall_script}#g;s/@USERNAME@/${var.username}/g;s/@PASSWORD@/${var.password}/g' $HOME/${var.mariner_config_file} <enter><wait>",
+        " curl http://{{ .HTTPIP }}:{{ .HTTPPort }}/packages.json -o $HOME/config/packages.json <enter><wait>",
+        " cp -R /mnt/cdrom/config/* $HOME/config <enter><wait>",
+        " curl http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.postinstall_script} -o $HOME/config/${var.postinstall_script} <enter><wait>",
+        " chmod 755 $HOME/config/${var.postinstall_script} <enter><wait>",
+        " $HOME/runliveinstaller -u $HOME/${var.mariner_config_file} -c $HOME/config <enter><wait>",
+        " <wait3m>"
+  ]
+  boot_wait        = "40s"
   communicator     = "none"
   cpus             = "${var.cpu}"
   disk_interface   = "virtio"
@@ -83,14 +102,17 @@ source "qemu" "azurelinux" {
   output_directory = "${var.out_dir}"
   qemuargs         = [
         ["-machine", "ubuntu,accel=kvm"],
+        ["-boot", "strict=off"],
         ["-cpu", "host"],
-        ["-device", "virtio-net,netdev=user.0"],
+        ["-device", "qemu-xhci"],
+        ["-device", "usb-kbd"],
+        ["-device", "virtio-net-pci,netdev=net0"],
+        ["-netdev", "user,id=net0"],
         ["-drive", "if=pflash,format=raw,id=ovmf_code,readonly=on,file=/usr/share/OVMF/OVMF_CODE${var.ovmf_suffix}.fd"],
         ["-drive", "if=pflash,format=raw,id=ovmf_vars,file=OVMF_VARS.fd"],
         ["-drive", "file=${var.out_dir}/packer-azurelinux,format=qcow2"],
         ["-cdrom", "${var.iso_url}" ],
         ["-serial", "stdio"],
-        ["-boot", "d"]
   ]
 }
 
