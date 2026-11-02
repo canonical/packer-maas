@@ -4,7 +4,7 @@
 #
 # Author: Alexsander de Souza <alexsander.souza@canonical.com>
 #
-# Copyright (C) 2024 Canonical
+# Copyright (C) 2026 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -25,10 +25,12 @@ export DEBIAN_FRONTEND=noninteractive
 rm /var/cache/debconf/config.dat
 dpkg --configure -a
 
-# Update the package lists before attempting to install the kernel
-apt-get update
 # Ensure the existence of linux-image-generic for non-cloudimg images.
-apt-get -y install linux-image-generic
+if [ $(dpkg -l | grep -c linux-image) -eq 0 ]; then
+    # Update the package lists before attempting to install the kernel
+    apt-get update
+    apt-get -y install linux-image-generic
+fi
 
 ARCH=$(dpkg --print-architecture)
 
@@ -56,7 +58,30 @@ else
 fi
 
 if [ -f /usr/bin/dracut ]; then
-    dracut -H --hostonly-mode=sloppy --regenerate-all --force
+    # DRACUT attempts to generate initramfs on half-removed kernels by
+    # scanning /lib/modules which can potentially lead to deployment
+    # failures.
+    # Checking /boot/vmlinuz-* is a safer alternative versus usig the
+    # --regenerate-all flag
+    for kernel in /boot/vmlinuz-*; do
+        [ -f "$kernel" ] || continue
+
+        kver="${kernel##*/vmlinuz-}"
+
+        if [ ! -f "/lib/modules/$kver/modules.dep" ] &&
+           [ ! -f "/lib/modules/$kver/modules.dep.bin" ]; then
+            echo "Skipping $kver: kernel modules missing"
+            continue
+        fi
+
+        echo "Regenerating initramfs for $kver"
+
+        sudo dracut \
+            -H \
+            --hostonly-mode=sloppy \
+            --force \
+            --kver "$kver" || break
+    done
 else
     update-initramfs -uk all
 fi
