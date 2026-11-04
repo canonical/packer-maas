@@ -4,7 +4,7 @@
 #
 # Author: Alexsander de Souza <alexsander.souza@canonical.com>
 #
-# Copyright (C) 2021 Canonical
+# Copyright (C) 2026 Canonical
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
@@ -38,15 +38,14 @@ CI_COMBINED_JSON=/run/cloud-init/combined-cloud-config.json
 [ -f "$CI_COMBINED_JSON" ] && APT_PROXY=$(jq -r '.apt.proxy // ""' "$CI_COMBINED_JSON")  # rewrite literal 'null' to empty str for next test [when not in JSON]
 [ -n "$APT_PROXY" ] && printf 'Acquire::http::Proxy "%s";\nAcquire::https::Proxy "%s";' "$APT_PROXY"{,} | tee /etc/apt/apt.conf.d/90cloud-init-aptproxy
 
-echo "remove existing kernels"
-dpkg -l 'linux-image-*' 'linux-headers-*' | awk '/^ii/{print $2}' | xargs apt-get -y purge
-
-echo "install new kernel"
 tar xzvf "${PKG_TGZ}" -C "${WORKDIR}"
-DEBS=$(find "${WORKDIR}" -name '*.deb')
-apt-get update
-apt-get install -y --no-install-recommends ${DEBS}
-apt-get install --fix-broken
+DEBS="$(find ${WORKDIR} -name '*.deb')"
 
-echo "purge unused packages"
-apt-get autoremove -y
+if [ ! -z "${DEBS}" ]; then
+    echo "processing custom packages"
+    apt-get update
+    apt-get install -y --no-install-recommends ${DEBS}
+    apt-get install --fix-broken
+    echo "purge unused packages"
+    apt-get autoremove -y
+fi
