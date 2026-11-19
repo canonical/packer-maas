@@ -112,8 +112,9 @@ source "qemu" "openeuler" {
   http_content = {
     "/openeuler.ks" = templatefile("${path.root}/http/openeuler.ks.pkrtpl.hcl",
       {
-        KS_PROXY           = local.ks_proxy,
-        KS_APPSTREAM_REPOS = var.ks_appstream_repos,
+        KS_PROXY               = local.ks_proxy,
+        KS_APPSTREAM_REPOS     = var.ks_appstream_repos,
+        CLOUD_INIT_OAUTH_PATCH = file("${path.root}/patches/cloud-init-oauth-fix.diff"),
       }
     )
   }

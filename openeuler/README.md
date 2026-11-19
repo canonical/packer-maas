@@ -16,6 +16,11 @@ The Packer template in this directory creates a OpenEuler AMD64/ARM64 image for 
 * [MAAS](https://maas.io) 3.3+
 * [Curtin](https://launchpad.net/curtin) 22.1+
 
+## Supported Versions
+
+* 24.03 LTS
+* 26.09
+
 ## Customizing the Image
 
 The deployment image may be customized by modifying http/openeuler.ks.pkrtpl.hcl. See the [OpenEuler kickstart documentation](https://docs.openeuler.org/en/docs/20.09/docs/Installation/using-kickstart-for-automatic-installation.html) for more information.
@@ -71,7 +76,7 @@ The timeout to apply when building the image. The default value is set to 1h.
 
 ```shell
 maas $PROFILE boot-resources create \
-    name='rhel/10' title='OpenEuler Custom' \
+    base_image='rhel/10' name="custom/openeuler" title='OpenEuler Custom' \
     architecture='amd64/generic' filetype='tgz' \
     content@=openeuler.tar.gz
 ```
@@ -80,7 +85,7 @@ For ARM64, use:
 
 ```shell
 maas $PROFILE boot-resources create \
-    name='rhel/10' title='OpenEuler Custom' \
+    base_image='rhel/10' name="custom/openeuler" title='OpenEuler Custom' \
     architecture='arm64/generic' filetype='tgz' \
     content@=openeuler.tar.gz
 ```
