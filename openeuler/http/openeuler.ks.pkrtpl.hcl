@@ -50,6 +50,41 @@ cp -r /boot/efi/EFI/openEuler /boot/efi/EFI/redhat
 # Add openeuler to group sudo
 usermod -a -G sudo openeuler
 
+# BEGIN cloud-init 25.1 MAAS OAuth callback workaround
+# Upstream fix: https://github.com/canonical/cloud-init/commit/9311e066f1eafea68fc714183173d8a5cc197d73
+# Only patch installed cloud-init VERSION=25.1, regardless of RPM release.
+CLOUD_INIT_VERSION=$(rpm -q --qf '%%{VERSION}' cloud-init) || exit 1
+echo "Installed cloud-init version: $CLOUD_INIT_VERSION"
+if [ "$CLOUD_INIT_VERSION" = "25.1" ]; then
+    CLOUD_INIT_DIR=/usr/lib/python3.11/site-packages
+    CLOUD_INIT_PATCH=/tmp/cloud-init-oauth-fix.diff
+    if ! command -v patch >/dev/null 2>&1; then
+        echo "ERROR: patch utility is unavailable" >&2
+        exit 1
+    fi
+
+    # Embed the upstream diff; no internet access is needed inside the installer.
+    cat > "$CLOUD_INIT_PATCH" <<'CLOUD_INIT_PATCH_EOF'
+${CLOUD_INIT_OAUTH_PATCH}
+CLOUD_INIT_PATCH_EOF
+
+    if patch --batch --forward --reverse --dry-run -p1 -d "$CLOUD_INIT_DIR" -i "$CLOUD_INIT_PATCH" >/dev/null 2>&1; then
+        echo "cloud-init OAuth callback fix already present; skipping"
+    elif patch --batch --forward --dry-run -p1 -d "$CLOUD_INIT_DIR" -i "$CLOUD_INIT_PATCH"; then
+        echo "Applying cloud-init OAuth callback fix"
+        patch --batch --forward -p1 -d "$CLOUD_INIT_DIR" -i "$CLOUD_INIT_PATCH" || exit 1
+    else
+        echo "ERROR: cloud-init is 25.1, but the OAuth patch does not apply" >&2
+        exit 1
+    fi
+
+    python3 -m py_compile "$CLOUD_INIT_DIR/cloudinit/url_helper.py" || exit 1
+    rm -f "$CLOUD_INIT_PATCH"
+else
+    echo "cloud-init is not 25.1; skipping OAuth patch"
+fi
+# END cloud-init 25.1 MAAS OAuth callback workaround
+
 dnf clean all
 %end
 
@@ -60,6 +95,7 @@ cloud-init
 # cloud-init only requires python3-oauthlib with MAAS. As such upstream
 # removed this dependency.
 python3-oauthlib
+patch
 rsync
 tar
 # grub2-efi-x64 ships grub signed for UEFI secure boot. If grub2-efi-x64-modules
